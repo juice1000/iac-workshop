@@ -1,0 +1,5 @@
+---
+db_name: tlbg_app
+db_user: tlbg_app
+# Nur fuer die Uebung im Klartext. Stretch-Aufgabe: mit Ansible Vault verschluesseln.
+db_password: "bitte-aendern-123"

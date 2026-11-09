@@ -1,0 +1,9 @@
+---
+# Lab 5: dasselbe wie Lab 3, aber als wiederverwendbare Rolle
+- name: Webserver einrichten
+  hosts: web
+  become: true
+  roles:
+    - role: webserver
+      vars:
+        webserver_begruessung: "Hallo aus der Rolle"

@@ -1,0 +1,6 @@
+---
+# Ubuntu 24.04 liefert PostgreSQL 16
+postgresql_version: "16"
+postgresql_conf_dir: "/etc/postgresql/{{ postgresql_version }}/main"
+# Aus welchem Netz darf die Anwendung zugreifen? Kommt aus dem Inventory (app_netz).
+postgresql_erlaubtes_netz: "{{ app_netz }}"

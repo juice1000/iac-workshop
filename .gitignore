@@ -1,0 +1,13 @@
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+# Generierte Dateien
+**/out/
+**/.ssh/
+**/inventory.ini
+# Ansible
+*.retry
+.vault_pass

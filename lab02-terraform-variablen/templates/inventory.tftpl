@@ -1,0 +1,9 @@
+%{ for rolle in rollen ~}
+[${rolle}]
+%{ for name, s in server ~}
+%{ if s.rolle == rolle ~}
+${name} ansible_host=127.0.0.1 ansible_port=${s.port}
+%{ endif ~}
+%{ endfor ~}
+
+%{ endfor ~}

@@ -1,0 +1,8 @@
+# Kopieren nach terraform.tfvars und anpassen
+umgebung = "test"
+
+server = {
+  app1 = { rolle = "app", port = 2201 }
+  app2 = { rolle = "app", port = 2203 }
+  db1  = { rolle = "db", port = 2202 }
+}

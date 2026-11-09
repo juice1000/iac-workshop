@@ -1,0 +1,48 @@
+# {{ ansible_managed }}
+"""Kleine Beispielanwendung: zaehlt Besuche in einer entfernten PostgreSQL-Datenbank."""
+import os
+import socket
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+import psycopg2
+
+
+def db_verbindung():
+    return psycopg2.connect(
+        host=os.environ["DB_HOST"],
+        dbname=os.environ["DB_NAME"],
+        user=os.environ["DB_USER"],
+        password=os.environ["DB_PASSWORD"],
+        connect_timeout=3,
+    )
+
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/health":
+            self.antwort(200, "ok\n")
+            return
+        try:
+            with db_verbindung() as conn, conn.cursor() as cur:
+                cur.execute(
+                    "CREATE TABLE IF NOT EXISTS besuche ("
+                    "id serial PRIMARY KEY, zeit timestamptz DEFAULT now())"
+                )
+                cur.execute("INSERT INTO besuche DEFAULT VALUES")
+                cur.execute("SELECT count(*) FROM besuche")
+                anzahl = cur.fetchone()[0]
+            text = f"Hallo von {socket.gethostname()}! DB OK ({os.environ['DB_HOST']}), Besuche: {anzahl}\n"
+            self.antwort(200, text)
+        except psycopg2.Error as fehler:
+            self.antwort(500, f"DB FEHLER: {fehler}\n")
+
+    def antwort(self, status, text):
+        self.send_response(status)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(text.encode("utf-8"))
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("APP_PORT", "8080"))
+    HTTPServer(("0.0.0.0", port), Handler).serve_forever()

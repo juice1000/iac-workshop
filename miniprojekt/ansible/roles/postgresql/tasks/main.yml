@@ -1,0 +1,47 @@
+---
+- name: PostgreSQL und Python-Treiber installieren
+  ansible.builtin.apt:
+    name:
+      - postgresql
+      - python3-psycopg2
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Auf allen Netzwerkschnittstellen lauschen
+  ansible.builtin.lineinfile:
+    path: "{{ postgresql_conf_dir }}/postgresql.conf"
+    regexp: "^#?listen_addresses"
+    line: "listen_addresses = '*'"
+  notify: PostgreSQL neu starten
+
+- name: Zugriff nur aus dem Anwendungsnetz erlauben
+  community.postgresql.postgresql_pg_hba:
+    dest: "{{ postgresql_conf_dir }}/pg_hba.conf"
+    contype: host
+    databases: "{{ db_name }}"
+    users: "{{ db_user }}"
+    address: "{{ postgresql_erlaubtes_netz }}"
+    method: scram-sha-256
+  notify: PostgreSQL neu starten
+
+- name: PostgreSQL laeuft und startet beim Booten
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Datenbankbenutzer anlegen
+  community.postgresql.postgresql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+  become: true
+  become_user: postgres
+  no_log: true
+
+- name: Datenbank anlegen
+  community.postgresql.postgresql_db:
+    name: "{{ db_name }}"
+    owner: "{{ db_user }}"
+  become: true
+  become_user: postgres

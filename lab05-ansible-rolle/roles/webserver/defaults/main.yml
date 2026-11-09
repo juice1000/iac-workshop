@@ -1,0 +1,4 @@
+---
+# Standardwerte, im Playbook oder Inventory ueberschreibbar
+webserver_port: 80
+webserver_begruessung: "Hallo TLBG"

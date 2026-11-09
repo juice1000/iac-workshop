@@ -1,0 +1,30 @@
+---
+# Miniprojekt: Anwendungsserver mit entferntem DB-Server
+- name: Datenbankserver einrichten
+  hosts: db
+  become: true
+  roles:
+    - postgresql
+
+- name: Anwendungsserver einrichten
+  hosts: app
+  become: true
+  roles:
+    - app
+
+- name: Smoke-Test
+  hosts: app
+  tasks:
+    - name: Anwendung abrufen
+      ansible.builtin.uri:
+        url: "http://localhost:{{ app_port }}/"
+        return_content: true
+      register: antwort
+      retries: 5
+      delay: 2
+      until: antwort.status == 200
+
+    - name: Anwendung erreicht die Datenbank
+      ansible.builtin.assert:
+        that: "'DB OK' in antwort.content"
+        success_msg: "{{ antwort.content | trim }}"

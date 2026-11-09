@@ -1,0 +1,5 @@
+---
+# Nur noetig, wenn nur ansible-core installiert ist:
+# ansible-galaxy collection install -r requirements.yml
+collections:
+  - name: community.postgresql
