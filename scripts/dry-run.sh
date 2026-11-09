@@ -6,6 +6,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 export TF_IN_AUTOMATION=1
+export TF_INPUT=0
 export ANSIBLE_FORCE_COLOR=0
 
 log() {
@@ -18,7 +19,7 @@ fehler() {
 }
 
 tf() {
-  terraform "$@" -input=false -no-color
+  terraform "$@" -no-color
 }
 
 # Playbook ausfuehren und Zusammenfassung zeigen
