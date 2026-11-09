@@ -16,6 +16,17 @@ What it checks:
 
 Idempotence is detected by grepping `changed=[1-9]` in the second run.
 
+## Other scripts
+
+| Script | Purpose |
+| --- | --- |
+| `scripts/gfu-reach.sh [host] [port]` | Reachability test for the RDP endpoint (DNS, TCP, answer to an RDP connection request). No credentials. Defaults to `rdp.gfu.cloud 44400` |
+| `scripts/check-start-branch.sh` | Checks `start`: based on `main`, differs only in README and the two role task files, tasks are `[]`, syntax check, fmt, validate |
+| `scripts/test-cleanup.sh` | Interrupts the dry run (SIGINT) during the mini project and checks that no containers or networks remain |
+| `scripts/dry-run-vm.sh` | Variant B (Linux VMs): runs labs 3, 5 and optionally the mini project against `INVENTORY` and `MINI_INVENTORY`. Needs SSH and sudo on the hosts |
+
+`lab00-check/check.sh` also checks Terraform >= 1.6, the `community.postgresql` collection, Docker Hub and the Ubuntu mirrors.
+
 ## CI
 
 `.github/workflows/test.yml`, runs on push to `main`, on pull requests and manually.
@@ -36,7 +47,9 @@ gh workflow run Test -R juice1000/iac-workshop
 
 ## Local testing on Julien's Mac
 
-Julien has Terraform and OrbStack (Docker) on macOS. The dry run should work there too (`bash scripts/dry-run.sh` from the repo root). Not tried yet. macOS ships bash 3.2; the scripts avoid bash 4 features, but watch for differences.
+Julien has Terraform and OrbStack (Docker) on macOS. Tested 2026-11-09: `bash scripts/dry-run.sh` passes (Terraform 1.13.2, ansible-core 2.21.6, Docker 29.4.0), also from a cold start (image and providers removed). macOS ships bash 3.2; the scripts avoid bash 4 features.
+
+Local `ansible-lint` from Homebrew uses its own ansible-core and does not see the collections (`unknown-module community.postgresql...`). Lint in a venv with `pip install ansible ansible-lint`, as CI does.
 
 ## Pitfalls already solved
 

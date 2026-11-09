@@ -10,6 +10,8 @@ Status 2026-11-09. Workshop starts Wednesday 11 November.
 
 ## To clarify with GFU Technik
 
+- [ ] Is the machine behind `rdp.gfu.cloud:44400` powered on? On 2026-11-09 TCP connects but the server does not answer the RDP handshake (`scripts/gfu-reach.sh`). Ask GFU to start it once so the login can be tested with an RDP client
+
 - [ ] Linux control node (WSL or VM) available?
 - [ ] Docker available inside it?
 - [ ] Preinstalled tools, can missing ones be installed?
@@ -33,5 +35,5 @@ Status 2026-11-09. Workshop starts Wednesday 11 November.
 
 ## Nice to have
 
-- [ ] Try the dry run on the Mac with OrbStack
+- [x] Try the dry run on the Mac with OrbStack (passed 2026-11-09)
 - [ ] Windows-friendly variant of `lab00-check` (PowerShell) if participants have no Linux shell
