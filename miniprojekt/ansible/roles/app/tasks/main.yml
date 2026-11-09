@@ -1,62 +1,17 @@
 ---
-- name: Python-Treiber fuer PostgreSQL installieren
-  ansible.builtin.apt:
-    name: python3-psycopg2
-    state: present
-    update_cache: true
-    cache_valid_time: 3600
-
-# user: legt Benutzer an. system: true = Systemkonto. Wozu: die Anwendung laeuft mit eigenen,
-#       minimalen Rechten (keine Shell, kein Home) statt als root.
-- name: Systembenutzer fuer die Anwendung anlegen
-  ansible.builtin.user:
-    name: "{{ app_user }}"
-    system: true
-    shell: /usr/sbin/nologin
-    create_home: false
-
-# file: legt Dateien, Verzeichnisse oder Links an, setzt Rechte. state: directory = Verzeichnis.
-- name: Anwendungsverzeichnis anlegen
-  ansible.builtin.file:
-    path: "{{ app_dir }}"
-    state: directory
-    owner: root
-    group: root
-    mode: "0755"
-
-# Die Anwendung kommt per Vorlage aufs Ziel. notify startet sie neu, wenn sich die Datei geaendert hat.
-- name: Anwendung ausrollen
-  ansible.builtin.template:
-    src: app.py.j2
-    dest: "{{ app_dir }}/app.py"
-    owner: root
-    group: root
-    mode: "0644"
-  notify: Anwendung neu starten
-
-- name: Datenbankverbindung konfigurieren
-  ansible.builtin.template:
-    src: app.env.j2
-    dest: /etc/tlbg-app.env
-    owner: root
-    group: "{{ app_user }}"
-    mode: "0640"
-  notify: Anwendung neu starten
-
-- name: Systemd-Dienst anlegen
-  ansible.builtin.template:
-    src: tlbg-app.service.j2
-    dest: /etc/systemd/system/tlbg-app.service
-    owner: root
-    group: root
-    mode: "0644"
-  notify: Anwendung neu starten
-
-# systemd_service: steuert Dienste mit systemd. daemon_reload liest die Dienstdateien neu ein,
-# das ist noetig, nachdem tlbg-app.service neu angelegt oder geaendert wurde.
-- name: Anwendung laeuft und startet beim Booten
-  ansible.builtin.systemd_service:
-    name: tlbg-app
-    state: started
-    enabled: true
-    daemon_reload: true
+# Phase 3: Rolle app
+# Ersetzt die leere Liste unten durch eure Tasks. Hilfe: ansible-doc <modulname>
+# Die Vorlagen in templates/ und der Handler in handlers/ sind schon fertig.
+#
+# 1. Paket python3-psycopg2 installieren (ansible.builtin.apt)
+# 2. Systembenutzer {{ app_user }} ohne Login-Shell und ohne Home anlegen
+#    (ansible.builtin.user)
+# 3. Verzeichnis {{ app_dir }} anlegen (ansible.builtin.file)
+# 4. Vorlage app.py.j2 nach {{ app_dir }}/app.py ausrollen (ansible.builtin.template)
+# 5. Vorlage app.env.j2 nach /etc/tlbg-app.env ausrollen,
+#    Besitzer root, Gruppe {{ app_user }}, Rechte 0640 (enthaelt das Passwort!)
+# 6. Vorlage tlbg-app.service.j2 nach /etc/systemd/system/tlbg-app.service ausrollen
+#    -> Schritte 4 bis 6 mit notify: Anwendung neu starten
+# 7. Dienst tlbg-app starten und aktivieren, vorher systemd neu laden
+#    (ansible.builtin.systemd_service mit daemon_reload: true)
+[]
