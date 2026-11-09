@@ -1,0 +1,65 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Werkzeuge installieren
+        run: pip install ansible ansible-lint
+
+      - name: terraform fmt
+        run: terraform fmt -check -recursive -diff
+
+      - name: terraform validate
+        run: |
+          for d in lab01-terraform-grundlagen lab02-terraform-variablen lab04-terraform-module umgebung miniprojekt/terraform; do
+            echo "== $d"
+            terraform -chdir="$d" init -backend=false -input=false >/dev/null
+            terraform -chdir="$d" validate
+          done
+
+      - name: ansible-lint
+        run: |
+          for d in lab03-ansible-grundlagen lab05-ansible-rolle miniprojekt/ansible; do
+            echo "== $d"
+            (cd "$d" && ansible-lint)
+          done
+
+      - name: shellcheck
+        run: shellcheck lab00-check/check.sh scripts/*.sh
+
+  dry-run:
+    needs: lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Ansible installieren
+        run: pip install ansible
+
+      - name: Probelauf aller Labs
+        run: bash scripts/dry-run.sh

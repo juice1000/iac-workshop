@@ -54,3 +54,9 @@ curl http://127.0.0.1:8080/
 ```
 
 Aufräumen: `terraform destroy` im jeweiligen Terraform-Ordner.
+
+## Probelauf fuer den Trainer
+
+`bash scripts/dry-run.sh` baut alle Labs nacheinander auf, prueft die Ergebnisse
+und die Idempotenz und raeumt danach auf. Derselbe Lauf passiert bei jedem Push
+auf GitHub (Actions, Workflow "Test").
