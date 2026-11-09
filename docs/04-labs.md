@@ -4,7 +4,7 @@ All lab code is German-facing. Providers are pinned with `~>` constraints: `hash
 
 ## lab00-check
 
-`check.sh` checks terraform, ansible, git, docker, python3, ssh, the Docker daemon and HTTPS access to the Terraform registry, GitHub and Ansible Galaxy. Expected: `Ergebnis: 10 OK, 0 fehlend`. Exit code non-zero if anything fails.
+`check.sh` checks terraform, ansible, git, docker, python3, ssh, Terraform >= 1.6, the `community.postgresql` collection, the Docker daemon and access to the Terraform registry, GitHub, Ansible Galaxy, Docker Hub and the Ubuntu mirrors. Expected: `Ergebnis: 15 OK, 0 fehlend`. Exit code non-zero if anything fails.
 
 ## lab01-terraform-grundlagen
 
