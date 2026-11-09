@@ -1,5 +1,8 @@
 # Terraform & Ansible: Einstieg (TLBG)
 
+> Branch `start`: Im Miniprojekt sind die Tasks der Rollen `postgresql` und `app`
+> leer. Die Aufgaben stehen als Kommentare in `roles/*/tasks/main.yml`.
+
 Übungsmaterial für den 2-tägigen Workshop. Jeder Ordner ist ein Lab.
 
 ## Voraussetzungen
