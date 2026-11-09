@@ -39,10 +39,28 @@ With the Notion MCP in Claude Code, fetch a page by URL, then use targeted searc
 
 | Page | Content | URL |
 | --- | --- | --- |
+| Vorwort: So arbeitet ihr mit diesem Material | how the material is structured, callout legend (participants read first) | https://app.notion.com/p/4137a6147595815985e1e732f8e30971 |
+| Glossar | all terms A to Z with chapter reference | https://app.notion.com/p/4137a61475958100865aeade0d5bc51a |
 | Repository und Lernumgebung | repo layout, prep checklist, clone command, requirements, variants, Dockerfile, module and `umgebung` code | https://app.notion.com/p/4137a614759581ca956ef0b4a2519df2 |
 | Cheat Sheet Terraform und Ansible | commands and skeletons | https://app.notion.com/p/4137a6147595816b840af9657947ee1c |
 | Trainer-Notizen und FAQ | test status, dry run checklist, pitfalls, FAQ for senior admins, cutting plan | https://app.notion.com/p/4137a614759581358a80d04dd06a7685 |
 
-## Structure of every block page
+## Structure of every chapter page (book style, since 2026-11-10)
 
-Lernziele, Ablauf, Inhalte, Demo, Lab (Schritte, Erwartete Ergebnisse, Bonus), Loesung (code), Trainer-Notizen (gray callout).
+1. Blue overview callout ("In diesem Kapitel ...", with duration)
+2. Table of contents block
+3. Lernziele as a to-do checklist
+4. Numbered sections with narrative prose, Mermaid diagrams, annotated code, comparison tables and side-by-side columns
+5. Lab section: steps, then "Was ihr sehen solltet" in a toggle, bonus with answer toggle, full solution in a toggle
+6. "Das Wichtigste in Kuerze" summary and "Kontrollfragen" (answers in toggles)
+7. Divider, then "Fuer den Trainer" gray callout (schedule, pitfalls, test status)
+
+Callout legend: blue book = overview, blue bulb = Merke, yellow warning = Achtung, gray magnifier = Hintergrund, gray teacher = trainer notes.
+
+## Notion formatting gotchas
+
+- Use `<toggle>` with the title on the first line, a blank line, then tab-indented children. `<details>` gets auto-converted
+- Code blocks inside toggles and columns work when every line is indented with the right number of tabs (blank lines need the tabs too)
+- Bold or plain filenames ending in a real TLD (`.tf`, `.sh`, `.py`) get auto-linked (`http://main.tf`). Always wrap filenames in inline code
+- Fetched pages show inline code as `<code>` and bold as `<b>`; build `old_str` for edits from a fresh fetch
+- Validate Mermaid diagrams locally with `mmdc -i file.mmd -o file.svg` before publishing
