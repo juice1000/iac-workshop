@@ -13,6 +13,16 @@ With the Notion MCP in Claude Code, fetch a page by URL, then use targeted searc
 | Material Tag 2: Praxis und Miniprojekt | https://app.notion.com/p/4127a6147595817ea6a8ff4585c97074 |
 | Material Allgemein | https://app.notion.com/p/4127a614759581e3a093f94d2dd91fc8 |
 
+### Lecturer's Edition (trainer only, English, questions and challenges in German)
+
+| Page | Content | URL |
+| --- | --- | --- |
+| Lecturer's Edition | how to use, where the workshop leads, recurring threads, how participants submit challenges, parking lot, follow-ups after the workshop | https://app.notion.com/p/4147a614759581aeb9ffe0d04ca17dd5 |
+| Day 1: Lecturer notes | per chapter 1.1 to 1.6: gist, points to land, questions with expected answers, challenge with "Abgabe", pitfalls, bridge to the next chapter | https://app.notion.com/p/4147a614759581bcac60e72aa2565201 |
+| Day 2: Lecturer notes | same for 2.1 to 2.5 | https://app.notion.com/p/4147a6147595812db5caef0c34011dc2 |
+
+When a chapter changes, check whether its block in the Lecturer's Edition still fits (questions and challenges reference lab commands).
+
 ### Day 1
 
 | Page | Repo folder | URL |
