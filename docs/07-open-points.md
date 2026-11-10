@@ -1,6 +1,6 @@
 # Open points
 
-Status 2026-11-09. Workshop starts Wednesday 11 November.
+Status 2026-11-11. Workshop starts Thursday 12 November (moved by one day).
 
 ## Blocking
 

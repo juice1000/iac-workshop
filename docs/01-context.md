@@ -7,7 +7,7 @@
 | Client | TLBG (two participants, both very senior developers or admins) |
 | Booked via | GFU (training provider), including the optional "complete cloud lab environment with remote access" |
 | Trainer | Julien |
-| Dates | Wednesday 11 and Thursday 12 November 2026, remote |
+| Dates | Thursday 12 and Friday 13 November 2026 (moved by one day on 2026-11-11, originally 11 and 12), remote |
 | Assumed daily hours | 09:00 to 16:30 with lunch 12:00 to 13:00 (not confirmed) |
 | Language | German (participants), material in German |
 | Video | Zoom |
@@ -53,3 +53,4 @@ Give the participants a solid basic understanding of Terraform and Ansible. This
 ## Related
 
 - A separate 3-day GKE workshop for another client also runs through GFU. Not part of this repo.
+| 2026-11-11 | Workshop moved by one day: Thursday 12 and Friday 13 November | Schedule change, source not recorded |

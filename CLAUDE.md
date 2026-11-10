@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Training repository for a 2-day Terraform and Ansible intro workshop (client TLBG, delivered remotely via GFU, 11 and 12 November 2026). Julien is the trainer. This file is the entry point; details live in `docs/`.
+Training repository for a 2-day Terraform and Ansible intro workshop (client TLBG, delivered remotely via GFU, 12 and 13 November 2026). Julien is the trainer. This file is the entry point; details live in `docs/`.
 
 ## Read first
 

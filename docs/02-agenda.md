@@ -2,7 +2,7 @@
 
 Times assume 09:00 to 16:30. Each block has a Notion page with learning goals, content, lab steps, solution and trainer notes (see `08-notion.md`).
 
-## Day 1: Fundamentals (Wednesday 11 November)
+## Day 1: Fundamentals (Thursday 12 November)
 
 | Time | Block | Lab folder |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ Times assume 09:00 to 16:30. Each block has a Notion page with learning goals, c
 | 14:30 to 16:00 | 1.5 Ansible basics: inventory, ad-hoc, playbooks, templates, handlers | `umgebung` then `lab03-ansible-grundlagen` |
 | 16:00 to 16:30 | 1.6 Recap and quiz | none |
 
-## Day 2: Practice and mini project (Thursday 12 November)
+## Day 2: Practice and mini project (Friday 13 November)
 
 | Time | Block | Lab folder |
 | --- | --- | --- |
