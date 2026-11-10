@@ -30,7 +30,7 @@ Lab 2 refactored: `modules/server-info` (inputs name, rolle, port, prefix, ausga
 
 ## lab05-ansible-rolle
 
-Lab 3 as role `roles/webserver` (defaults `webserver_port`, `webserver_begruessung`, tasks, handler, templates). `site.yml` sets `webserver_begruessung: "Hallo aus der Rolle"`. Uses lab 3's inventory via `ansible.cfg`. Also used for: `ansible-galaxy role init` demo, `-e webserver_port=8082` precedence demo, Vault demo (`ansible-vault create vault.yml`, then `ansible web -m debug -a "var=api_token" -e @vault.yml --ask-vault-pass`).
+Lab 3 as role `roles/webserver` (defaults `webserver_port`, `webserver_begruessung`, tasks, handler, templates). `site.yml` sets `webserver_begruessung: "Hallo aus der Rolle"`. Uses lab 3's inventory via `ansible.cfg`. Also used for: `-e webserver_port=8082` precedence demo, Vault demo (`ansible-vault create vault.yml`, then `ansible web -m debug -a "var=api_token" -e @vault.yml --ask-vault-pass`).
 
 ## miniprojekt
 

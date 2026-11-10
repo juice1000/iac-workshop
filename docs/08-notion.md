@@ -39,7 +39,6 @@ With the Notion MCP in Claude Code, fetch a page by URL, then use targeted searc
 
 | Page | Content | URL |
 | --- | --- | --- |
-| Vorwort: So arbeitet ihr mit diesem Material | how the material is structured, callout legend (participants read first) | https://app.notion.com/p/4137a6147595815985e1e732f8e30971 |
 | Glossar | all terms A to Z with chapter reference | https://app.notion.com/p/4137a61475958100865aeade0d5bc51a |
 | Repository und Lernumgebung | repo layout, prep checklist, clone command, requirements, variants, Dockerfile, module and `umgebung` code | https://app.notion.com/p/4137a614759581ca956ef0b4a2519df2 |
 | Cheat Sheet Terraform und Ansible | commands and skeletons | https://app.notion.com/p/4137a6147595816b840af9657947ee1c |

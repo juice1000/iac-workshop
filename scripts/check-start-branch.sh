@@ -21,12 +21,18 @@ echo "== Unterschiede zu main"
 erlaubt="README.md
 miniprojekt/ansible/roles/app/tasks/main.yml
 miniprojekt/ansible/roles/postgresql/tasks/main.yml"
-geaendert="$(git -C "$ROOT" diff --name-only main start)"
+# Trainer-Doku (docs/, CLAUDE.md) ist auf start absichtlich entfernt und zaehlt hier nicht mit
+geaendert="$(git -C "$ROOT" diff --name-only main start | grep -Ev '^(docs/|CLAUDE\.md$)' || true)"
 echo "$geaendert"
 if [ "$geaendert" != "$erlaubt" ]; then
   echo "Hinweis: erwartet waren nur:" >&2
   echo "$erlaubt" >&2
-  fehler "start unterscheidet sich in unerwarteten Dateien (docs/ oder CLAUDE.md entfernt? dann hier anpassen)"
+  fehler "start unterscheidet sich in unerwarteten Dateien"
+fi
+
+echo "== Trainer-Doku ist auf start entfernt"
+if git -C "$ROOT" cat-file -e start:CLAUDE.md 2>/dev/null || git -C "$ROOT" cat-file -e start:docs 2>/dev/null; then
+  fehler "docs/ oder CLAUDE.md liegen noch auf start"
 fi
 
 git -C "$ROOT" worktree add --detach "$TMP/start" start >/dev/null 2>&1

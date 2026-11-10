@@ -21,9 +21,9 @@ Times assume 09:00 to 16:30. Each block has a Notion page with learning goals, c
 | Time | Block | Lab folder |
 | --- | --- | --- |
 | 09:00 to 09:20 | 2.1 Recap, restart lab servers if the desktop was reset | `umgebung` |
-| 09:20 to 10:15 | 2.2 Terraform in practice: modules, layout, remote state, secrets, environments | `lab04-terraform-module` |
+| 09:20 to 10:15 | 2.2 Terraform in practice: modules, layout, shared state with locking (concept), secrets | `lab04-terraform-module` |
 | 10:15 to 10:30 | Break | |
-| 10:30 to 12:00 | 2.3 Ansible in practice: roles, layout, precedence, collections, Vault, inventory sources | `lab05-ansible-rolle` |
+| 10:30 to 12:00 | 2.3 Ansible in practice: roles, layout, precedence, collections, Vault | `lab05-ansible-rolle` |
 | 12:00 to 13:00 | Lunch | |
 | 13:00 to 15:15 | 2.4 Mini project: app server with remote DB server | `miniprojekt` |
 | 15:15 to 15:30 | Break | |
@@ -41,10 +41,10 @@ Times assume 09:00 to 16:30. Each block has a Notion page with learning goals, c
 
 ## Cutting plan if time runs short
 
-1. Bonus tasks in all labs
-2. Workspaces and import (mention only)
-3. Dynamic inventory (mention only)
-4. OpenTofu demo
-5. Destroy and rebuild in the mini project as trainer demo
+1. Bonus and stretch tasks in all labs
+2. OpenTofu demo
+3. Destroy and rebuild in the mini project as trainer demo
 
 Never cut: state, modules, roles, mini project.
+
+Deliberately left out as beyond "basics only" (decided 2026-11-10): Terraform import, `moved`, workspaces, pipeline workflows, Ansible dynamic inventory.
