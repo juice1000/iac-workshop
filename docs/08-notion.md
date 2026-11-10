@@ -25,7 +25,7 @@ When a chapter changes, check whether its block in the Lecturer's Edition still 
 
 ### Slides (shown to participants)
 
-Not in Notion: a Claude Slides artifact, "Terraform & Ansible: Workshop-Folien", https://claude.ai/artifact/XAihkrchhuq9Sg2pcG15hg (private until shared). 51 slides, German, visual-first, one section per block (1.1 to 2.5), divider slide per block, lab slides with the commands, short English trainer notes per slide. Exports to PPTX and PDF. Lab commands on the slides mirror the lab folders, so when a lab command changes, update the matching lab slide too.
+Not in Notion: a Claude Slides artifact, "Terraform & Ansible: Workshop-Folien", https://claude.ai/artifact/XAihkrchhuq9Sg2pcG15hg (private until shared). German, visual-first, one section per block (1.1 to 2.5), divider slide per block, lab slides with the commands, short English trainer notes per slide. Exports to PPTX and PDF. Lab commands on the slides mirror the lab folders, so when a lab command changes, update the matching lab slide too.
 
 ### Day 1
 
