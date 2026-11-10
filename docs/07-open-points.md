@@ -27,7 +27,7 @@ Status 2026-11-11. Workshop starts Thursday 12 November (moved by one day).
 
 ## Trainer preparation
 
-- [ ] Decide: teach from Notion pages or build short slides
+- [x] Slides built (see `08-notion.md`): present the slides, Notion pages for depth
 - [ ] Study checklist (Notion workshop page): walk through every lab timed, explain core concepts without notes, know the mini project failure modes
 - [ ] Decide whether `docs/` and `CLAUDE.md` should be removed from the `start` branch
 - [ ] Optional: write a short German Ansible handout instead of (or in addition to) the book recommendation
