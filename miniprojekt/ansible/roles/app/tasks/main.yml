@@ -14,4 +14,14 @@
 #    -> Schritte 4 bis 6 mit notify: Anwendung neu starten
 # 7. Dienst tlbg-app starten und aktivieren, vorher systemd neu laden
 #    (ansible.builtin.systemd_service mit daemon_reload: true)
+#
+# OPTIONAL / GUT ZU WISSEN
+# - Reihenfolge: erst Benutzer und Verzeichnis, dann Dateien, dann Dienst.
+# - Rechte 0640 mit Gruppe der Anwendung: nur die App und root lesen das Passwort.
+# - Idempotenz pruefen: zweiter Lauf muss changed=0 zeigen.
+# - ansible.builtin.uri mit until, retries und delay wartet, bis die Anwendung antwortet.
+# - ansible.builtin.wait_for wartet auf einen Port.
+# - Dienst haerten (systemd): NoNewPrivileges, ProtectSystem, PrivateTmp in der Service-Datei.
+# - Health-Check als eigene Aufgabe am Ende: Antwort muss "DB OK" enthalten (assert).
+# - delegate_to: localhost fuer Pruefungen vom Controller aus.
 []

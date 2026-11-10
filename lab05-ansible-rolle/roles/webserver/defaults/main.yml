@@ -1,3 +1,8 @@
 ---
 # TODO: webserver_port (80) und webserver_begruessung ("Hallo TLBG") als Standardwerte
+#
+# OPTIONAL / GUT ZU WISSEN
+# - defaults/ hat die niedrigste Rangfolge und ist zum Ueberschreiben gedacht. vars/ ist fest und schwer zu ueberschreiben.
+# - Alle Variablen der Rolle mit dem Rollennamen als Praefix (ansible-lint var-naming).
+# - meta/argument_specs.yml beschreibt und prueft die Eingaben der Rolle.
 {}

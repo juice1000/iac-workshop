@@ -3,4 +3,13 @@
 # Die Vorlagen liegen in templates/, die Variablen heissen webserver_*.
 # TODO: Nginx installieren, beide Vorlagen ausrollen (Konfiguration mit notify),
 #       Dienst nginx starten und aktivieren
+#
+# OPTIONAL / GUT ZU WISSEN
+# - include_tasks (dynamisch, zur Laufzeit) gegen import_tasks (statisch, beim Einlesen).
+# - tags an Aufgaben, z. B. "konfig", damit man nur diesen Teil mit --tags konfig ausfuehrt.
+# - Rollen aufteilen: tasks/install.yml und tasks/konfig.yml, aus main.yml eingebunden.
+# - meta/main.yml: dependencies auf andere Rollen und Metadaten fuer Galaxy.
+# - ansible-galaxy init <name> erzeugt das Rollengeruest. Fertige Rollen und Collections gibt es auf Galaxy.
+# - Molecule testet Rollen automatisch in Containern. ansible-lint prueft Stil und Fallstricke.
+# - validate: bei template/copy prueft eine Datei vor dem Ausrollen, z. B. validate: "nginx -t -c %s" (Pfad je nach Datei).
 []

@@ -10,3 +10,15 @@
 # TODO 6: zweites Play: Startseite per uri abrufen und mit assert pruefen,
 #         dass der Hostname im Inhalt steht (im Check-Modus ueberspringen)
 # Pruefen: zweiter Lauf zeigt changed=0; Lauf mit -e web_port=8081 --check --diff
+#
+# OPTIONAL / GUT ZU WISSEN
+# Module: copy, file, lineinfile, blockinfile, user, group, get_url, unarchive, cron, systemd,
+#         package (statt apt, fuer mehrere Distributionen), wait_for, ufw.
+# Kontrolle: when, loop, register, failed_when, changed_when, block/rescue/always, ignore_errors.
+# command und shell melden immer changed (ohne changed_when). Deshalb lieber ein passendes Modul nehmen.
+# Handler: listen, meta: flush_handlers (Handler sofort ausfuehren statt am Ende).
+# Ausfuehrung: --limit server1, --tags, --check --diff, --step, --start-at-task, -v bis -vvv.
+# Variablen: Rangfolge defaults < group_vars < host_vars < Play-vars < -e. Fakten mit ansible -m setup.
+# Geheimes: ansible-vault encrypt_string und no_log: true.
+# Rollout: serial: 1 (ein Server nach dem anderen), delegate_to, run_once.
+# Tipp: ansible-doc <modul> zeigt Beispiele ohne Internet.

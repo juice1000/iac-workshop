@@ -15,4 +15,14 @@
 #    become: true und become_user: postgres, no_log: true)
 # 6. Datenbank {{ db_name }} mit Besitzer {{ db_user }} anlegen
 #    (community.postgresql.postgresql_db, ebenfalls als postgres)
+#
+# OPTIONAL / GUT ZU WISSEN
+# - Die pg_hba.conf wird von oben nach unten ausgewertet. Die erste passende Zeile gilt.
+# - scram-sha-256 ist der moderne Standard, md5 ist veraltet, trust sollte man nie nutzen.
+# - Weitere Module in community.postgresql: postgresql_privs, postgresql_ext, postgresql_query, postgresql_set.
+# - Neustart gegen Reload: listen_addresses braucht Neustart, pg_hba.conf nur Reload.
+# - no_log: true verhindert, dass Passwoerter im Log landen. Auch mit -vvv.
+# - Passwoerter gehoeren in Ansible Vault, nicht in group_vars im Klartext.
+# - Backups: pg_dump per cron oder systemd-Timer, Wiederherstellung testen.
+# - Bei Cloud-Betrieb: Security Group erlaubt Port 5432 nur aus dem App-Netz (siehe docs/03-architecture.md).
 []
