@@ -1,43 +1,8 @@
-# Lab 4: Lab 2 als Modul. Das Root-Modul ruft das Modul pro Server auf.
-
-terraform {
-  required_version = ">= 1.6"
-
-  required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5"
-    }
-  }
-}
-
-variable "umgebung" {
-  type    = string
-  default = "schulung"
-}
-
-variable "server" {
-  type = map(object({
-    rolle = string
-    port  = number
-  }))
-  default = {
-    app1 = { rolle = "app", port = 2201 }
-    db1  = { rolle = "db", port = 2202 }
-  }
-}
-
-module "server_info" {
-  source   = "./modules/server-info"
-  for_each = var.server
-
-  name           = each.key
-  rolle          = each.value.rolle
-  port           = each.value.port
-  prefix         = "tlbg-${var.umgebung}"
-  ausgabe_ordner = "${path.module}/out"
-}
-
-output "dateien" {
-  value = { for name, m in module.server_info : name => m.datei }
-}
+# Lab 4: Lab 2 als Modul (Uebung)
+# Ziel: das Modul in modules/server-info pro Server aufrufen
+#
+# TODO 1: terraform-Block mit Provider local
+# TODO 2: Variablen umgebung (Default "schulung") und server (wie in Lab 2)
+# TODO 3: module "server_info" mit for_each ueber var.server
+#         Eingaben: name, rolle, port, prefix, ausgabe_ordner (${path.module}/out)
+# TODO 4: output "dateien": Map Servername -> Dateiname aus den Modul-Outputs

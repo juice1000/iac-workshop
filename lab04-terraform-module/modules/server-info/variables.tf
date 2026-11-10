@@ -1,20 +1,2 @@
-variable "name" {
-  type = string
-}
-
-variable "rolle" {
-  type = string
-}
-
-variable "port" {
-  type = number
-}
-
-variable "prefix" {
-  type = string
-}
-
-variable "ausgabe_ordner" {
-  description = "Ordner, in den die Datei geschrieben wird"
-  type        = string
-}
+# TODO: Variablen name, rolle (string), port (number), prefix (string),
+#       ausgabe_ordner (string, mit description)

@@ -1,4 +1,3 @@
 ---
-# Standardwerte, im Playbook oder Inventory ueberschreibbar
-webserver_port: 80
-webserver_begruessung: "Hallo TLBG"
+# TODO: webserver_port (80) und webserver_begruessung ("Hallo TLBG") als Standardwerte
+{}

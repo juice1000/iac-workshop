@@ -1,63 +1,12 @@
 ---
-# Lab 3: Webserver einrichten (Paket, Datei aus Vorlage, Dienst, Handler)
-- name: Webserver einrichten
-  hosts: web
-  become: true
-
-  vars:
-    web_port: 80
-    begruessung: "Hallo TLBG"
-
-  tasks:
-    - name: Nginx installieren
-      ansible.builtin.apt:
-        name: nginx
-        state: present
-        update_cache: true
-        cache_valid_time: 3600
-
-    - name: Startseite aus Vorlage erzeugen
-      ansible.builtin.template:
-        src: templates/index.html.j2
-        dest: /var/www/html/index.html
-        owner: root
-        group: root
-        mode: "0644"
-
-    - name: Nginx-Konfiguration aus Vorlage erzeugen
-      ansible.builtin.template:
-        src: templates/site.conf.j2
-        dest: /etc/nginx/sites-available/default
-        owner: root
-        group: root
-        mode: "0644"
-      notify: Nginx neu laden
-
-    - name: Nginx laeuft und startet beim Booten
-      ansible.builtin.service:
-        name: nginx
-        state: started
-        enabled: true
-
-  handlers:
-    - name: Nginx neu laden
-      ansible.builtin.service:
-        name: nginx
-        state: reloaded
-
-- name: Ergebnis pruefen
-  hosts: web
-  # Im Check-Modus aendert sich nichts, also gibt es auch nichts zu pruefen
-  tasks:
-    - name: Startseite abrufen
-      ansible.builtin.uri:
-        url: "http://localhost:{{ web_port | default(80) }}/"
-        return_content: true
-      register: seite
-      when: not ansible_check_mode
-
-    - name: Inhalt pruefen
-      ansible.builtin.assert:
-        that: inventory_hostname in seite.content
-        success_msg: "Webserver auf {{ inventory_hostname }} antwortet"
-      when: not ansible_check_mode
+# Lab 3: Webserver einrichten (Uebung)
+# Ziel: nginx auf der Gruppe web, Startseite und Konfiguration aus den Vorlagen in templates/
+#
+# TODO 1: Play fuer hosts web mit become, Variablen web_port (80) und begruessung ("Hallo TLBG")
+# TODO 2: Nginx installieren (apt, Cache aktualisieren)
+# TODO 3: templates/index.html.j2 nach /var/www/html/index.html
+# TODO 4: templates/site.conf.j2 nach /etc/nginx/sites-available/default, danach Nginx neu laden (Handler)
+# TODO 5: Dienst nginx laeuft und startet beim Booten
+# TODO 6: zweites Play: Startseite per uri abrufen und mit assert pruefen,
+#         dass der Hostname im Inhalt steht (im Check-Modus ueberspringen)
+# Pruefen: zweiter Lauf zeigt changed=0; Lauf mit -e web_port=8081 --check --diff

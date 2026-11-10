@@ -1,3 +1,1 @@
-output "datei" {
-  value = local_file.info.filename
-}
+# TODO: output "datei" mit dem Dateinamen

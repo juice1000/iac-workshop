@@ -1,13 +1,3 @@
-terraform {
-  required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5"
-    }
-  }
-}
-
-resource "local_file" "info" {
-  filename = "${var.ausgabe_ordner}/${var.prefix}-${var.name}.txt"
-  content  = "Server ${var.name}, Rolle ${var.rolle}, SSH-Port ${var.port}\n"
-}
+# TODO 1: terraform-Block mit Provider local
+# TODO 2: local_file "info": Datei <ausgabe_ordner>/<prefix>-<name>.txt,
+#         Inhalt: Server, Rolle, SSH-Port
