@@ -4,7 +4,7 @@ Status 2026-11-09. Workshop starts Wednesday 11 November.
 
 ## Blocking
 
-- [ ] **Access test of the GFU lab environment.** RDP client and browser variants, from the teaching setup and a phone hotspot. Find out: is WSL or a Linux VM available, is Docker available, which tools are installed, admin rights, outbound internet (Terraform registry, GitHub, Docker Hub, Ubuntu mirrors), do desktops persist between day 1 and day 2, can the trainer prepare the desktop in advance, are trainer and participant accounts different from the test account
+- [ ] **Access test of the GFU lab environment.** RDP client and browser variants, from the teaching setup. Find out: is WSL or a Linux VM available, is Docker available, which tools are installed, admin rights, outbound internet (Terraform registry, GitHub, Docker Hub, Ubuntu mirrors), do desktops persist between day 1 and day 2, can the trainer prepare the desktop in advance, are trainer and participant accounts different from the test account
 - [ ] **Run `bash scripts/dry-run.sh` inside the GFU environment** once the access test passes
 - [ ] **Pick the variant** (A Docker, B VMs, C offline) based on the test, see `03-architecture.md`
 
