@@ -2,10 +2,17 @@
 # Lab 3: Webserver einrichten (Uebung)
 # Ziel: nginx auf der Gruppe web, Startseite und Konfiguration aus den Vorlagen in templates/
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# PLAY
+# Was: ein Abschnitt im Playbook. Er sagt, AUF WELCHEN Servern (hosts) WAS (tasks) passieren soll.
+#      Ein Playbook ist eine Liste von Plays. Die Datei ist YAML, Einrueckung zaehlt.
+# hosts:  Gruppe aus dem Inventory (hier web).
+# become: true = mit sudo ausfuehren. Wozu: Pakete installieren braucht Root-Rechte.
 - name: Webserver einrichten
   hosts: web
   become: true
 
+  # vars: Variablen fuer dieses Play, nutzbar mit {{ name }} in Aufgaben und Vorlagen.
+  #       Mit -e web_port=8081 auf der Kommandozeile ueberschreibbar (hat Vorrang).
   vars:
     web_port: 80
     begruessung: "Hallo TLBG"
@@ -19,7 +26,13 @@
   # OPTIONAL: Ein Server nach dem anderen (in das Play schreiben)
   #   serial: 1
 
+  # tasks: die Aufgaben, die der Reihe nach laufen. Jede Aufgabe ruft ein Modul auf.
+  # Ein Modul ist ein fertiger Baustein (apt, template, service ...) mit eigenen Parametern.
+  # Module sind idempotent: sie pruefen den Ist-Zustand und aendern nur, wenn er abweicht.
+  # Hilfe zu jedem Modul: ansible-doc ansible.builtin.apt
   tasks:
+    # apt: installiert Pakete (Debian/Ubuntu). state: present = soll vorhanden sein.
+    #      cache_valid_time: Paketliste nur aktualisieren, wenn sie aelter als eine Stunde ist.
     - name: Nginx installieren
       ansible.builtin.apt:
         name: nginx
@@ -30,6 +43,7 @@
       #   tags: [paket]
       #   when: ansible_facts['os_family'] == "Debian"
 
+    # loop: wiederholt die Aufgabe fuer jedes Element, das Element heisst {{ item }}.
     # OPTIONAL: mehrere Pakete mit einer Schleife
     #   - name: Werkzeuge installieren
     #     ansible.builtin.apt:
@@ -49,6 +63,9 @@
     #       state: directory
     #       mode: "0755"
 
+    # template: rendert eine Jinja2-Vorlage (*.j2) auf dem Controller und legt das Ergebnis auf dem Server ab.
+    #           Wozu: Konfigurationsdateien mit Variablen. Unterschied zu copy: copy kopiert 1:1.
+    #           owner, group, mode setzen Besitzer und Rechte.
     - name: Startseite aus Vorlage erzeugen
       ansible.builtin.template:
         src: templates/index.html.j2
@@ -75,6 +92,7 @@
     #       path: /etc/motd
     #       line: "Wartung am Freitag"
 
+    # notify: loest einen Handler aus, aber nur, wenn diese Aufgabe etwas geaendert hat.
     - name: Nginx-Konfiguration aus Vorlage erzeugen
       ansible.builtin.template:
         # TODO: src templates/site.conf.j2, dest /etc/nginx/sites-available/default
@@ -87,11 +105,15 @@
     #   - name: Handler jetzt ausfuehren
     #     ansible.builtin.meta: flush_handlers
 
+    # service: steuert Dienste. state: started = soll laufen, enabled: true = startet beim Booten.
     - name: Nginx laeuft und startet beim Booten
       ansible.builtin.service:
         name: nginx
         # TODO: state started, enabled true
 
+    # command / shell: fuehren ein Kommando aus. Sie kennen den Soll-Zustand nicht und melden immer changed.
+    #                  Deshalb: changed_when steuert die Meldung, und wenn moeglich ein Modul nehmen.
+    # debug: gibt Werte aus. Wozu: nachsehen, was in einer Variable steht.
     # OPTIONAL: command meldet immer "changed". Mit changed_when steuert man das.
     #   - name: Nginx-Version lesen
     #     ansible.builtin.command: nginx -v
@@ -100,6 +122,8 @@
     #   - name: Version anzeigen
     #     ansible.builtin.debug:
     #       msg: "{{ nginx_version.stderr }}"
+    # block / rescue / always: fasst Aufgaben zusammen.
+    #   rescue laeuft nur bei einem Fehler im block, always immer. Wozu: Fehler abfangen und aufraeumen.
     # OPTIONAL: Fehlerbehandlung mit block, rescue und always
     #   - name: Mit Fehlerbehandlung
     #     block:
@@ -113,6 +137,7 @@
     #       - name: Immer
     #         ansible.builtin.debug:
     #           msg: "fertig"
+    # wait_for: wartet auf einen Port oder eine Datei. Wozu: erst weitermachen, wenn ein Dienst bereit ist.
     # OPTIONAL: Wartet, bis der Port offen ist
     #   - name: Auf Port warten
     #     ansible.builtin.wait_for:
@@ -128,6 +153,8 @@
     #     run_once: true
     #     changed_when: false
 
+  # handlers: Aufgaben, die nur auf notify hin laufen, einmal am Ende des Plays, auch bei mehreren notify.
+  #           Wozu: Dienst nur neu laden, wenn sich die Konfiguration wirklich geaendert hat.
   handlers:
     - name: Nginx neu laden
       ansible.builtin.service:
@@ -136,6 +163,11 @@
       # OPTIONAL: mehrere Handler auf dasselbe Stichwort
       #   listen: "web neu laden"
 
+# Zweites Play: Pruefung nach der Einrichtung. Ein Playbook kann mehrere Plays haben, auch fuer
+# andere Hosts.
+# register: speichert das Ergebnis einer Aufgabe in einer Variable (hier seite).
+# when:     fuehrt die Aufgabe nur aus, wenn die Bedingung stimmt.
+# uri:      ruft eine URL auf. assert: bricht mit Fehler ab, wenn die Bedingung nicht stimmt.
 - name: Ergebnis pruefen
   hosts: web
   # Im Check-Modus aendert sich nichts, also gibt es auch nichts zu pruefen

@@ -1,4 +1,13 @@
 ---
+# ROLLE
+# Was: eine wiederverwendbare Sammlung von Aufgaben in fester Ordnerstruktur:
+#   tasks/main.yml     die Aufgaben (diese Datei, ohne Play-Kopf, nur die Liste)
+#   defaults/main.yml  Standardwerte der Variablen, leicht ueberschreibbar
+#   handlers/main.yml  Handler zu den Aufgaben
+#   templates/         Jinja2-Vorlagen, mit src: ohne Pfad ansprechbar
+#   meta/main.yml      Metadaten und Abhaengigkeiten (optional)
+# Wozu: dieselbe Einrichtung in mehreren Projekten nutzen. Das Playbook (site.yml) ruft nur noch
+#       die Rolle auf. Variablen der Rolle beginnen mit dem Rollennamen (webserver_...).
 # Lab 5: die Aufgaben aus Lab 3 als Rolle (Uebung)
 # Die Vorlagen liegen in templates/ (ohne Pfadpraefix), die Variablen heissen webserver_*.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.

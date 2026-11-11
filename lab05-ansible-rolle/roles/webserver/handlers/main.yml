@@ -1,4 +1,6 @@
 ---
+# handlers/main.yml: Handler der Rolle. Sie laufen nur, wenn eine Aufgabe sie per notify ruft, und
+# einmal am Ende. Wozu: Dienst nur neu laden, wenn sich die Konfiguration geaendert hat.
 - name: Nginx neu laden
   ansible.builtin.service:
     name: nginx

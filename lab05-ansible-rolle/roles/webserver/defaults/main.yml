@@ -1,4 +1,6 @@
 ---
+# defaults/main.yml: Vorgabewerte der Rolle. Sie haben die niedrigste Rangfolge, jeder andere Ort
+# (Inventory, Play, -e) ueberschreibt sie. So bleibt die Rolle anpassbar, ohne sie zu aendern.
 # Standardwerte, im Playbook oder Inventory ueberschreibbar
 webserver_port: 80
 # TODO: webserver_begruessung mit dem Wert "Hallo TLBG"
