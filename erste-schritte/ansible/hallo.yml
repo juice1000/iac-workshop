@@ -1,0 +1,26 @@
+---
+# Erste Schritte: ein Playbook nur fuer den eigenen Rechner
+- name: Erste Schritte mit Ansible
+  hosts: lokal
+  vars:
+    begruessung: "Hallo"
+
+  tasks:
+    - name: Ordner fuer Ergebnisse anlegen
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/out"
+        state: directory
+        mode: "0755"
+
+    - name: Datei mit Fakten ueber den Rechner schreiben
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/out/rechner.txt"
+        content: |
+          {{ begruessung }} von {{ ansible_facts['hostname'] }}
+          System: {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}
+          Python: {{ ansible_facts['python_version'] }}
+        mode: "0644"
+
+    - name: Ergebnis zeigen
+      ansible.builtin.debug:
+        msg: "{{ begruessung }}, Ansible laeuft auf {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}"

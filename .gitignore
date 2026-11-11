@@ -8,6 +8,8 @@ crash.log
 **/out/
 **/.ssh/
 **/inventory.ini
+# Ausnahme: von Hand geschrieben, nur localhost
+!erste-schritte/ansible/inventory.ini
 # Ansible
 *.retry
 .vault_pass

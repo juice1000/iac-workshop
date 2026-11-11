@@ -6,6 +6,24 @@ All lab code is German-facing. Providers are pinned with `~>` constraints: `hash
 
 `check.sh` checks terraform, ansible, git, docker, python3, ssh, Terraform >= 1.6, the `community.postgresql` collection, the Docker daemon and access to the Terraform registry, GitHub, Ansible Galaxy, Docker Hub and the Ubuntu mirrors. Expected: `Ergebnis: 15 OK, 0 fehlend`. Exit code non-zero if anything fails.
 
+## erste-schritte
+
+Command line warm-ups that need no lab servers. Each folder has a `rundgang.sh` that prints each command, runs it and waits for Enter when run in a terminal (no pause without a TTY). Failed steps are counted, the walk continues, and the exit code is the number of failures, so CI can use it. Participants should type the commands themselves; the script is the fallback and a reference.
+
+### erste-schritte/terraform
+
+`main.tf` uses no provider at all: a variable, locals, one `terraform_data` resource (built in since Terraform 1.4) and two outputs. So `init` downloads nothing and works offline. Steps: `version`, `-help`, `plan -help`, `init`, `fmt`, `validate`, `plan`, `apply`, `output`, `output -raw`, `state list/show`, empty second plan, `plan -var name=Welt` (shows `~` in-place update, which lab 1 does not show), two `terraform console` expressions, `graph`, `ls -la`, `destroy`, then `ls -la` again: empty state plus `terraform.tfstate.backup` with the previous state.
+
+Tested locally with OpenTofu 1.10 (HashiCorp downloads are blocked in the cloud sandbox), and in CI with Terraform. With OpenTofu, no `.terraform/` and no lock file appear because there are no providers; not verified for Terraform, so the docs do not claim it.
+
+### erste-schritte/ansible
+
+`ansible.cfg` plus a hand-written `inventory.ini` with only `localhost` (`ansible_connection=local`, `ansible_python_interpreter="{{ ansible_playbook_python }}"`), group `[lokal]`. It is excluded from the `**/inventory.ini` ignore rule in `.gitignore`. `hallo.yml` writes `out/rechner.txt` from facts and is idempotent.
+
+Steps: `ansible --version`, `ansible-config dump --only-changed`, `ansible-inventory --graph`, ad-hoc `ping`, `setup` with filter, `debug`, `command` (always CHANGED), `file` twice (CHANGED then SUCCESS), `copy`, `copy --check --diff`, `ansible-doc -l ansible.builtin`, `ansible-doc -s ansible.builtin.copy`, `ansible-galaxy collection list community.postgresql`, `ansible-doc -l community.general | wc -l`, playbook twice (`changed=1`, then `changed=0`), playbook `--check --diff -e begruessung=Moin`.
+
+Do not use plain `ansible-doc -l` without a collection name: with ansible 14.6 / ansible-core 2.21.6 it crashes (`'_AnsibleTaggedDict' object has no attribute 'strip'`). Filtered by collection it works. Reference numbers from that version: `ansible.builtin` has 71 modules, the full `ansible` package ships 94 collections, `community.general` alone has 581 modules.
+
 ## lab01-terraform-grundlagen
 
 `main.tf` with `random_pet` and `local_file` (writes `out/hallo.txt`). Teaches init, fmt, validate, plan, apply, state list/show, second apply = no changes, `-/+` replacement when the content changes, drift when the file is deleted by hand, destroy.

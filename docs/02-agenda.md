@@ -9,11 +9,11 @@ Times assume 09:00 to 16:30. Each block has a Notion page with learning goals, c
 | 09:00 to 09:30 | 1.1 Kickoff and lab check | `lab00-check` |
 | 09:30 to 10:15 | 1.2 IaC concepts (declarative, idempotence, Terraform vs Ansible) | none |
 | 10:15 to 10:30 | Break | |
-| 10:30 to 12:00 | 1.3 Terraform basics: providers, resources, init/plan/apply/destroy, state | `lab01-terraform-grundlagen` |
+| 10:30 to 12:00 | 1.3 Terraform basics: providers, resources, init/plan/apply/destroy, state. Starts with a 10 minute command line warm-up | `erste-schritte/terraform`, then `lab01-terraform-grundlagen` |
 | 12:00 to 13:00 | Lunch | |
 | 13:00 to 14:15 | 1.4 Variables, locals, outputs, for_each, templatefile | `lab02-terraform-variablen` |
 | 14:15 to 14:30 | Break | |
-| 14:30 to 16:00 | 1.5 Ansible basics: inventory, ad-hoc, playbooks, templates, handlers | `umgebung` then `lab03-ansible-grundlagen` |
+| 14:30 to 16:00 | 1.5 Ansible basics: inventory, ad-hoc, module overview, playbooks, templates, handlers | `umgebung` (start the apply first, the image build takes minutes), `erste-schritte/ansible` against localhost while it builds, then `lab03-ansible-grundlagen` |
 | 16:00 to 16:30 | 1.6 Recap and quiz | none |
 
 ## Day 2: Practice and mini project (Friday 13 November)

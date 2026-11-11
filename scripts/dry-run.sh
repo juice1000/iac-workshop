@@ -55,7 +55,7 @@ aufraeumen() {
   log "Aufraeumen"
   (cd "$ROOT/miniprojekt/terraform" && tf destroy -auto-approve >/dev/null 2>&1) || true
   (cd "$ROOT/umgebung" && tf destroy -auto-approve >/dev/null 2>&1) || true
-  for d in lab01-terraform-grundlagen lab02-terraform-variablen lab04-terraform-module; do
+  for d in erste-schritte/terraform lab01-terraform-grundlagen lab02-terraform-variablen lab04-terraform-module; do
     (cd "$ROOT/$d" && tf destroy -auto-approve >/dev/null 2>&1) || true
   done
 }
@@ -63,6 +63,15 @@ trap aufraeumen EXIT
 
 log "Lab 0: Werkzeuge"
 bash "$ROOT/lab00-check/check.sh" || echo "Hinweis: nicht alle Checks gruen, Probelauf geht weiter"
+
+log "Erste Schritte: Terraform"
+bash "$ROOT/erste-schritte/terraform/rundgang.sh" </dev/null >/dev/null || fehler "Rundgang Terraform hatte Fehler"
+echo "Rundgang Terraform OK"
+
+log "Erste Schritte: Ansible"
+bash "$ROOT/erste-schritte/ansible/rundgang.sh" </dev/null >/dev/null || fehler "Rundgang Ansible hatte Fehler"
+(cd "$ROOT/erste-schritte/ansible" && idempotent hallo.yml)
+echo "Rundgang Ansible OK"
 
 log "Lab 1: Terraform-Grundlagen"
 cd "$ROOT/lab01-terraform-grundlagen"

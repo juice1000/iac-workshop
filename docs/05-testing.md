@@ -7,6 +7,7 @@ Runs every lab in teaching order and fails on the first problem. Cleans up all T
 What it checks:
 
 - lab 0 check (non-fatal)
+- both `erste-schritte` walkthroughs (`rundgang.sh` exit code = number of failed steps), plus idempotence of `erste-schritte/ansible/hallo.yml`
 - lab 1: apply, file exists, second plan is empty (`-detailed-exitcode`), destroy
 - lab 2: inventory has `[app]` and the app1 line, sensitive output not empty, validation rejects `umgebung=dev`
 - lab 4: module address in state

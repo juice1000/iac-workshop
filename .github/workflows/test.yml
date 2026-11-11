@@ -28,7 +28,7 @@ jobs:
 
       - name: terraform validate
         run: |
-          for d in lab01-terraform-grundlagen lab02-terraform-variablen lab04-terraform-module umgebung miniprojekt/terraform; do
+          for d in erste-schritte/terraform lab01-terraform-grundlagen lab02-terraform-variablen lab04-terraform-module umgebung miniprojekt/terraform; do
             echo "== $d"
             terraform -chdir="$d" init -backend=false -input=false >/dev/null
             terraform -chdir="$d" validate
@@ -36,13 +36,13 @@ jobs:
 
       - name: ansible-lint
         run: |
-          for d in lab03-ansible-grundlagen lab05-ansible-rolle miniprojekt/ansible; do
+          for d in erste-schritte/ansible lab03-ansible-grundlagen lab05-ansible-rolle miniprojekt/ansible; do
             echo "== $d"
             (cd "$d" && ansible-lint)
           done
 
       - name: shellcheck
-        run: shellcheck lab00-check/check.sh scripts/*.sh
+        run: shellcheck lab00-check/check.sh scripts/*.sh erste-schritte/*/rundgang.sh
 
   dry-run:
     needs: lint

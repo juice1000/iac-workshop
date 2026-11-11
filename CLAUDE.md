@@ -22,7 +22,7 @@ bash lab00-check/check.sh        # tools and network check
 bash scripts/dry-run.sh          # full end-to-end run of all labs, cleans up after itself
 terraform fmt -recursive         # before every commit
 (cd <ansible-dir> && ansible-lint)
-shellcheck lab00-check/check.sh scripts/*.sh
+shellcheck lab00-check/check.sh scripts/*.sh erste-schritte/*/rundgang.sh
 bash scripts/gfu-reach.sh        # RDP endpoint reachability
 bash scripts/check-start-branch.sh
 ```

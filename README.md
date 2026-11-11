@@ -23,13 +23,26 @@ In VS Code: Ansicht "Quellcodeverwaltung" > "Repository klonen".
 | Ordner | Wann | Inhalt |
 | --- | --- | --- |
 | `lab00-check` | Tag 1, Start | Werkzeuge und Netzwerk prüfen |
+| `erste-schritte/terraform` | Tag 1, vor Lab 1 | Terraform-Befehle ausprobieren, ohne Provider und ohne Internet |
 | `lab01-terraform-grundlagen` | Tag 1 | init, plan, apply, destroy, State |
 | `lab02-terraform-variablen` | Tag 1 | Variablen, Locals, for_each, Outputs, Vorlagen |
 | `umgebung` | Tag 1 | Startet zwei Linux-Server für die Ansible-Labs |
+| `erste-schritte/ansible` | Tag 1, vor Lab 3 | Ansible-Befehle und Module am eigenen Rechner ausprobieren, ohne Server |
 | `lab03-ansible-grundlagen` | Tag 1 | Inventory, Ad-hoc, Playbook, Vorlagen, Handler |
 | `lab04-terraform-module` | Tag 2 | Lab 2 als Modul |
 | `lab05-ansible-rolle` | Tag 2 | Lab 3 als Rolle |
 | `miniprojekt` | Tag 2 | Anwendungsserver mit entferntem DB-Server |
+
+## Erste Schritte auf der Kommandozeile
+
+Beide Ordner unter `erste-schritte/` enthalten ein Skript `rundgang.sh`, das die
+wichtigsten Befehle der Reihe nach zeigt und ausführt. Am meisten lernt ihr, wenn
+ihr die Befehle selbst tippt. Wer festhängt, startet den Rundgang:
+
+```bash
+cd erste-schritte/terraform && bash rundgang.sh
+cd erste-schritte/ansible && bash rundgang.sh
+```
 
 ## Übungsserver
 
