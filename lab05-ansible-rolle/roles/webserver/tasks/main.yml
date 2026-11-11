@@ -1,12 +1,15 @@
 ---
 # Lab 5: die Aufgaben aus Lab 3 als Rolle (Uebung)
 # Die Vorlagen liegen in templates/ (ohne Pfadpraefix), die Variablen heissen webserver_*.
+# Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
 - name: Nginx installieren
   ansible.builtin.apt:
     name: nginx
     state: present
     update_cache: true
     cache_valid_time: 3600
+  # OPTIONAL: Stichwort, damit nur dieser Teil laeuft:  ansible-playbook site.yml --tags paket
+  #   tags: [paket]
 
 - name: Startseite aus Vorlage erzeugen
   ansible.builtin.template:
@@ -18,16 +21,26 @@
     src: site.conf.j2
     # TODO: dest /etc/nginx/sites-available/default, Besitzer root, Gruppe root, Rechte 0644
   # TODO: notify "Nginx neu laden"
+  # Hinweis: validate: "nginx -t -c %s" funktioniert nur bei einer kompletten nginx.conf,
+  # nicht bei diesem Ausschnitt. Beispiel mit sudoers:  validate: "visudo -cf %s"
 
 # TODO: Task "Nginx laeuft und startet beim Booten"
 #       (ansible.builtin.service: name nginx, state started, enabled true)
 
-#
-# OPTIONAL / GUT ZU WISSEN
-# - include_tasks (dynamisch, zur Laufzeit) gegen import_tasks (statisch, beim Einlesen).
-# - tags an Aufgaben, z. B. "konfig", damit man nur diesen Teil mit --tags konfig ausfuehrt.
-# - Rollen aufteilen: tasks/install.yml und tasks/konfig.yml, aus main.yml eingebunden.
-# - meta/main.yml: dependencies auf andere Rollen und Metadaten fuer Galaxy.
-# - ansible-galaxy init <name> erzeugt das Rollengeruest. Fertige Rollen und Collections gibt es auf Galaxy.
-# - Molecule testet Rollen automatisch in Containern. ansible-lint prueft Stil und Fallstricke.
-# - validate: bei template/copy prueft eine Datei vor dem Ausrollen, z. B. validate: "nginx -t -c %s" (Pfad je nach Datei).
+# OPTIONAL: Aufgaben in Dateien aufteilen und einbinden
+#   - name: Installation
+#     ansible.builtin.include_tasks: install.yml     # dynamisch, zur Laufzeit
+#     tags: [paket]
+#   - name: Konfiguration
+#     ansible.builtin.import_tasks: konfig.yml       # statisch, beim Einlesen
+#     tags: [konfig]
+# OPTIONAL: Aufgabe nur unter einer Bedingung oder in einer Schleife
+#   - name: Zusaetzliches Paket
+#     ansible.builtin.apt:
+#       name: "{{ item }}"
+#     loop: "{{ webserver_pakete | default([]) }}"
+#     when: webserver_pakete is defined
+# OPTIONAL: Befehle
+#   ansible-galaxy init meine_rolle      # Geruest fuer eine neue Rolle
+#   ansible-lint                         # Stil und Fallstricke
+#   molecule test                        # Rolle automatisch in Containern testen

@@ -3,8 +3,7 @@
   ansible.builtin.service:
     name: nginx
     # TODO: state reloaded
-
-#
-# OPTIONAL / GUT ZU WISSEN
-# - listen: "web neu laden" erlaubt, dass mehrere Handler auf dasselbe Stichwort hoeren.
-# - meta: flush_handlers im Task-Teil fuehrt Handler sofort aus.
+# OPTIONAL: mehrere Handler auf dasselbe Stichwort (in den Handler schreiben)
+#   listen: "web neu laden"
+# OPTIONAL: Handler sofort ausfuehren, in tasks/main.yml:
+#   - ansible.builtin.meta: flush_handlers

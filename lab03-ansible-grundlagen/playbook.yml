@@ -1,6 +1,7 @@
 ---
 # Lab 3: Webserver einrichten (Uebung)
 # Ziel: nginx auf der Gruppe web, Startseite und Konfiguration aus den Vorlagen in templates/
+# Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
 - name: Webserver einrichten
   hosts: web
   become: true
@@ -8,6 +9,15 @@
   vars:
     web_port: 80
     begruessung: "Hallo TLBG"
+  # OPTIONAL: Variablen aus Datei oder Eingabe
+  #   vars_files:
+  #     - vars/web.yml
+  #   vars_prompt:
+  #     - name: begruessung
+  #       prompt: "Welche Begruessung?"
+  #       private: false
+  # OPTIONAL: Ein Server nach dem anderen (in das Play schreiben)
+  #   serial: 1
 
   tasks:
     - name: Nginx installieren
@@ -16,6 +26,28 @@
         state: present
         update_cache: true
         cache_valid_time: 3600
+      # OPTIONAL: Stichwort fuer --tags und eine Bedingung (in die Aufgabe schreiben)
+      #   tags: [paket]
+      #   when: ansible_facts['os_family'] == "Debian"
+
+    # OPTIONAL: mehrere Pakete mit einer Schleife
+    #   - name: Werkzeuge installieren
+    #     ansible.builtin.apt:
+    #       name: "{{ item }}"
+    #       state: present
+    #     loop: [curl, vim, htop]
+    # OPTIONAL: Benutzer und Verzeichnis anlegen
+    #   - name: Benutzer anlegen
+    #     ansible.builtin.user:
+    #       name: webadmin
+    #       shell: /bin/bash
+    #       groups: www-data
+    #       append: true
+    #   - name: Verzeichnis anlegen
+    #     ansible.builtin.file:
+    #       path: /srv/daten
+    #       state: directory
+    #       mode: "0755"
 
     - name: Startseite aus Vorlage erzeugen
       ansible.builtin.template:
@@ -25,6 +57,24 @@
         group: root
         # TODO: mode "0644"
 
+    # OPTIONAL: Datei vor dem Ausrollen pruefen (validate), Beispiel sudoers
+    #   - name: sudo-Regel anlegen
+    #     ansible.builtin.copy:
+    #       content: "webadmin ALL=(ALL) NOPASSWD: ALL\n"
+    #       dest: /etc/sudoers.d/webadmin
+    #       mode: "0440"
+    #       validate: "visudo -cf %s"
+    # OPTIONAL: statische Datei kopieren und eine Zeile in einer Datei setzen
+    #   - name: Datei kopieren
+    #     ansible.builtin.copy:
+    #       content: "Hallo\n"
+    #       dest: /etc/motd
+    #       mode: "0644"
+    #   - name: Zeile in Datei setzen
+    #     ansible.builtin.lineinfile:
+    #       path: /etc/motd
+    #       line: "Wartung am Freitag"
+
     - name: Nginx-Konfiguration aus Vorlage erzeugen
       ansible.builtin.template:
         # TODO: src templates/site.conf.j2, dest /etc/nginx/sites-available/default
@@ -33,16 +83,58 @@
         mode: "0644"
       # TODO: notify auf den Handler "Nginx neu laden"
 
+    # OPTIONAL: Handler sofort ausfuehren statt am Ende des Plays
+    #   - name: Handler jetzt ausfuehren
+    #     ansible.builtin.meta: flush_handlers
+
     - name: Nginx laeuft und startet beim Booten
       ansible.builtin.service:
         name: nginx
         # TODO: state started, enabled true
+
+    # OPTIONAL: command meldet immer "changed". Mit changed_when steuert man das.
+    #   - name: Nginx-Version lesen
+    #     ansible.builtin.command: nginx -v
+    #     register: nginx_version
+    #     changed_when: false
+    #   - name: Version anzeigen
+    #     ansible.builtin.debug:
+    #       msg: "{{ nginx_version.stderr }}"
+    # OPTIONAL: Fehlerbehandlung mit block, rescue und always
+    #   - name: Mit Fehlerbehandlung
+    #     block:
+    #       - name: Kann fehlschlagen
+    #         ansible.builtin.command: /bin/false
+    #     rescue:
+    #       - name: Wird bei Fehler ausgefuehrt
+    #         ansible.builtin.debug:
+    #           msg: "Fehler abgefangen"
+    #     always:
+    #       - name: Immer
+    #         ansible.builtin.debug:
+    #           msg: "fertig"
+    # OPTIONAL: Wartet, bis der Port offen ist
+    #   - name: Auf Port warten
+    #     ansible.builtin.wait_for:
+    #       port: "{{ web_port }}"
+    #       timeout: 30
+      # OPTIONAL: Passwoerter nicht ins Log schreiben (in die Aufgabe schreiben)
+      #   no_log: true
+    # OPTIONAL: Aufgabe nur einmal und auf dem eigenen Rechner ausfuehren
+    #   - name: Zeitstempel auf dem eigenen Rechner
+    #     ansible.builtin.command: date
+    #     delegate_to: localhost
+    #     become: false             # auf dem eigenen Rechner kein sudo
+    #     run_once: true
+    #     changed_when: false
 
   handlers:
     - name: Nginx neu laden
       ansible.builtin.service:
         name: nginx
         # TODO: state reloaded
+      # OPTIONAL: mehrere Handler auf dasselbe Stichwort
+      #   listen: "web neu laden"
 
 - name: Ergebnis pruefen
   hosts: web
@@ -54,20 +146,24 @@
         return_content: true
       register: seite
       when: not ansible_check_mode
+      # OPTIONAL: wiederholen, bis der Server antwortet (in die Aufgabe schreiben)
+      #   until: seite.status == 200
+      #   retries: 5
+      #   delay: 2
 
     # TODO: Task mit ansible.builtin.assert: that: der Hostname (inventory_hostname)
     #       steht im Inhalt der Seite (seite.content). success_msg frei waehlen.
     #       Ebenfalls nur ausfuehren, wenn nicht ansible_check_mode.
+    # OPTIONAL: Fakten anzeigen
+    #   - name: Betriebssystem anzeigen
+    #     ansible.builtin.debug:
+    #       var: ansible_facts['distribution']
 
-#
-# OPTIONAL / GUT ZU WISSEN
-# Module: copy, file, lineinfile, blockinfile, user, group, get_url, unarchive, cron, systemd,
-#         package (statt apt, fuer mehrere Distributionen), wait_for, ufw.
-# Kontrolle: when, loop, register, failed_when, changed_when, block/rescue/always, ignore_errors.
-# command und shell melden immer changed (ohne changed_when). Deshalb lieber ein passendes Modul nehmen.
-# Handler: listen, meta: flush_handlers (Handler sofort ausfuehren statt am Ende).
-# Ausfuehrung: --limit server1, --tags, --check --diff, --step, --start-at-task, -v bis -vvv.
-# Variablen: Rangfolge defaults < group_vars < host_vars < Play-vars < -e. Fakten mit ansible -m setup.
-# Geheimes: ansible-vault encrypt_string und no_log: true.
-# Rollout: serial: 1 (ein Server nach dem anderen), delegate_to, run_once.
-# Tipp: ansible-doc <modul> zeigt Beispiele ohne Internet.
+# OPTIONAL: Befehle
+#   ansible-playbook playbook.yml --limit server1
+#   ansible-playbook playbook.yml --tags paket
+#   ansible-playbook playbook.yml --start-at-task "Nginx laeuft und startet beim Booten"
+#   ansible-playbook playbook.yml -v        # bis -vvv
+#   ansible web -m ansible.builtin.setup    # alle Fakten
+#   ansible-doc ansible.builtin.template
+#   ansible-vault encrypt_string 'geheim' --name db_passwort

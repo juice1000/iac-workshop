@@ -2,6 +2,7 @@
 # Phase 3: Rolle app. Hilfe: ansible-doc <modulname>
 # Die Vorlagen in templates/ und der Handler in handlers/ sind schon fertig.
 # Die ersten beiden Aufgaben sind als Beispiel fertig. Ergaenzt die Stellen mit TODO.
+# Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
 - name: Python-Treiber fuer PostgreSQL installieren
   ansible.builtin.apt:
     name: python3-psycopg2
@@ -29,19 +30,30 @@
 
 # TODO: Vorlage app.env.j2 nach /etc/tlbg-app.env
 #       Besitzer root, Gruppe {{ app_user }}, Rechte 0640 (enthaelt das Passwort!), notify wie oben
+# OPTIONAL: Datei nicht im Log zeigen (in die Aufgabe schreiben)
+#   no_log: true
 
 # TODO: Vorlage tlbg-app.service.j2 nach /etc/systemd/system/tlbg-app.service, notify wie oben
+# OPTIONAL: Dienst haerten, in der Vorlage tlbg-app.service.j2 unter [Service]:
+#   NoNewPrivileges=true
+#   ProtectSystem=strict
+#   PrivateTmp=true
 
 # TODO: Dienst tlbg-app starten und aktivieren, vorher systemd neu laden
 #       (ansible.builtin.systemd_service, daemon_reload: true)
 
-#
-# OPTIONAL / GUT ZU WISSEN
-# - Reihenfolge: erst Benutzer und Verzeichnis, dann Dateien, dann Dienst.
-# - Rechte 0640 mit Gruppe der Anwendung: nur die App und root lesen das Passwort.
-# - Idempotenz pruefen: zweiter Lauf muss changed=0 zeigen.
-# - ansible.builtin.uri mit until, retries und delay wartet, bis die Anwendung antwortet.
-# - ansible.builtin.wait_for wartet auf einen Port.
-# - Dienst haerten (systemd): NoNewPrivileges, ProtectSystem, PrivateTmp in der Service-Datei.
-# - Health-Check als eigene Aufgabe am Ende: Antwort muss "DB OK" enthalten (assert).
-# - delegate_to: localhost fuer Pruefungen vom Controller aus.
+# OPTIONAL: Warten, bis die Anwendung antwortet, und das Ergebnis pruefen
+#   - name: Auf die Anwendung warten
+#     ansible.builtin.uri:
+#       url: "http://localhost:{{ app_port }}/"
+#       return_content: true
+#     register: antwort
+#     until: antwort.status == 200
+#     retries: 10
+#     delay: 2
+#   - name: Datenbankverbindung pruefen
+#     ansible.builtin.assert:
+#       that: "'DB OK' in antwort.content"
+#       success_msg: "Anwendung erreicht die Datenbank"
+# OPTIONAL: Pruefung vom Controller aus
+#   delegate_to: localhost

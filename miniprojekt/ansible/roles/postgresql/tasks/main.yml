@@ -1,6 +1,7 @@
 ---
 # Phase 2: Rolle postgresql. Hilfe: ansible-doc <modulname>
 # Die erste Aufgabe ist als Beispiel fertig. Ergaenzt die Stellen mit TODO.
+# Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
 - name: PostgreSQL und Python-Treiber installieren
   ansible.builtin.apt:
     name:
@@ -16,6 +17,14 @@
     regexp: "^#?listen_addresses"
     # TODO: line "listen_addresses = '*'"
   notify: PostgreSQL neu starten
+# OPTIONAL: weitere Einstellungen mit community.postgresql.postgresql_set (nach dem Dienststart)
+#   - name: Maximale Verbindungen setzen
+#     community.postgresql.postgresql_set:
+#       name: max_connections
+#       value: "50"
+#     become: true
+#     become_user: postgres
+#     notify: PostgreSQL neu starten
 
 - name: Zugriff nur aus dem Anwendungsnetz erlauben
   community.postgresql.postgresql_pg_hba:
@@ -24,8 +33,18 @@
     # TODO: databases {{ db_name }}, users {{ db_user }}
     # TODO: address {{ postgresql_erlaubtes_netz }}, method scram-sha-256
   notify: PostgreSQL neu starten
+# Die pg_hba.conf wird von oben nach unten gelesen, die erste passende Zeile gilt.
+# listen_addresses braucht einen Neustart, pg_hba.conf nur ein Reload.
 
 # TODO: Dienst postgresql starten und beim Booten aktivieren (ansible.builtin.service)
+# OPTIONAL: Handler sofort ausfuehren, damit die Datenbank die neuen Einstellungen hat
+#   - name: Handler jetzt ausfuehren
+#     ansible.builtin.meta: flush_handlers
+# OPTIONAL: Warten, bis der Port offen ist
+#   - name: Auf PostgreSQL warten
+#     ansible.builtin.wait_for:
+#       port: 5432
+#       timeout: 30
 
 - name: Datenbankbenutzer anlegen
   community.postgresql.postgresql_user:
@@ -33,17 +52,38 @@
     # TODO: password {{ db_password }}
   # TODO: als Benutzer postgres ausfuehren (become und become_user)
   # TODO: das Passwort darf nicht im Log erscheinen (no_log)
+# OPTIONAL: Passwort nicht im Klartext ablegen, sondern mit Ansible Vault:
+#   ansible-vault encrypt_string 'geheim' --name db_password
+#   ansible-playbook site.yml --ask-vault-pass
 
 # TODO: Datenbank {{ db_name }} mit Besitzer {{ db_user }} anlegen
 #       (community.postgresql.postgresql_db, ebenfalls als Benutzer postgres)
-
-#
-# OPTIONAL / GUT ZU WISSEN
-# - Die pg_hba.conf wird von oben nach unten ausgewertet. Die erste passende Zeile gilt.
-# - scram-sha-256 ist der moderne Standard, md5 ist veraltet, trust sollte man nie nutzen.
-# - Weitere Module in community.postgresql: postgresql_privs, postgresql_ext, postgresql_query, postgresql_set.
-# - Neustart gegen Reload: listen_addresses braucht Neustart, pg_hba.conf nur Reload.
-# - no_log: true verhindert, dass Passwoerter im Log landen. Auch mit -vvv.
-# - Passwoerter gehoeren in Ansible Vault, nicht in group_vars im Klartext.
-# - Backups: pg_dump per cron oder systemd-Timer, Wiederherstellung testen.
-# - Bei Cloud-Betrieb: Security Group erlaubt Port 5432 nur aus dem App-Netz (siehe docs/03-architecture.md).
+# OPTIONAL: Rechte vergeben und eine Abfrage ausfuehren
+#   - name: Rechte setzen
+#     community.postgresql.postgresql_privs:
+#       db: "{{ db_name }}"
+#       role: "{{ db_user }}"
+#       type: database
+#       privs: ALL
+#     become: true
+#     become_user: postgres
+#   - name: Abfrage ausfuehren
+#     community.postgresql.postgresql_query:
+#       db: "{{ db_name }}"
+#       query: "SELECT version();"
+#     become: true
+#     become_user: postgres
+#     register: abfrage
+#     changed_when: false
+# OPTIONAL: Datenbank sichern (pg_dump) per cron. Im Lab-Image ist cron nicht installiert.
+#   - name: cron installieren
+#     ansible.builtin.apt:
+#       name: cron
+#       state: present
+#   - name: Taegliche Sicherung
+#     ansible.builtin.cron:
+#       name: pg_dump
+#       minute: "30"
+#       hour: "2"
+#       user: postgres
+#       job: "pg_dump {{ db_name }} > /var/backups/{{ db_name }}.sql"

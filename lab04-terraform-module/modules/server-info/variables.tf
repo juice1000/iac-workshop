@@ -1,7 +1,12 @@
+# Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+
 # TODO: Variablen name, rolle, prefix (string), port (number)
 # TODO: Variable ausgabe_ordner (string) mit description
 
-#
-# OPTIONAL / GUT ZU WISSEN
-# - Eingaben immer mit type und description. Mit validation fruehe, verstaendliche Fehlermeldungen geben.
-# - Defaults sparsam setzen: Pflichtvariablen erzwingen, dass der Aufrufer bewusst entscheidet.
+# OPTIONAL: Eingabe frueh pruefen (in den variable-Block schreiben)
+#   validation {
+#     condition     = var.port >= 1024 && var.port <= 65535
+#     error_message = "Der Port muss zwischen 1024 und 65535 liegen."
+#   }
+# OPTIONAL: Standardwert machen die Variable optional, ohne Default ist sie Pflicht
+#   default = "app"

@@ -2,9 +2,28 @@
 # Standardwerte, im Playbook oder Inventory ueberschreibbar
 webserver_port: 80
 # TODO: webserver_begruessung mit dem Wert "Hallo TLBG"
-
-#
-# OPTIONAL / GUT ZU WISSEN
-# - defaults/ hat die niedrigste Rangfolge und ist zum Ueberschreiben gedacht. vars/ ist fest und schwer zu ueberschreiben.
-# - Alle Variablen der Rolle mit dem Rollennamen als Praefix (ansible-lint var-naming).
-# - meta/argument_specs.yml beschreibt und prueft die Eingaben der Rolle.
+# Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# defaults/ hat die niedrigste Rangfolge, vars/ ueberschreibt fast alles.
+# OPTIONAL: weitere Standardwerte
+#   webserver_pakete: [nginx]
+#   webserver_dokumentenwurzel: /var/www/html
+# OPTIONAL: Eingaben der Rolle beschreiben und pruefen, in roles/webserver/meta/argument_specs.yml:
+#   ---
+#   argument_specs:
+#     main:
+#       short_description: Nginx einrichten
+#       options:
+#         webserver_port:
+#           type: int
+#           default: 80
+#         webserver_begruessung:
+#           type: str
+#           default: "Hallo TLBG"
+# OPTIONAL: Abhaengigkeiten und Metadaten in roles/webserver/meta/main.yml:
+#   ---
+#   dependencies: []
+#   galaxy_info:
+#     author: Julien Look
+#     description: Nginx mit Startseite
+#     license: MIT
+#     min_ansible_version: "2.14"

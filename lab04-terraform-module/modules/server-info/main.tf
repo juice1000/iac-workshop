@@ -1,11 +1,9 @@
 # TODO: terraform-Block mit required_providers fuer local (hashicorp/local, ~> 2.5)
+# OPTIONAL: Version von Terraform fordern (in den terraform-Block schreiben)
+#   required_version = ">= 1.6"
+# Ein Modul konfiguriert keine Provider. Das macht der Aufrufer.
 
 resource "local_file" "info" {
   # TODO: filename = <ausgabe_ordner>/<prefix>-<name>.txt
   # TODO: content = "Server <name>, Rolle <rolle>, SSH-Port <port>\n" mit den Modul-Variablen
 }
-
-#
-# OPTIONAL / GUT ZU WISSEN
-# - Ein Modul deklariert seine Provider nur in required_providers, konfiguriert sie aber nicht (das macht der Aufrufer).
-# - Versionsbedingung ins Modul: required_version und Provider-Mindestversion.
