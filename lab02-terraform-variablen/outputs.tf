@@ -1,6 +1,6 @@
 output "server_dateien" {
   description = "Erzeugte Dateien pro Server"
-  value       = { for name, f in local_file.server_info : name => f.filename }
+  # TODO: value = Map Servername -> Dateiname (for-Ausdruck ueber local_file.server_info)
 }
 
 # TODO: output "rollen" mit local.rollen

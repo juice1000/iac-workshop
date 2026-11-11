@@ -1,40 +1,17 @@
 # Lab 4: Lab 2 als Modul (Uebung)
 # Das Root-Modul ruft das Modul in modules/server-info pro Server auf.
 
-terraform {
-  required_version = ">= 1.6"
+# TODO: terraform-Block mit required_version >= 1.6 und dem Provider local (~> 2.5)
 
-  required_providers {
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5"
-    }
-  }
-}
-
-variable "umgebung" {
-  type    = string
-  default = "schulung"
-}
-
-variable "server" {
-  type = map(object({
-    rolle = string
-    port  = number
-  }))
-  default = {
-    app1 = { rolle = "app", port = 2201 }
-    db1  = { rolle = "db", port = 2202 }
-  }
-}
+# TODO: variable "umgebung" (string, Default "schulung")
+# TODO: variable "server" wie in Lab 2 (map von Objekten mit rolle und port, gleicher Default)
 
 module "server_info" {
   source = "./modules/server-info"
   # TODO: for_each ueber var.server
 
   # TODO: Eingaben name, rolle, port aus each.key / each.value
-  prefix         = "tlbg-${var.umgebung}"
-  ausgabe_ordner = "${path.module}/out"
+  # TODO: prefix wie in Lab 2, ausgabe_ordner = out/ im Ordner des Moduls
 }
 
 output "dateien" {

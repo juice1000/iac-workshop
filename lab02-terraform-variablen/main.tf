@@ -1,23 +1,11 @@
 # Lab 2: Variablen, Locals, for_each, Outputs, templatefile (Uebung)
 # Ziel: eine Datei pro Server und out/inventory.ini aus templates/inventory.tftpl
 
-terraform {
-  required_version = ">= 1.6"
-
-  required_providers {
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.6"
-    }
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5"
-    }
-  }
-}
+# TODO: terraform-Block mit required_version >= 1.6 und required_providers
+#       random (hashicorp/random, ~> 3.6) und local (hashicorp/local, ~> 2.5)
 
 locals {
-  prefix = "tlbg-${var.umgebung}"
+  # TODO: prefix = "tlbg-" plus var.umgebung
   # TODO: rollen = sortierte Liste aller Rollen ohne Duplikate.
   #       Tipp: for-Ausdruck ueber var.server, dazu distinct() und sort()
 }
@@ -32,14 +20,14 @@ resource "random_password" "db" {
 resource "local_file" "server_info" {
   # TODO: for_each ueber var.server
 
-  filename = "${path.module}/out/${local.prefix}-${each.key}.txt"
+  # TODO: filename = out/<prefix>-<servername>.txt im Ordner des Moduls
   # TODO: content = "Server <name>, Rolle <rolle>, SSH-Port <port>\n"
   #       Tipp: each.key und each.value.rolle / each.value.port
 }
 
 # Ansible-Inventory aus einer Vorlage erzeugen
 resource "local_file" "inventory" {
-  filename = "${path.module}/out/inventory.ini"
+  # TODO: filename = out/inventory.ini im Ordner des Moduls
   # TODO: content mit templatefile("${path.module}/templates/inventory.tftpl", { ... })
   #       Die Vorlage erwartet die Variablen server und rollen (siehe Vorlage)
 }

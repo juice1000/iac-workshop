@@ -1,21 +1,9 @@
 # Lab 1: Terraform-Grundlagen (Uebung)
 # Ziel: out/hallo.txt mit "Hallo Terraform! Servername: <zufaelliger Name>"
-# Der terraform-Block steht schon. Ergaenzt die Stellen mit TODO.
+# Ergaenzt die Stellen mit TODO.
 
-terraform {
-  required_version = ">= 1.6"
-
-  required_providers {
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.6"
-    }
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5"
-    }
-  }
-}
+# TODO: terraform-Block mit required_version >= 1.6 und required_providers
+#       random (hashicorp/random, ~> 3.6) und local (hashicorp/local, ~> 2.5)
 
 # Erzeugt einen zufaelligen Namen, z. B. "brave-otter"
 resource "random_pet" "server_name" {
@@ -24,7 +12,7 @@ resource "random_pet" "server_name" {
 
 # Schreibt eine Datei. Der Inhalt haengt von random_pet ab (implizite Abhaengigkeit).
 resource "local_file" "hallo" {
-  filename = "${path.module}/out/hallo.txt"
+  # TODO: filename = Datei hallo.txt im Ordner out/ des Moduls (path.module)
   # TODO: content = "Hallo Terraform! Servername: " plus den Namen aus random_pet.server_name
   #       (Attribut id), am Ende ein Zeilenumbruch \n
 }
