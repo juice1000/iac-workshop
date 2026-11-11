@@ -1,6 +1,13 @@
-# TODO 1: output "server_dateien": Map Servername -> Dateiname
-# TODO 2: output "rollen"
-# TODO 3: output "db_passwort", als sensitive markiert
+output "server_dateien" {
+  description = "Erzeugte Dateien pro Server"
+  value       = { for name, f in local_file.server_info : name => f.filename }
+}
+
+# TODO: output "rollen" mit local.rollen
+
+# TODO: output "db_passwort" mit dem Ergebnis von random_password.db (Attribut result)
+#       Der Wert ist geheim: sensitive = true
+
 #
 # OPTIONAL / GUT ZU WISSEN
 # - terraform output -raw db_passwort zeigt auch sensitive Werte. Im State stehen sie im Klartext.

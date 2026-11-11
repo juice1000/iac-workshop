@@ -1,7 +1,21 @@
-# TODO 1: variable "umgebung" (string, Default "schulung"),
-#         validation: nur schulung, test oder prod erlaubt
-# TODO 2: variable "server": map von Objekten mit rolle (string) und port (number),
-#         Default: app1 (Rolle app, Port 2201) und db1 (Rolle db, Port 2202)
+variable "umgebung" {
+  description = "Name der Umgebung, wird als Praefix verwendet"
+  type        = string
+  default     = "schulung"
+
+  # TODO: validation-Block: nur "schulung", "test" oder "prod" erlaubt
+  #       Tipp: condition mit contains(), dazu error_message
+}
+
+variable "server" {
+  description = "Server mit Rolle und SSH-Port"
+  # TODO: type = map(object({ ... })) mit rolle (string) und port (number)
+  default = {
+    app1 = { rolle = "app", port = 2201 }
+    db1  = { rolle = "db", port = 2202 }
+  }
+}
+
 #
 # OPTIONAL / GUT ZU WISSEN
 # - Rangfolge der Werte: Default, terraform.tfvars, *.auto.tfvars, -var-file, -var, Umgebungsvariable TF_VAR_<name>.

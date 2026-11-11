@@ -1,7 +1,10 @@
 ---
-# TODO: Handler "Nginx neu laden" (Dienst nginx, state reloaded)
+- name: Nginx neu laden
+  ansible.builtin.service:
+    name: nginx
+    # TODO: state reloaded
+
 #
 # OPTIONAL / GUT ZU WISSEN
 # - listen: "web neu laden" erlaubt, dass mehrere Handler auf dasselbe Stichwort hoeren.
 # - meta: flush_handlers im Task-Teil fuehrt Handler sofort aus.
-[]

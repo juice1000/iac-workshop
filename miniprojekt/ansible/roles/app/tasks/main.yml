@@ -1,19 +1,40 @@
 ---
-# Phase 3: Rolle app
-# Ersetzt die leere Liste unten durch eure Tasks. Hilfe: ansible-doc <modulname>
+# Phase 3: Rolle app. Hilfe: ansible-doc <modulname>
 # Die Vorlagen in templates/ und der Handler in handlers/ sind schon fertig.
-#
-# 1. Paket python3-psycopg2 installieren (ansible.builtin.apt)
-# 2. Systembenutzer {{ app_user }} ohne Login-Shell und ohne Home anlegen
-#    (ansible.builtin.user)
-# 3. Verzeichnis {{ app_dir }} anlegen (ansible.builtin.file)
-# 4. Vorlage app.py.j2 nach {{ app_dir }}/app.py ausrollen (ansible.builtin.template)
-# 5. Vorlage app.env.j2 nach /etc/tlbg-app.env ausrollen,
-#    Besitzer root, Gruppe {{ app_user }}, Rechte 0640 (enthaelt das Passwort!)
-# 6. Vorlage tlbg-app.service.j2 nach /etc/systemd/system/tlbg-app.service ausrollen
-#    -> Schritte 4 bis 6 mit notify: Anwendung neu starten
-# 7. Dienst tlbg-app starten und aktivieren, vorher systemd neu laden
-#    (ansible.builtin.systemd_service mit daemon_reload: true)
+# Die ersten beiden Aufgaben sind als Beispiel fertig. Ergaenzt die Stellen mit TODO.
+- name: Python-Treiber fuer PostgreSQL installieren
+  ansible.builtin.apt:
+    name: python3-psycopg2
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Systembenutzer fuer die Anwendung anlegen
+  ansible.builtin.user:
+    name: "{{ app_user }}"
+    system: true
+    # TODO: keine Login-Shell (/usr/sbin/nologin) und kein Home-Verzeichnis
+
+- name: Anwendungsverzeichnis anlegen
+  ansible.builtin.file:
+    path: "{{ app_dir }}"
+    # TODO: state directory, Besitzer root, Gruppe root, Rechte 0755
+
+- name: Anwendung ausrollen
+  ansible.builtin.template:
+    src: app.py.j2
+    dest: "{{ app_dir }}/app.py"
+    # TODO: Besitzer root, Gruppe root, Rechte 0644
+  # TODO: notify "Anwendung neu starten"
+
+# TODO: Vorlage app.env.j2 nach /etc/tlbg-app.env
+#       Besitzer root, Gruppe {{ app_user }}, Rechte 0640 (enthaelt das Passwort!), notify wie oben
+
+# TODO: Vorlage tlbg-app.service.j2 nach /etc/systemd/system/tlbg-app.service, notify wie oben
+
+# TODO: Dienst tlbg-app starten und aktivieren, vorher systemd neu laden
+#       (ansible.builtin.systemd_service, daemon_reload: true)
+
 #
 # OPTIONAL / GUT ZU WISSEN
 # - Reihenfolge: erst Benutzer und Verzeichnis, dann Dateien, dann Dienst.
@@ -24,4 +45,3 @@
 # - Dienst haerten (systemd): NoNewPrivileges, ProtectSystem, PrivateTmp in der Service-Datei.
 # - Health-Check als eigene Aufgabe am Ende: Antwort muss "DB OK" enthalten (assert).
 # - delegate_to: localhost fuer Pruefungen vom Controller aus.
-[]
