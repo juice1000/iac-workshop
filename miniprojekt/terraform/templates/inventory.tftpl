@@ -1,7 +1,9 @@
 # Inventory: die Liste der Server, die Ansible verwaltet. Terraform erzeugt die Datei aus
 # dieser Vorlage, deshalb nicht von Hand aendern.
 # Pro Rolle eine Gruppe (hier app und db). Im Playbook waehlt "hosts: app" die Server der Gruppe.
-# Pro Zeile: Servername, dann ansible_host und ansible_port (wohin Ansible per SSH verbindet).
+# Pro Zeile: Servername, dann Variablen (name=wert, durch Leerzeichen getrennt), nur fuer diesen Server.
+# ansible_host und ansible_port sagen, wohin Ansible per SSH verbindet. Ansible liest diese Namen
+# selbst (SSH-Plugin), sie stehen in keinem Playbook. Siehe umgebung/templates/inventory.tftpl.
 %{ for rolle in rollen ~}
 [${rolle}]
 %{ for name, s in server ~}
@@ -13,6 +15,8 @@ ${knoten[name].name} ansible_host=127.0.0.1 ansible_port=${s.ssh_port}
 %{ endfor ~}
 # [all:vars]: Variablen fuer alle Server. Neben dem SSH-Zugang reicht Terraform hier
 # Werte an die Rollen weiter: Adresse der Datenbank, Netz, auf dem die App die DB erreicht, App-Port.
+# ansible_user und ansible_ssh_private_key_file liest Ansible selbst. db_host, app_netz und app_port
+# sind eigene Namen und wirken nur dort, wo eine Rolle sie mit doppelten geschweiften Klammern nutzt.
 [all:vars]
 ansible_user=root
 ansible_ssh_private_key_file=${key_path}
