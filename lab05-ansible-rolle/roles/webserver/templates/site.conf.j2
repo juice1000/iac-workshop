@@ -1,3 +1,6 @@
+{# Jinja2-Vorlage fuer die nginx-Konfiguration. {{ ansible_managed }} ist ein Hinweis, dass die Datei
+   von Ansible verwaltet wird. Der Port kommt aus der Variable, so reicht eine Aenderung im Playbook,
+   um die Konfiguration anzupassen. -#}
 # {{ ansible_managed }}
 server {
     listen {{ webserver_port }} default_server;
