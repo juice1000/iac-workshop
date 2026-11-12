@@ -1,5 +1,7 @@
 # Lab 3: Ansible-Grundlagen
 
+> Branch `practice-solved`: Die Lücken (`TODO`) sind hier schon ausgefüllt, inklusive der optionalen Beispiele. Zum Vergleichen mit der eigenen Lösung.
+
 ## Ziel
 
 Terraform hat die Server angelegt, jetzt konfiguriert Ansible sie. Ihr richtet auf zwei Servern einen Webserver ein und seht, was Ansible von einem Shell-Skript unterscheidet: Es beschreibt den Soll-Zustand und ändert nur, was abweicht (Idempotenz).
