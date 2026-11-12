@@ -33,7 +33,7 @@ Give the participants a solid basic understanding of Terraform and Ansible. This
 ## Constraints
 
 - No AI usage inside the training
-- The training runs in the GFU lab environment: a prepared Windows desktop reached via RDP (client or browser). What runs inside it (WSL, Docker, Linux VM) is not confirmed yet, see `07-open-points.md`
+- The training runs in the GFU lab environment: a prepared Windows desktop reached via RDP (client or browser). Result of the 2026-11-12 test: WSL2 with Ubuntu 24.04 and Docker work inside it, see `09-windows-wsl-setup.md`
 - Remote only
 
 ## Decision log

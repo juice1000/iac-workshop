@@ -63,7 +63,7 @@ All published ports bind to 127.0.0.1 only. `umgebung` and `miniprojekt` can run
 
 ## Requirements inside the GFU environment
 
-- Linux control node: WSL2 or a Linux VM (Ansible does not run natively on Windows)
+- Linux control node: WSL2 or a Linux VM (Ansible does not run natively on Windows). The GFU desktops use WSL2 with Ubuntu 24.04, set up by `setup-wsl.sh`, see `09-windows-wsl-setup.md`
 - Docker inside that Linux environment, user in group `docker`
 - Terraform >= 1.6, the full `ansible` package (needs `community.postgresql`), Git, Python 3, SSH client, VS Code
 - Internet: registry.terraform.io, github.com, Docker Hub (`ubuntu:24.04`), archive.ubuntu.com and security.ubuntu.com (apt inside the containers)

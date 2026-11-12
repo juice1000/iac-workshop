@@ -24,6 +24,7 @@ Idempotence is detected by grepping `changed=[1-9]` in the second run.
 | `scripts/gfu-reach.sh [host] [port]` | Reachability test for the RDP endpoint (DNS, TCP, answer to an RDP connection request). No credentials. Defaults to `rdp.gfu.cloud 44400` |
 | `scripts/check-start-branch.sh` | Checks `start`: based on `main`, differs only in README and the two role task files, tasks are `[]`, syntax check, fmt, validate |
 | `scripts/test-cleanup.sh` | Interrupts the dry run (SIGINT) during the mini project and checks that no containers or networks remain |
+| `setup-wsl.sh` (repo root) | Participant setup for Ubuntu on WSL2: installs Docker, Ansible, Terraform, adds the user to `docker`, runs `lab00-check`. Idempotent. Not run in CI (needs sudo, systemd), only linted with shellcheck. See `09-windows-wsl-setup.md` |
 | `scripts/dry-run-vm.sh` | Variant B (Linux VMs): runs labs 3, 5 and optionally the mini project against `INVENTORY` and `MINI_INVENTORY`. Needs SSH and sudo on the hosts |
 
 `lab00-check/check.sh` also checks Terraform >= 1.6, the `community.postgresql` collection, Docker Hub and the Ubuntu mirrors.
@@ -65,6 +66,6 @@ Local `ansible-lint` from Homebrew uses its own ansible-core and does not see th
 
 ## What is not tested
 
-- The GFU lab environment itself (see `07-open-points.md`)
+- `setup-wsl.sh` on a fresh Ubuntu (only its individual commands were run by hand on the GFU desktop, and a re-run on that machine)
 - Docker Desktop on Windows with WSL2 (cgroup v2): CI uses Docker on Ubuntu with cgroup v2, which is the closest proxy
 - The OpenStack example snippet in Notion page 2.5 (orientation only)

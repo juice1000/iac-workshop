@@ -42,7 +42,7 @@ jobs:
           done
 
       - name: shellcheck
-        run: shellcheck lab00-check/check.sh scripts/*.sh erste-schritte/*/rundgang.sh
+        run: shellcheck setup-wsl.sh lab00-check/check.sh scripts/*.sh erste-schritte/*/rundgang.sh
 
   dry-run:
     needs: lint

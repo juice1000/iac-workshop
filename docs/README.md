@@ -10,5 +10,6 @@ Context for working on this workshop with Claude Code. Start with `../CLAUDE.md`
 6. [Branches and workflow](06-branches-and-workflow.md): `main`, `start`, commits
 7. [Open points](07-open-points.md): what is still undecided or untested
 8. [Notion](08-notion.md): where the teaching material lives
+9. [Windows and WSL setup](09-windows-wsl-setup.md): participant desktop setup script and findings
 
-Status as of 2026-11-09: all labs written, CI green, `start` branch created, access test of the GFU lab environment pending.
+Status as of 2026-11-12: all labs written, CI green, `start` branch created, GFU desktop tested (WSL2 and Docker work), participant setup script `setup-wsl.sh` added.

@@ -14,6 +14,7 @@ Training repository for a 2-day Terraform and Ansible intro workshop (client TLB
 | `docs/06-branches-and-workflow.md` | `main` vs `start`, how to keep them in sync, commit conventions |
 | `docs/07-open-points.md` | What is still undecided or untested |
 | `docs/08-notion.md` | Where the teaching material lives in Notion and how it maps to this repo |
+| `docs/09-windows-wsl-setup.md` | Setting up the GFU Windows desktops with WSL2 (`setup-wsl.sh`), findings, quirks |
 
 ## Commands
 
@@ -22,7 +23,7 @@ bash lab00-check/check.sh        # tools and network check
 bash scripts/dry-run.sh          # full end-to-end run of all labs, cleans up after itself
 terraform fmt -recursive         # before every commit
 (cd <ansible-dir> && ansible-lint)
-shellcheck lab00-check/check.sh scripts/*.sh erste-schritte/*/rundgang.sh
+shellcheck setup-wsl.sh lab00-check/check.sh scripts/*.sh erste-schritte/*/rundgang.sh
 bash scripts/gfu-reach.sh        # RDP endpoint reachability
 bash scripts/check-start-branch.sh
 ```

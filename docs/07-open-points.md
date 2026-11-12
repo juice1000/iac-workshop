@@ -5,8 +5,11 @@ Status 2026-11-11. Workshop starts Thursday 12 November (moved by one day).
 ## Blocking
 
 - [ ] **Access test of the GFU lab environment.** RDP client and browser variants, from the teaching setup. Find out: is WSL or a Linux VM available, is Docker available, which tools are installed, admin rights, outbound internet (Terraform registry, GitHub, Docker Hub, Ubuntu mirrors), do desktops persist between day 1 and day 2, can the trainer prepare the desktop in advance, are trainer and participant accounts different from the test account
-- [ ] **Run `bash scripts/dry-run.sh` inside the GFU environment** once the access test passes
-- [ ] **Pick the variant** (A Docker, B VMs, C offline) based on the test, see `03-architecture.md`
+- [x] Access test done 2026-11-12 (trainer desktop, user `Dozent`). WSL2 and Docker work, all network endpoints reachable, see `09-windows-wsl-setup.md`
+- [~] **`bash scripts/dry-run.sh` inside the GFU environment**: run on the `start` branch, labs 0 to 5 pass, mini project fails there by design (empty role tasks). Still to do: run it from `main` to see `Miniprojekt OK`
+- [x] **Variant** A (Docker), no Linux VMs needed. Desktops are the same for all participants (confirmed by Julien)
+- [ ] **Fresh-machine test of `setup-wsl.sh`** (new Ubuntu instance or a second desktop), and a check that participants can run `wsl --install` (admin rights)
+- [ ] VS Code with the WSL extension (`code .` from Ubuntu), untested on the GFU desktop
 
 ## To clarify with GFU Technik
 

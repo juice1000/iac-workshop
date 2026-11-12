@@ -7,6 +7,39 @@
 - Linux-Umgebung (Linux-VM oder WSL unter Windows)
 - Terraform >= 1.6, Ansible, Git, Docker, Python 3, SSH-Client
 - Prüfen: `bash lab00-check/check.sh`
+- Windows-Rechner im Kurs: siehe "Rechner einrichten" unten
+
+## Rechner einrichten (Windows mit WSL)
+
+Auf den Kursrechnern läuft Windows. Ansible, Docker und die Labs laufen in Ubuntu
+unter WSL. Das richtet ihr einmal ein (etwa 10 Minuten).
+
+**1. PowerShell** (als Administrator öffnen: Startmenü, "PowerShell" rechtsklicken, "Als Administrator ausführen"):
+
+```powershell
+wsl --install -d Ubuntu-24.04
+```
+
+Ubuntu öffnet sich und fragt nach einem Benutzernamen und einem Passwort. Beides
+selbst wählen und merken, das Passwort braucht ihr gleich für `sudo`. Die Meldung
+zur "geschachtelten Virtualisierung" ist nur ein Hinweis und kann ignoriert werden.
+
+**2. In Ubuntu** (nicht in PowerShell) einfügen:
+
+```bash
+cd ~ && git clone -b start https://github.com/juice1000/iac-workshop.git && cd iac-workshop && bash setup-wsl.sh
+```
+
+Das Skript installiert Docker, Ansible und Terraform und prüft am Ende alles. Es
+fragt einmal nach dem Passwort. Am Ende steht `Ergebnis: 15 OK, 0 fehlend`.
+
+**3. Ubuntu-Fenster schließen und neu öffnen**, dann testen: `docker ps`
+(eine leere Tabelle ist richtig).
+
+Kommt eine Fehlermeldung? Skript einfach noch einmal starten, es ist gefahrlos
+wiederholbar. Hilft das nicht: Ausgabe kopieren und im Chat zeigen.
+
+Wichtig: Das Repository immer im Linux-Home (`~`) ablegen, nicht unter `/mnt/c`.
 
 ## Repository holen
 
