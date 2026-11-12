@@ -68,6 +68,40 @@ Wer wann welches Werkzeug nimmt:
 | Container: nginx ins Image bauen, mit Terraform starten (Image und Instanz, siehe `modules/linux-server/README.md`) | Dockerfile und Terraform |
 | Server, der lange läuft und verändert wird: Dienst einrichten und aktuell halten | Ansible |
 
+### Warum stehen in einer Zeile der `inventory.ini` mehrere Variablen?
+
+```ini
+server1 ansible_host=127.0.0.1 ansible_port=2211
+```
+
+Hinter dem Servernamen stehen Variablen (`name=wert`, durch Leerzeichen getrennt). Sie gelten nur für diesen Server.
+
+- `server1` ist der Name in Ansible (`inventory_hostname`).
+- `ansible_host` ist die Adresse, zu der Ansible sich verbindet. Ohne sie würde es den Namen `server1` auflösen.
+- `ansible_port` ist der SSH-Port. Alle Container laufen auf demselben Rechner, also braucht jeder einen eigenen Port.
+
+Was für alle Server gleich ist, steht einmal unter `[all:vars]` (nur für eine Gruppe: `[web:vars]`). Das sind hier `ansible_user` und `ansible_ssh_private_key_file`.
+
+### Welcher Befehl liest diese Variablen? Im Playbook steht kein Verweis darauf.
+
+Das passiert implizit. Das SSH-Plugin von Ansible liest sie, bevor eine Aufgabe läuft, und baut daraus den `ssh`-Aufruf:
+
+| Variable | wird zu |
+| --- | --- |
+| `ansible_host` | Ziel von `ssh` |
+| `ansible_port` | `-o Port=...` |
+| `ansible_user` | `-o User=...` |
+| `ansible_ssh_private_key_file` | `-o IdentityFile=...` |
+
+Die Namen sind fest vorgegeben. Ein Tippfehler wie `ansible_prot` wird still ignoriert, und Ansible nimmt Port 22. Eigene Variablen wie `web_port` oder `db_host` wirken dagegen nur dort, wo ihr sie mit `{{ name }}` selbst nutzt.
+
+Prüfen könnt ihr es so:
+
+```bash
+ansible-inventory --host server1      # alle Variablen des Servers
+ansible server1 -m ping -vvv          # zeigt den ssh-Aufruf mit Port, Schlüssel und Benutzer
+```
+
 ## Aufräumen
 
 Die Server bleiben für Lab 5 stehen. Zum Beenden: `terraform destroy` im Ordner `umgebung`.
