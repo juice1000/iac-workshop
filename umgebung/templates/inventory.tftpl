@@ -1,9 +1,15 @@
-# Erzeugt von Terraform (umgebung/). Nicht von Hand aendern.
+# Inventory: die Liste der Server, die Ansible verwaltet. Terraform erzeugt die Datei aus
+# dieser Vorlage, deshalb nicht von Hand aendern (sie wird beim naechsten apply ueberschrieben).
+# [web] ist eine Gruppe. Im Playbook waehlt "hosts: web" alle Server dieser Gruppe.
+# Pro Zeile: Name des Servers, dann Variablen. ansible_host und ansible_port sagen, wohin
+# Ansible per SSH verbindet. Die Container laufen lokal, jeder mit eigenem Port.
 [web]
 %{ for name, s in server ~}
 ${name} ansible_host=127.0.0.1 ansible_port=${s.ssh_port}
 %{ endfor ~}
 
+# [all:vars]: Variablen fuer alle Server. ansible_user ist der SSH-Benutzer,
+# ansible_ssh_private_key_file der Schluessel, den Terraform erzeugt hat.
 [all:vars]
 ansible_user=root
 ansible_ssh_private_key_file=${key_path}
