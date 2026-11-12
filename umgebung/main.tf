@@ -1,17 +1,6 @@
 # Uebungsumgebung fuer die Ansible-Labs an Tag 1:
 # zwei Linux-Server (Container mit systemd und SSH).
 
-variable "server" {
-  type = map(object({
-    ssh_port = number
-    ip       = string
-  }))
-  default = {
-    server1 = { ssh_port = 2211, ip = "172.31.0.11" }
-    server2 = { ssh_port = 2212, ip = "172.31.0.12" }
-  }
-}
-
 resource "tls_private_key" "lab" {
   algorithm = "ED25519"
 }
@@ -61,8 +50,4 @@ resource "local_file" "inventory" {
     server   = module.server
     key_path = abspath(local_sensitive_file.private_key.filename)
   })
-}
-
-output "server" {
-  value = { for name, s in module.server : name => "ssh -i ${local_sensitive_file.private_key.filename} -p ${s.ssh_port} root@127.0.0.1" }
 }
