@@ -12,32 +12,42 @@
 ## Rechner einrichten (Windows mit WSL)
 
 Auf den Kursrechnern läuft Windows. Ansible, Docker und die Labs laufen in Ubuntu
-unter WSL. Das richtet ihr einmal ein (etwa 10 Minuten).
+unter WSL. Das richtet ihr einmal ein (etwa 10 Minuten). Alle Befehle unten
+fügt ihr in **PowerShell** ein, als Administrator geöffnet (Startmenü, "PowerShell"
+rechtsklicken, "Als Administrator ausführen").
 
-**1. PowerShell** (als Administrator öffnen: Startmenü, "PowerShell" rechtsklicken, "Als Administrator ausführen"):
+**1. Ubuntu installieren**
 
 ```powershell
 wsl --install -d Ubuntu-24.04
 ```
 
 Ubuntu öffnet sich und fragt nach einem Benutzernamen und einem Passwort. Beides
-selbst wählen und merken, das Passwort braucht ihr gleich für `sudo`. Die Meldung
-zur "geschachtelten Virtualisierung" ist nur ein Hinweis und kann ignoriert werden.
+selbst wählen und merken, das Passwort braucht ihr gleich für `sudo`. Danach
+`exit` eingeben, ihr seid wieder in PowerShell. Die Meldung zur "geschachtelten
+Virtualisierung" ist nur ein Hinweis und kann ignoriert werden.
 
-**2. In Ubuntu** (nicht in PowerShell) einfügen:
+**2. Werkzeuge einrichten** (ebenfalls in PowerShell)
 
-```bash
-cd ~ && git clone -b start https://github.com/juice1000/iac-workshop.git && cd iac-workshop && bash setup-wsl.sh
+```powershell
+wsl -d Ubuntu-24.04 -- bash -lc "cd ~ && (test -d iac-workshop || git clone -q -b start https://github.com/juice1000/iac-workshop.git) && cd iac-workshop && git pull -q && bash setup-wsl.sh"
 ```
 
-Das Skript installiert Docker, Ansible und Terraform und prüft am Ende alles. Es
-fragt einmal nach dem Passwort. Am Ende steht `Ergebnis: 15 OK, 0 fehlend`.
+Das lädt das Repository ins Linux-Home, installiert Docker, Ansible und Terraform
+und prüft am Ende alles. Es fragt einmal nach dem Passwort aus Schritt 1. Am Ende
+steht `Ergebnis: 15 OK, 0 fehlend`.
 
-**3. Ubuntu-Fenster schließen und neu öffnen**, dann testen: `docker ps`
-(eine leere Tabelle ist richtig).
+**3. Testen**
 
-Kommt eine Fehlermeldung? Skript einfach noch einmal starten, es ist gefahrlos
-wiederholbar. Hilft das nicht: Ausgabe kopieren und im Chat zeigen.
+```powershell
+wsl -d Ubuntu-24.04
+```
+
+In Ubuntu dann `docker ps` (eine leere Tabelle ist richtig) und
+`cd ~/iac-workshop`. Dort arbeitet ihr im Kurs.
+
+Kommt eine Fehlermeldung? Schritt 2 einfach noch einmal ausführen, er ist
+gefahrlos wiederholbar. Hilft das nicht: Ausgabe kopieren und im Chat zeigen.
 
 Wichtig: Das Repository immer im Linux-Home (`~`) ablegen, nicht unter `/mnt/c`.
 

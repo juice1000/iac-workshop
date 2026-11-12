@@ -3,7 +3,8 @@
 # Installiert Docker, Ansible und Terraform und prueft am Ende alles mit lab00-check.
 # Mehrfaches Ausfuehren ist ungefaehrlich: was schon da ist, wird uebersprungen.
 #
-# Aufruf im Ordner des Repositorys (in Ubuntu, nicht in PowerShell):
+# Normalerweise startet ihr es aus PowerShell (siehe README, "Rechner einrichten").
+# Direkt in Ubuntu im Ordner des Repositorys geht auch:
 #   bash setup-wsl.sh
 set -euo pipefail
 
@@ -48,7 +49,7 @@ if [ "$(ps -p 1 -o comm= 2>/dev/null | tr -d ' ')" != "systemd" ]; then
   printf '[boot]\nsystemd=true\n' | sudo tee /etc/wsl.conf >/dev/null
   printf '\nsystemd ist jetzt aktiviert, aber Ubuntu muss einmal neu starten.\n'
   printf 'Bitte in PowerShell ausfuehren:  wsl --shutdown\n'
-  printf 'Danach Ubuntu neu oeffnen und dieses Skript noch einmal starten.\n'
+  printf 'Danach den Einrichtungsbefehl aus dem README (Schritt 2) noch einmal ausfuehren.\n'
   exit 1
 fi
 echo "systemd laeuft, Ordner ist $PWD"
@@ -106,5 +107,5 @@ if [ "$RC" -ne 0 ]; then
 fi
 
 printf '\n===== Fertig.\n'
-echo "Ubuntu-Fenster bitte einmal schliessen und neu oeffnen, dann gilt die Gruppe docker."
-echo "Test im neuen Fenster: docker ps    (leere Tabelle ist richtig, kein sudo noetig)"
+echo "Jetzt Ubuntu in einem neuen Fenster starten (PowerShell: wsl -d Ubuntu-24.04), dann gilt die Gruppe docker."
+echo "Test dort: docker ps    (leere Tabelle ist richtig, kein sudo noetig)"

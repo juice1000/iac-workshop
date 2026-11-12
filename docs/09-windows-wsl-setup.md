@@ -14,11 +14,13 @@ The GFU lab desktops run Windows (German UI). Participants work in Ubuntu 24.04 
 
 ## What participants do
 
-1. PowerShell as administrator: `wsl --install -d Ubuntu-24.04`, then choose a Unix user and password
-2. In Ubuntu: `cd ~ && git clone -b start https://github.com/juice1000/iac-workshop.git && cd iac-workshop && bash setup-wsl.sh`
-3. Close and reopen Ubuntu (docker group), check with `docker ps`
+The entry point is PowerShell (as administrator), participants never have to type into Ubuntu except for `docker ps`:
 
-The same text is in the README (German). If the repo already exists: `cd ~/iac-workshop && git pull && bash setup-wsl.sh`.
+1. `wsl --install -d Ubuntu-24.04`, choose a Unix user and password, type `exit`
+2. `wsl -d Ubuntu-24.04 -- bash -lc "cd ~ && (test -d iac-workshop || git clone -q -b start <repo>) && cd iac-workshop && git pull -q && bash setup-wsl.sh"` (exact command in the README). Safe to repeat
+3. `wsl -d Ubuntu-24.04` in a new window, `docker ps`
+
+The bash script stays because Docker, Ansible and Terraform live inside Ubuntu. Step 2 runs it from PowerShell via `wsl --`. The `wsl -d ... -- bash -lc` form is not tested on a fresh desktop yet.
 
 ## What the script does
 
