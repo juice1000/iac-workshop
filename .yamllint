@@ -1,0 +1,14 @@
+---
+# Gleiche Grenzen wie ansible-lint (dort sind 160 Zeichen pro Zeile Standard),
+# damit Editor, ansible-lint und CI dasselbe melden.
+extends: default
+rules:
+  line-length:
+    max: 160
+  comments:
+    min-spaces-from-content: 2
+  truthy:
+    allowed-values: ["true", "false"]
+  # TODO- und Hinweis-Kommentare stehen bewusst auf der Einrueckung des Codes, der spaeter folgt,
+  # oft direkt vor einer kleineren Einrueckung. Die Regel wuerde das immer melden.
+  comments-indentation: disable

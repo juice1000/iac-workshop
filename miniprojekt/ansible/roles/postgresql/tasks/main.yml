@@ -1,18 +1,48 @@
 ---
-# Phase 2: Rolle postgresql
-# Ersetzt die leere Liste unten durch eure Tasks. Hilfe: ansible-doc <modulname>
-#
-# 1. Pakete postgresql und python3-psycopg2 installieren (ansible.builtin.apt)
-# 2. In {{ postgresql_conf_dir }}/postgresql.conf die Zeile
-#    listen_addresses = '*' setzen (ansible.builtin.lineinfile)
-#    -> danach muss PostgreSQL neu starten (notify: PostgreSQL neu starten)
-# 3. In {{ postgresql_conf_dir }}/pg_hba.conf nur {{ db_user }} auf {{ db_name }}
-#    aus dem Netz {{ postgresql_erlaubtes_netz }} mit scram-sha-256 erlauben
-#    (community.postgresql.postgresql_pg_hba), ebenfalls mit notify
-# 4. Dienst postgresql starten und beim Booten aktivieren (ansible.builtin.service)
-# 5. Datenbankbenutzer {{ db_user }} mit Passwort {{ db_password }} anlegen
-#    (community.postgresql.postgresql_user, als Benutzer postgres:
-#    become: true und become_user: postgres, no_log: true)
-# 6. Datenbank {{ db_name }} mit Besitzer {{ db_user }} anlegen
-#    (community.postgresql.postgresql_db, ebenfalls als postgres)
-[]
+# Phase 2: Rolle postgresql. Hilfe: ansible-doc <modulname>
+# Die erste Aufgabe ist als Beispiel fertig. Ergaenzt die Stellen mit TODO.
+- name: PostgreSQL und Python-Treiber installieren
+  ansible.builtin.apt:
+    name:
+      - postgresql
+      - python3-psycopg2
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+# lineinfile: stellt sicher, dass eine Zeile in einer Datei so steht. regexp findet die alte Zeile,
+#             line ersetzt sie. Wozu: einzelne Einstellung aendern, ohne die ganze Datei zu besitzen.
+- name: Auf allen Netzwerkschnittstellen lauschen
+  ansible.builtin.lineinfile:
+    path: "{{ postgresql_conf_dir }}/postgresql.conf"
+    regexp: "^#?listen_addresses"
+    # TODO: line "listen_addresses = '*'"
+  notify: PostgreSQL neu starten
+
+# pg_hba.conf: Zugriffsregeln von PostgreSQL (wer darf von wo auf welche Datenbank mit welcher
+# Anmeldung). Das Modul postgresql_pg_hba pflegt einzelne Zeilen. Wozu: die Datenbank nur dem
+# Anwendungsnetz oeffnen, nicht der ganzen Welt.
+- name: Zugriff nur aus dem Anwendungsnetz erlauben
+  community.postgresql.postgresql_pg_hba:
+    dest: "{{ postgresql_conf_dir }}/pg_hba.conf"
+    contype: host
+    # TODO: databases {{ db_name }}, users {{ db_user }}
+    # TODO: address {{ postgresql_erlaubtes_netz }}, method scram-sha-256
+  notify: PostgreSQL neu starten
+# Die pg_hba.conf wird von oben nach unten gelesen, die erste passende Zeile gilt.
+# listen_addresses braucht einen Neustart, pg_hba.conf nur ein Reload.
+
+# TODO: Dienst postgresql starten und beim Booten aktivieren (ansible.builtin.service)
+
+# become_user: postgres fuehrt die Aufgabe als Datenbank-Administrator aus (sudo -u postgres).
+# no_log: true unterdrueckt die Ausgabe der Aufgabe, damit das Passwort nicht im Log landet.
+# Die Module postgresql_user und postgresql_db sind idempotent: sie legen nur an, was fehlt.
+- name: Datenbankbenutzer anlegen
+  community.postgresql.postgresql_user:
+    name: "{{ db_user }}"
+    # TODO: password {{ db_password }}
+  # TODO: als Benutzer postgres ausfuehren (become und become_user)
+  # TODO: das Passwort darf nicht im Log erscheinen (no_log)
+
+# TODO: Datenbank {{ db_name }} mit Besitzer {{ db_user }} anlegen
+#       (community.postgresql.postgresql_db, ebenfalls als Benutzer postgres)

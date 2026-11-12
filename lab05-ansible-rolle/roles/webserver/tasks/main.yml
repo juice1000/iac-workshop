@@ -8,6 +8,8 @@
 #   meta/main.yml      Metadaten und Abhaengigkeiten (optional)
 # Wozu: dieselbe Einrichtung in mehreren Projekten nutzen. Das Playbook (site.yml) ruft nur noch
 #       die Rolle auf. Variablen der Rolle beginnen mit dem Rollennamen (webserver_...).
+# Lab 5: die Aufgaben aus Lab 3 als Rolle
+# Die Vorlagen liegen in templates/ (ohne Pfadpraefix), die Variablen heissen webserver_*.
 - name: Nginx installieren
   ansible.builtin.apt:
     name: nginx
@@ -18,22 +20,13 @@
 - name: Startseite aus Vorlage erzeugen
   ansible.builtin.template:
     src: index.html.j2
-    dest: /var/www/html/index.html
-    owner: root
-    group: root
-    mode: "0644"
+    # TODO: dest /var/www/html/index.html, Besitzer root, Gruppe root, Rechte 0644
 
 - name: Nginx-Konfiguration aus Vorlage erzeugen
   ansible.builtin.template:
     src: site.conf.j2
-    dest: /etc/nginx/sites-available/default
-    owner: root
-    group: root
-    mode: "0644"
-  notify: Nginx neu laden
+    # TODO: dest /etc/nginx/sites-available/default, Besitzer root, Gruppe root, Rechte 0644
+  # TODO: notify "Nginx neu laden"
 
-- name: Nginx laeuft und startet beim Booten
-  ansible.builtin.service:
-    name: nginx
-    state: started
-    enabled: true
+# TODO: Task "Nginx laeuft und startet beim Booten"
+#       (ansible.builtin.service: name nginx, state started, enabled true)

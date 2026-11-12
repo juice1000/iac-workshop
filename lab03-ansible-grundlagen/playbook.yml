@@ -1,7 +1,9 @@
 ---
-# Lab 3: Webserver einrichten (Paket, Datei aus Vorlage, Dienst, Handler)
+# Lab 3: Webserver einrichten
+# Ziel: nginx auf der Gruppe web, Startseite und Konfiguration aus den Vorlagen in templates/
 # PLAY
 # Was: ein Abschnitt im Playbook. Er sagt, AUF WELCHEN Servern (hosts) WAS (tasks) passieren soll.
+#      Ein Playbook ist eine Liste von Plays. Die Datei ist YAML, Einrueckung zaehlt.
 # hosts:  Gruppe aus dem Inventory (hier web).
 # become: true = mit sudo ausfuehren. Wozu: Pakete installieren braucht Root-Rechte.
 - name: Webserver einrichten
@@ -9,6 +11,7 @@
   become: true
 
   # vars: Variablen fuer dieses Play, nutzbar mit {{ name }} in Aufgaben und Vorlagen.
+  #       Mit -e web_port=8081 auf der Kommandozeile ueberschreibbar (hat Vorrang).
   vars:
     web_port: 80
     begruessung: "Hallo TLBG"
@@ -19,6 +22,7 @@
   # Hilfe zu jedem Modul: ansible-doc ansible.builtin.apt
   tasks:
     # apt: installiert Pakete (Debian/Ubuntu). state: present = soll vorhanden sein.
+    #      cache_valid_time: Paketliste nur aktualisieren, wenn sie aelter als eine Stunde ist.
     - name: Nginx installieren
       ansible.builtin.apt:
         name: nginx
@@ -27,37 +31,38 @@
         cache_valid_time: 3600
 
     # template: rendert eine Jinja2-Vorlage (*.j2) auf dem Controller und legt das Ergebnis auf dem Server ab.
+    #           Wozu: Konfigurationsdateien mit Variablen. Unterschied zu copy: copy kopiert 1:1.
+    #           owner, group, mode setzen Besitzer und Rechte.
     - name: Startseite aus Vorlage erzeugen
       ansible.builtin.template:
         src: templates/index.html.j2
-        dest: /var/www/html/index.html
+        # TODO: dest /var/www/html/index.html
         owner: root
         group: root
-        mode: "0644"
+        # TODO: mode "0644"
 
     # notify: loest einen Handler aus, aber nur, wenn diese Aufgabe etwas geaendert hat.
     - name: Nginx-Konfiguration aus Vorlage erzeugen
       ansible.builtin.template:
-        src: templates/site.conf.j2
-        dest: /etc/nginx/sites-available/default
+        # TODO: src templates/site.conf.j2, dest /etc/nginx/sites-available/default
         owner: root
         group: root
         mode: "0644"
-      notify: Nginx neu laden
+      # TODO: notify auf den Handler "Nginx neu laden"
 
     # service: steuert Dienste. state: started = soll laufen, enabled: true = startet beim Booten.
     - name: Nginx laeuft und startet beim Booten
       ansible.builtin.service:
         name: nginx
-        state: started
-        enabled: true
+        # TODO: state started, enabled true
 
   # handlers: Aufgaben, die nur auf notify hin laufen, einmal am Ende des Plays, auch bei mehreren notify.
+  #           Wozu: Dienst nur neu laden, wenn sich die Konfiguration wirklich geaendert hat.
   handlers:
     - name: Nginx neu laden
       ansible.builtin.service:
         name: nginx
-        state: reloaded
+        # TODO: state reloaded
 
 # Zweites Play: Pruefung nach der Einrichtung. Ein Playbook kann mehrere Plays haben, auch fuer
 # andere Hosts.
@@ -75,8 +80,6 @@
       register: seite
       when: not ansible_check_mode
 
-    - name: Inhalt pruefen
-      ansible.builtin.assert:
-        that: inventory_hostname in seite.content
-        success_msg: "Webserver auf {{ inventory_hostname }} antwortet"
-      when: not ansible_check_mode
+    # TODO: Task mit ansible.builtin.assert: that: der Hostname (inventory_hostname)
+    #       steht im Inhalt der Seite (seite.content). success_msg frei waehlen.
+    #       Ebenfalls nur ausfuehren, wenn nicht ansible_check_mode.
