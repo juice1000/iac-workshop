@@ -27,6 +27,12 @@ variable "server" {
   }
 }
 
+# BLOCK module "NAME" { }
+# Was: ruft ein anderes Terraform-Verzeichnis (ein Modul) auf und gibt ihm Eingaben (die Variablen
+#      des Moduls). source sagt, wo das Modul liegt (Pfad, Registry, Git).
+# Wozu: Wiederverwendung. Was man mehrfach braucht, schreibt man einmal als Modul. Ein Modul hat
+#       Variablen als Eingang, Outputs als Ausgang und kapselt alles dazwischen.
+# Mit for_each oder count entsteht pro Eintrag eine Modulinstanz: module.server_info["app1"].
 module "server_info" {
   source   = "./modules/server-info"
   for_each = var.server
@@ -38,6 +44,8 @@ module "server_info" {
   ausgabe_ordner = "${path.module}/out"
 }
 
+# Outputs des Moduls: das Root-Modul liest sie ueber module.<name>.<output>. Alles andere im Modul
+# ist von aussen nicht sichtbar.
 output "dateien" {
   value = { for name, m in module.server_info : name => m.datei }
 }

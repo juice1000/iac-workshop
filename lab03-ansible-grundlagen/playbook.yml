@@ -1,14 +1,24 @@
 ---
 # Lab 3: Webserver einrichten (Paket, Datei aus Vorlage, Dienst, Handler)
+# PLAY
+# Was: ein Abschnitt im Playbook. Er sagt, AUF WELCHEN Servern (hosts) WAS (tasks) passieren soll.
+# hosts:  Gruppe aus dem Inventory (hier web).
+# become: true = mit sudo ausfuehren. Wozu: Pakete installieren braucht Root-Rechte.
 - name: Webserver einrichten
   hosts: web
   become: true
 
+  # vars: Variablen fuer dieses Play, nutzbar mit {{ name }} in Aufgaben und Vorlagen.
   vars:
     web_port: 80
     begruessung: "Hallo TLBG"
 
+  # tasks: die Aufgaben, die der Reihe nach laufen. Jede Aufgabe ruft ein Modul auf.
+  # Ein Modul ist ein fertiger Baustein (apt, template, service ...) mit eigenen Parametern.
+  # Module sind idempotent: sie pruefen den Ist-Zustand und aendern nur, wenn er abweicht.
+  # Hilfe zu jedem Modul: ansible-doc ansible.builtin.apt
   tasks:
+    # apt: installiert Pakete (Debian/Ubuntu). state: present = soll vorhanden sein.
     - name: Nginx installieren
       ansible.builtin.apt:
         name: nginx
@@ -16,6 +26,7 @@
         update_cache: true
         cache_valid_time: 3600
 
+    # template: rendert eine Jinja2-Vorlage (*.j2) auf dem Controller und legt das Ergebnis auf dem Server ab.
     - name: Startseite aus Vorlage erzeugen
       ansible.builtin.template:
         src: templates/index.html.j2
@@ -24,6 +35,7 @@
         group: root
         mode: "0644"
 
+    # notify: loest einen Handler aus, aber nur, wenn diese Aufgabe etwas geaendert hat.
     - name: Nginx-Konfiguration aus Vorlage erzeugen
       ansible.builtin.template:
         src: templates/site.conf.j2
@@ -33,18 +45,25 @@
         mode: "0644"
       notify: Nginx neu laden
 
+    # service: steuert Dienste. state: started = soll laufen, enabled: true = startet beim Booten.
     - name: Nginx laeuft und startet beim Booten
       ansible.builtin.service:
         name: nginx
         state: started
         enabled: true
 
+  # handlers: Aufgaben, die nur auf notify hin laufen, einmal am Ende des Plays, auch bei mehreren notify.
   handlers:
     - name: Nginx neu laden
       ansible.builtin.service:
         name: nginx
         state: reloaded
 
+# Zweites Play: Pruefung nach der Einrichtung. Ein Playbook kann mehrere Plays haben, auch fuer
+# andere Hosts.
+# register: speichert das Ergebnis einer Aufgabe in einer Variable (hier seite).
+# when:     fuehrt die Aufgabe nur aus, wenn die Bedingung stimmt.
+# uri:      ruft eine URL auf. assert: bricht mit Fehler ab, wenn die Bedingung nicht stimmt.
 - name: Ergebnis pruefen
   hosts: web
   # Im Check-Modus aendert sich nichts, also gibt es auch nichts zu pruefen

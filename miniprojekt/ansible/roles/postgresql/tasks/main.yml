@@ -8,6 +8,8 @@
     update_cache: true
     cache_valid_time: 3600
 
+# lineinfile: stellt sicher, dass eine Zeile in einer Datei so steht. regexp findet die alte Zeile,
+#             line ersetzt sie. Wozu: einzelne Einstellung aendern, ohne die ganze Datei zu besitzen.
 - name: Auf allen Netzwerkschnittstellen lauschen
   ansible.builtin.lineinfile:
     path: "{{ postgresql_conf_dir }}/postgresql.conf"
@@ -15,6 +17,9 @@
     line: "listen_addresses = '*'"
   notify: PostgreSQL neu starten
 
+# pg_hba.conf: Zugriffsregeln von PostgreSQL (wer darf von wo auf welche Datenbank mit welcher
+# Anmeldung). Das Modul postgresql_pg_hba pflegt einzelne Zeilen. Wozu: die Datenbank nur dem
+# Anwendungsnetz oeffnen, nicht der ganzen Welt.
 - name: Zugriff nur aus dem Anwendungsnetz erlauben
   community.postgresql.postgresql_pg_hba:
     dest: "{{ postgresql_conf_dir }}/pg_hba.conf"
@@ -25,12 +30,17 @@
     method: scram-sha-256
   notify: PostgreSQL neu starten
 
+# Die pg_hba.conf wird von oben nach unten gelesen, die erste passende Zeile gilt.
+# listen_addresses braucht einen Neustart, pg_hba.conf nur ein Reload.
 - name: PostgreSQL laeuft und startet beim Booten
   ansible.builtin.service:
     name: postgresql
     state: started
     enabled: true
 
+# become_user: postgres fuehrt die Aufgabe als Datenbank-Administrator aus (sudo -u postgres).
+# no_log: true unterdrueckt die Ausgabe der Aufgabe, damit das Passwort nicht im Log landet.
+# Die Module postgresql_user und postgresql_db sind idempotent: sie legen nur an, was fehlt.
 - name: Datenbankbenutzer anlegen
   community.postgresql.postgresql_user:
     name: "{{ db_user }}"

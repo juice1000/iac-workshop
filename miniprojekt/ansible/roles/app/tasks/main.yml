@@ -6,6 +6,8 @@
     update_cache: true
     cache_valid_time: 3600
 
+# user: legt Benutzer an. system: true = Systemkonto. Wozu: die Anwendung laeuft mit eigenen,
+#       minimalen Rechten (keine Shell, kein Home) statt als root.
 - name: Systembenutzer fuer die Anwendung anlegen
   ansible.builtin.user:
     name: "{{ app_user }}"
@@ -13,6 +15,7 @@
     shell: /usr/sbin/nologin
     create_home: false
 
+# file: legt Dateien, Verzeichnisse oder Links an, setzt Rechte. state: directory = Verzeichnis.
 - name: Anwendungsverzeichnis anlegen
   ansible.builtin.file:
     path: "{{ app_dir }}"
@@ -21,6 +24,7 @@
     group: root
     mode: "0755"
 
+# Die Anwendung kommt per Vorlage aufs Ziel. notify startet sie neu, wenn sich die Datei geaendert hat.
 - name: Anwendung ausrollen
   ansible.builtin.template:
     src: app.py.j2
@@ -48,6 +52,8 @@
     mode: "0644"
   notify: Anwendung neu starten
 
+# systemd_service: steuert Dienste mit systemd. daemon_reload liest die Dienstdateien neu ein,
+# das ist noetig, nachdem tlbg-app.service neu angelegt oder geaendert wurde.
 - name: Anwendung laeuft und startet beim Booten
   ansible.builtin.systemd_service:
     name: tlbg-app

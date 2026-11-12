@@ -1,3 +1,5 @@
+# Die Variablen sind die Eingabe-Schnittstelle des Moduls. Ohne default sind sie Pflicht:
+# Der Aufrufer muss sie setzen, sonst bricht terraform plan ab.
 variable "name" {
   type = string
 }
