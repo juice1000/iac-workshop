@@ -1,9 +1,15 @@
 ---
 # Lab 5: dasselbe wie Lab 3, aber als wiederverwendbare Rolle
+# Das Playbook sagt nur noch WO (hosts) und WELCHE Rolle. Das WIE steht in roles/webserver/.
 - name: Webserver einrichten
+  # Gruppe web aus dem Inventory. ansible.cfg verweist auf die inventory.ini von Lab 3, es sind also
+  # dieselben Server wie dort (Terraform aus umgebung/ hat sie angelegt).
   hosts: web
   become: true
   roles:
+    # Ansible sucht roles/webserver (roles_path in ansible.cfg) und fuehrt tasks/main.yml aus.
     - role: webserver
+      # vars: ueberschreibt die Werte aus roles/webserver/defaults/main.yml. Was hier nicht steht,
+      # bleibt beim Standardwert (webserver_port: 80).
       vars:
         webserver_begruessung: "Hallo aus der Rolle"
