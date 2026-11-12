@@ -10,16 +10,17 @@
 | Branch | Audience | Content |
 | --- | --- | --- |
 | `main` | Trainer | Complete solution, docs, CI |
-| `start` | Participants | `main` minus the mini project role tasks (empty list with the tasks as comments), minus the trainer docs (`docs/`, `CLAUDE.md`), plus a note in the README |
+| `start` | Participants | `main` with gaps to fill in (`TODO` comments) in every lab block and in the mini project role tasks, without the trainer docs (`docs/`, `CLAUDE.md`), plus a note in the README |
 
 Participants clone with `git clone -b start https://github.com/juice1000/iac-workshop.git`. After the mini project they can compare with `git fetch origin main && git diff start origin/main -- miniprojekt/`.
 
-`start` consists of `main` plus one commit ("Startversion: leere Rollen-Tasks im Miniprojekt") that:
+`start` is `main` plus commits that:
 
-- replaces `miniprojekt/ansible/roles/postgresql/tasks/main.yml` with commented task descriptions and `[]`
-- replaces `miniprojekt/ansible/roles/app/tasks/main.yml` the same way
-- adds a note at the top of `README.md`
-- deletes the trainer docs `docs/` and `CLAUDE.md`
+- turn the lab files into exercises: the block explanations (what, why) stay, one or more pieces per block are replaced by a `TODO` comment (same layout as the `practice` branch, without the optional extras)
+- add `.yamllint` and a note at the top of `README.md`
+- delete the trainer docs `docs/` and `CLAUDE.md`
+
+The exercise files are listed in `scripts/check-start-branch.sh`. Related branches for the trainer: `practice` (the same gaps plus optional extras as comments) and `practice-solved` (everything filled in).
 
 ## Keeping start in sync
 
@@ -27,13 +28,15 @@ After every change on `main`:
 
 ```bash
 git checkout start
-git rebase main
-# resolve conflicts if the two task files or the README top changed on main
-git push --force-with-lease origin start
+git merge main
+# conflicts happen when main changes one of the exercise files: keep the gaps (TODO), take the new text
+git push origin start
 git checkout main
 ```
 
-The start commit also deletes `docs/` and `CLAUDE.md`. If a rebase brings back new files under `docs/`, remove them again (`git rm -r docs` and amend). `bash scripts/check-start-branch.sh` verifies the branch.
+Use merge, not rebase: participants may already have cloned `start`, so do not rewrite its history.
+
+`start` has no `docs/` and no `CLAUDE.md`. If a merge brings back new files under `docs/`, remove them again (`git rm -r docs` and commit). `bash scripts/check-start-branch.sh` verifies the branch.
 
 ## Commits
 
