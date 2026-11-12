@@ -49,7 +49,7 @@
     group: "{{ app_user }}"
     mode: "0640"
   notify: Anwendung neu starten
-  no_log: true # die Datei enthaelt das Passwort
+  no_log: true  # die Datei enthaelt das Passwort
 # OPTIONAL: Datei nicht im Log zeigen (in die Aufgabe schreiben)
 # Aktiv: no_log steht oben bei der Aufgabe.
 

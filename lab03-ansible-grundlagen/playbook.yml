@@ -131,7 +131,7 @@
       ansible.builtin.command: nginx -v
       register: nginx_version
       changed_when: false
-      check_mode: false # lesender Befehl, laeuft auch im Check-Modus
+      check_mode: false  # lesender Befehl, laeuft auch im Check-Modus
 
     - name: Version anzeigen
       ansible.builtin.debug:
@@ -158,14 +158,14 @@
       ansible.builtin.wait_for:
         port: "{{ web_port }}"
         timeout: 30
-      when: not ansible_check_mode # im Check-Modus lauscht nginx noch nicht auf dem neuen Port
+      when: not ansible_check_mode  # im Check-Modus lauscht nginx noch nicht auf dem neuen Port
       # OPTIONAL: Passwoerter nicht ins Log schreiben (in die Aufgabe schreiben)
       # [NICHT AKTIV] no_log: true versteckt auch Fehlermeldungen. Nur fuer Aufgaben mit Geheimnissen (siehe Miniprojekt).
     # OPTIONAL: Aufgabe nur einmal und auf dem eigenen Rechner ausfuehren
     - name: Zeitstempel auf dem eigenen Rechner
       ansible.builtin.command: date
       delegate_to: localhost
-      become: false # auf dem eigenen Rechner kein sudo
+      become: false  # auf dem eigenen Rechner kein sudo
       # run_once: true # [NICHT AKTIV] ansible-lint warnt davor (anderes Verhalten bei strategy: free)
       changed_when: false
 

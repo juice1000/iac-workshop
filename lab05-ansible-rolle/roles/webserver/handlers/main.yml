@@ -8,7 +8,7 @@
   ansible.builtin.service:
     name: nginx
     state: reloaded
-# OPTIONAL: mehrere Handler auf dasselbe Stichwort (in den Handler schreiben)
+  # OPTIONAL: mehrere Handler auf dasselbe Stichwort (in den Handler schreiben)
   listen: "web neu laden"
 # OPTIONAL: Handler sofort ausfuehren, in tasks/main.yml:
 # Aktiv: meta: flush_handlers steht in tasks/main.yml nach dem Start des Dienstes.
