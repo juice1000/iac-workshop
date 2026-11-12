@@ -12,6 +12,20 @@ Die Ansible-Labs brauchen Server. Hier baut Terraform sie als Docker-Container m
 - ein SSH-Schlüssel
 - `lab03-ansible-grundlagen/inventory.ini` mit der Gruppe `web`: Terraform übergibt die Server an Ansible
 
+## Aufbau
+
+Dieselbe Trennung wie in Lab 2:
+
+| Datei | Inhalt |
+| --- | --- |
+| `versions.tf` | Terraform-Version, Provider (docker, tls, local), Docker-Anbindung |
+| `variables.tf` | Eingabe `server`: Name, SSH-Port und IP der Server |
+| `main.tf` | Schlüssel, Image, Netz, Server (Modul `../modules/linux-server`), Inventory |
+| `outputs.tf` | SSH-Befehl pro Server |
+| `templates/inventory.tftpl` | Vorlage für das Ansible-Inventory |
+
+Wollt ihr einen dritten Server, ergänzt ihr in `variables.tf` einen Eintrag mit freiem Port und freier IP im Netz `172.31.0.0/24`. Alles andere ergibt sich daraus.
+
 ## Ausführen
 
 ```bash
