@@ -34,7 +34,7 @@ Do not use plain `ansible-doc -l` without a collection name: with ansible 14.6 /
 
 ## umgebung
 
-Terraform root that builds the image, network `tlbg-umgebung` and two servers `server1`, `server2` via `modules/linux-server`, plus the inventory for lab 3 (group `[web]`). Run at 14:55 on day 1, keep running for lab 5.
+Terraform root (split like lab 2: `versions.tf`, `variables.tf`, `main.tf`, `outputs.tf`) that builds the image, network `tlbg-umgebung` and two servers `server1`, `server2` via `modules/linux-server`, plus the inventory for lab 3 (group `[web]`). Run at 14:55 on day 1, keep running for lab 5.
 
 ## lab03-ansible-grundlagen
 
