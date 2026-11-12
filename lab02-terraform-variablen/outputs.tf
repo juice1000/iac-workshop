@@ -1,4 +1,9 @@
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: terraform output -raw und -json, precondition am Output.
 
 # BLOCK output "NAME" { }
 # Was: Wert, den Terraform nach apply anzeigt (terraform output) und nach aussen weitergibt.

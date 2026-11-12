@@ -1,6 +1,12 @@
 # Lab 4: Lab 2 als Modul (Uebung)
 # Das Root-Modul ruft das Modul in modules/server-info pro Server auf.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: andere Modulquellen, count als Bedingung, zweiter Modulaufruf, moved
+#   ins Modul, precondition, check, Befehle.
 
 # TODO: terraform-Block mit required_version >= 1.6 und dem Provider local (~> 2.5)
 
@@ -20,7 +26,7 @@ module "server_info" {
   # TODO: Eingaben name, rolle, port aus each.key / each.value
   # TODO: prefix wie in Lab 2, ausgabe_ordner = out/ im Ordner des Moduls
 }
-# Modulquellen: lokaler Pfad (./modules/...), Terraform Registry (mit version) oder Git (mit ?ref=).
+# [OPTIONAL] Modulquellen: lokaler Pfad (./modules/...), Terraform Registry (mit version) oder Git (mit ?ref=).
 # Mit version bzw. ref pinnt man den Stand, damit Aenderungen am Modul nicht ungeplant wirken.
 # OPTIONAL: andere Modulquellen (Zeile "source" ersetzen)
 #   source  = "terraform-aws-modules/vpc/aws"      # Registry

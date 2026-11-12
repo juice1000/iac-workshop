@@ -1,4 +1,9 @@
 ---
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: listen, flush_handlers.
 # handlers/main.yml: Handler der Rolle. Sie laufen nur, wenn eine Aufgabe sie per notify ruft, und
 # einmal am Ende. Wozu: Dienst nur neu laden, wenn sich die Konfiguration geaendert hat.
 - name: Nginx neu laden

@@ -2,6 +2,13 @@
 # Ziel: out/hallo.txt mit "Hallo Terraform! Servername: <zufaelliger Name>"
 # Ergaenzt die Stellen mit TODO.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: backend (gemeinsamer State), zweiter Provider time, provider mit
+#   alias, weitere Argumente von random_pet und local_file, depends_on, lifecycle, data und
+#   output, terraform_data, time_static, nuetzliche Befehle.
 
 # BLOCK terraform { }
 # Was: Einstellungen fuer Terraform selbst, kein Teil der Infrastruktur.
@@ -12,7 +19,7 @@
 # TODO: terraform-Block mit required_version >= 1.6 und required_providers
 #       random (hashicorp/random, ~> 3.6) und local (hashicorp/local, ~> 2.5)
 
-# BLOCK backend (im terraform-Block)
+# [OPTIONAL] BLOCK backend (im terraform-Block)
 # Was: sagt, wo Terraform den State speichert. Der State ist die Datei, in der Terraform festhaelt,
 #      welche echten Objekte zu welchen Ressourcen im Code gehoeren.
 # Wozu: Standard ist eine lokale Datei terraform.tfstate. Im Team braucht man einen gemeinsamen Ort
@@ -29,7 +36,7 @@
 #     version = "~> 0.12"
 #   }
 
-# BLOCK provider { }
+# [OPTIONAL] BLOCK provider { }
 # Was: konfiguriert einen Provider, z. B. Region und Zugangsdaten.
 # Wozu: random und local brauchen keine Konfiguration. Echte Clouds schon. Mit alias nutzt man
 #       denselben Provider mehrfach (zwei Regionen, zwei Konten). Eine Ressource waehlt ihn mit
@@ -68,7 +75,7 @@ resource "local_file" "hallo" {
   # TODO: content = "Hallo Terraform! Servername: " plus den Namen aus random_pet.server_name
   #       (Attribut id), am Ende ein Zeilenumbruch \n
 }
-# Zusatz in Ressourcen:
+# [OPTIONAL] Zusatz in Ressourcen:
 # depends_on: erzwingt eine Reihenfolge, wenn Terraform die Abhaengigkeit nicht aus Verweisen erkennt.
 # lifecycle:  steuert, wie Terraform mit der Ressource umgeht (nicht loeschen, Aenderungen ignorieren,
 #             erst neu anlegen, dann alte loeschen).
@@ -82,7 +89,7 @@ resource "local_file" "hallo" {
 #     ignore_changes  = [content]   # Aenderungen von Hand werden ignoriert
 #   }
 
-# BLOCK data "TYP" "NAME" { }
+# [OPTIONAL] BLOCK data "TYP" "NAME" { }
 # Was: liest etwas Vorhandenes, ohne es zu verwalten (Datei, Image, Netzwerk, Webseite).
 # Wozu: man nutzt Werte aus der Aussenwelt im Code, ohne sie neu anzulegen.
 # BLOCK output "NAME" { }
@@ -97,7 +104,7 @@ resource "local_file" "hallo" {
 #     value = data.local_file.gelesen.content
 #   }
 
-# terraform_data: eingebaute Ressource ohne Provider. Wozu: Klebstoff, z. B. als Ausloeser, der sich
+# [OPTIONAL] terraform_data: eingebaute Ressource ohne Provider. Wozu: Klebstoff, z. B. als Ausloeser, der sich
 #                 aendert, wenn sich ein Wert aendert (Nachfolger von null_resource).
 # time_static:    speichert einen Zeitpunkt dauerhaft im State (Provider time).
 # OPTIONAL: terraform_data als Ausloeser (Ersatz fuer null_resource)

@@ -1,4 +1,10 @@
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: zweite validation, nullable und sensitive, tfvars und TF_VAR,
+#   optional() im Objekt, weitere Typen.
 
 # BLOCK variable "NAME" { }
 # Was: ein Eingabewert fuer das Modul (Zugriff: var.name).

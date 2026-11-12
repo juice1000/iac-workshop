@@ -1,3 +1,8 @@
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: description, sensitive, weiterer Output.
 # Der Output ist die Ausgabe-Schnittstelle des Moduls. Nur was hier steht, sieht der Aufrufer.
 output "datei" {
   # TODO: value = Dateiname der Ressource local_file.info

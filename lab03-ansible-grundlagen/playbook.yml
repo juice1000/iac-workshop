@@ -2,6 +2,13 @@
 # Lab 3: Webserver einrichten (Uebung)
 # Ziel: nginx auf der Gruppe web, Startseite und Konfiguration aus den Vorlagen in templates/
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: vars_files und vars_prompt, serial, tags und when, loop, user und
+#   file, validate, copy und lineinfile, flush_handlers, command mit changed_when,
+#   block/rescue/always, wait_for, no_log, delegate_to, listen, until/retries, Fakten, Befehle.
 # PLAY
 # Was: ein Abschnitt im Playbook. Er sagt, AUF WELCHEN Servern (hosts) WAS (tasks) passieren soll.
 #      Ein Playbook ist eine Liste von Plays. Die Datei ist YAML, Einrueckung zaehlt.
@@ -43,7 +50,7 @@
       #   tags: [paket]
       #   when: ansible_facts['os_family'] == "Debian"
 
-    # loop: wiederholt die Aufgabe fuer jedes Element, das Element heisst {{ item }}.
+    # [OPTIONAL] loop: wiederholt die Aufgabe fuer jedes Element, das Element heisst {{ item }}.
     # OPTIONAL: mehrere Pakete mit einer Schleife
     #   - name: Werkzeuge installieren
     #     ansible.builtin.apt:
@@ -111,7 +118,7 @@
         name: nginx
         # TODO: state started, enabled true
 
-    # command / shell: fuehren ein Kommando aus. Sie kennen den Soll-Zustand nicht und melden immer changed.
+    # [OPTIONAL] command / shell: fuehren ein Kommando aus. Sie kennen den Soll-Zustand nicht und melden immer changed.
     #                  Deshalb: changed_when steuert die Meldung, und wenn moeglich ein Modul nehmen.
     # debug: gibt Werte aus. Wozu: nachsehen, was in einer Variable steht.
     # OPTIONAL: command meldet immer "changed". Mit changed_when steuert man das.
@@ -122,7 +129,7 @@
     #   - name: Version anzeigen
     #     ansible.builtin.debug:
     #       msg: "{{ nginx_version.stderr }}"
-    # block / rescue / always: fasst Aufgaben zusammen.
+    # [OPTIONAL] block / rescue / always: fasst Aufgaben zusammen.
     #   rescue laeuft nur bei einem Fehler im block, always immer. Wozu: Fehler abfangen und aufraeumen.
     # OPTIONAL: Fehlerbehandlung mit block, rescue und always
     #   - name: Mit Fehlerbehandlung
@@ -137,7 +144,7 @@
     #       - name: Immer
     #         ansible.builtin.debug:
     #           msg: "fertig"
-    # wait_for: wartet auf einen Port oder eine Datei. Wozu: erst weitermachen, wenn ein Dienst bereit ist.
+    # [OPTIONAL] wait_for: wartet auf einen Port oder eine Datei. Wozu: erst weitermachen, wenn ein Dienst bereit ist.
     # OPTIONAL: Wartet, bis der Port offen ist
     #   - name: Auf Port warten
     #     ansible.builtin.wait_for:

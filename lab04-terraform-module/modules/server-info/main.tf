@@ -1,3 +1,8 @@
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: required_version im Modul.
 # Im Modul reicht required_providers: es sagt, welchen Provider das Modul braucht.
 # Der Provider selbst wird nicht im Modul konfiguriert, sondern vom Aufrufer (Root-Modul).
 # Ein Modul besteht ueblich aus main.tf (Ressourcen), variables.tf (Eingaben) und outputs.tf (Ausgaben).

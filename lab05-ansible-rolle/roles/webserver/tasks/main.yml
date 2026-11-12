@@ -11,6 +11,12 @@
 # Lab 5: die Aufgaben aus Lab 3 als Rolle (Uebung)
 # Die Vorlagen liegen in templates/ (ohne Pfadpraefix), die Variablen heissen webserver_*.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: tags, Hinweis zu validate, include_tasks/import_tasks, loop und when,
+#   Befehle.
 - name: Nginx installieren
   ansible.builtin.apt:
     name: nginx

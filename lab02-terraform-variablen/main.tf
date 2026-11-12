@@ -1,6 +1,12 @@
 # Lab 2: Variablen, Locals, for_each, Outputs, templatefile (Uebung)
 # Ziel: eine Datei pro Server und out/inventory.ini aus templates/inventory.tftpl
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: for-Ausdruecke und Funktionen in locals, time_rotating, lifecycle mit
+#   precondition, count, local_sensitive_file, dynamic, moved, jsonencode/yamlencode, data, check.
 
 # TODO: terraform-Block mit required_version >= 1.6 und required_providers
 #       random (hashicorp/random, ~> 3.6) und local (hashicorp/local, ~> 2.5)
@@ -50,7 +56,7 @@ resource "local_file" "server_info" {
   # TODO: content = "Server <name>, Rolle <rolle>, SSH-Port <port>\n"
   #       Tipp: each.key und each.value.rolle / each.value.port
 
-  # BLOCK lifecycle { } (in einer Ressource)
+  # [OPTIONAL] BLOCK lifecycle { } (in einer Ressource)
   # Was: Regeln, wie Terraform diese Ressource behandelt.
   #   precondition / postcondition: eigene Pruefungen mit klarer Fehlermeldung vor/nach dem Anlegen.
   #   create_before_destroy: neues Objekt zuerst anlegen, dann das alte loeschen.
@@ -67,7 +73,7 @@ resource "local_file" "server_info" {
   #     replace_triggered_by  = [random_password.db]
   #   }
 }
-# count: erzeugt n Kopien mit count.index (0, 1, 2 ...). Nachteil: Elemente werden ueber die Position
+# [OPTIONAL] count: erzeugt n Kopien mit count.index (0, 1, 2 ...). Nachteil: Elemente werden ueber die Position
 # adressiert, das Loeschen eines mittleren Elements verschiebt alle folgenden. for_each ist stabiler.
 # OPTIONAL: count statt for_each (loescht man ein mittleres Element, verschieben sich die Indizes)
 #   resource "local_file" "mit_count" {
@@ -81,7 +87,7 @@ resource "local_file" "server_info" {
 #     content         = random_password.db.result
 #     file_permission = "0600"
 #   }
-# BLOCK dynamic "NAME" { }
+# [OPTIONAL] BLOCK dynamic "NAME" { }
 # Was: erzeugt einen verschachtelten Block (z. B. ports) mehrfach aus einer Liste oder Map.
 # Wozu: wenn die Anzahl der inneren Bloecke von einer Variable abhaengt. for_each geht nur auf
 #       Ressourcen, dynamic auf Bloecke in Ressourcen.
@@ -94,7 +100,7 @@ resource "local_file" "server_info" {
 #       external = ports.value.extern
 #     }
 #   }
-# BLOCK moved { }
+# [OPTIONAL] BLOCK moved { }
 # Was: sagt Terraform, dass eine Ressource ihre Adresse geaendert hat.
 # Wozu: Umbenennen oder in ein Modul verschieben, ohne dass Terraform sie loescht und neu anlegt.
 # OPTIONAL: Ressource umbenennen, ohne sie neu zu erzeugen.
@@ -120,7 +126,7 @@ resource "local_file" "inventory" {
 #     content  = jsonencode(var.server)
 #   }
 #   # yamlencode(var.server) fuer YAML
-# data-Block: liest Vorhandenes (siehe Lab 1). Hier eine Datei und eine Webseite (Provider http).
+# [OPTIONAL] data-Block: liest Vorhandenes (siehe Lab 1). Hier eine Datei und eine Webseite (Provider http).
 # OPTIONAL: vorhandene Datei oder URL lesen
 #   data "local_file" "readme" {
 #     filename = "${path.module}/README.md"
@@ -128,7 +134,7 @@ resource "local_file" "inventory" {
 #   data "http" "beispiel" {
 #     url = "https://example.com"        # Provider hashicorp/http
 #   }
-# BLOCK check "NAME" { }
+# [OPTIONAL] BLOCK check "NAME" { }
 # Was: Pruefung der laufenden Umgebung mit assert. Schlaegt sie fehl, gibt es nur eine Warnung.
 # Wozu: Gesundheitspruefungen nach dem Apply (Webseite erreichbar?), ohne den Lauf abzubrechen.
 #       Im Gegensatz zu precondition blockiert ein check nichts.

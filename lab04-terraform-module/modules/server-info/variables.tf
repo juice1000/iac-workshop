@@ -1,4 +1,9 @@
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: validation, default.
 
 # Die Variablen sind die Eingabe-Schnittstelle des Moduls. Ohne default sind sie Pflicht:
 # Der Aufrufer muss sie setzen, sonst bricht terraform plan ab.

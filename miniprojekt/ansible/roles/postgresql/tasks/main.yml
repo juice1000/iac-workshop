@@ -2,6 +2,12 @@
 # Phase 2: Rolle postgresql. Hilfe: ansible-doc <modulname>
 # Die erste Aufgabe ist als Beispiel fertig. Ergaenzt die Stellen mit TODO.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
+# WEGWEISER
+# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
+# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
+# erst nach dem Hauptweg ansehen.
+# Optional in dieser Datei: postgresql_set, flush_handlers, wait_for, Vault, postgresql_privs und
+#   postgresql_query, cron-Sicherung.
 - name: PostgreSQL und Python-Treiber installieren
   ansible.builtin.apt:
     name:
