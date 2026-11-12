@@ -8,6 +8,15 @@
 #   meta/main.yml      Metadaten und Abhaengigkeiten (optional)
 # Wozu: dieselbe Einrichtung in mehreren Projekten nutzen. Das Playbook (site.yml) ruft nur noch
 #       die Rolle auf. Variablen der Rolle beginnen mit dem Rollennamen (webserver_...).
+# Woher kommt was:
+#   Server (hosts)   site.yml waehlt die Gruppe web aus dem Inventory (ansible.cfg verweist auf Lab 3)
+#   Variablen        defaults/main.yml gibt Standardwerte vor, site.yml kann sie unter vars: ueberschreiben
+#   Vorlagen         roles/webserver/templates/, src: braucht keinen Pfad
+#   Handler          roles/webserver/handlers/main.yml, notify nennt ihn beim Namen
+# Die Aufgaben sind dieselben wie in Lab 3, in derselben Reihenfolge: erst installieren, dann die Dateien,
+# dann den Dienst. Neu ist nur, dass Play-Kopf und vars fehlen. Die stehen jetzt in site.yml und defaults/.
+# Das Paket kommt aus den apt-Quellen des Servers. become: true steht nicht hier, sondern in site.yml
+# und gilt fuer alle Aufgaben der Rolle.
 - name: Nginx installieren
   ansible.builtin.apt:
     name: nginx
@@ -15,6 +24,8 @@
     update_cache: true
     cache_valid_time: 3600
 
+# src: index.html.j2 wird in roles/webserver/templates/ gesucht. Darin steht {{ webserver_begruessung }}.
+# Der Wert kommt aus defaults/main.yml ("Hallo TLBG"), site.yml ueberschreibt ihn mit "Hallo aus der Rolle".
 - name: Startseite aus Vorlage erzeugen
   ansible.builtin.template:
     src: index.html.j2
@@ -23,6 +34,8 @@
     group: root
     mode: "0644"
 
+# site.conf.j2 setzt den Port aus webserver_port (Standard 80 aus defaults/main.yml).
+# notify ruft den Handler aus handlers/main.yml, aber nur, wenn sich die Datei geaendert hat.
 - name: Nginx-Konfiguration aus Vorlage erzeugen
   ansible.builtin.template:
     src: site.conf.j2
@@ -32,6 +45,7 @@
     mode: "0644"
   notify: Nginx neu laden
 
+# Nach der Konfiguration, damit nginx gleich mit den richtigen Einstellungen startet.
 - name: Nginx laeuft und startet beim Booten
   ansible.builtin.service:
     name: nginx

@@ -2,5 +2,8 @@
 # defaults/main.yml: Vorgabewerte der Rolle. Sie haben die niedrigste Rangfolge, jeder andere Ort
 # (Inventory, Play, -e) ueberschreibt sie. So bleibt die Rolle anpassbar, ohne sie zu aendern.
 # Standardwerte, im Playbook oder Inventory ueberschreibbar
+# Genutzt werden sie in tasks/main.yml und in den Vorlagen (index.html.j2: webserver_begruessung,
+# site.conf.j2: webserver_port). Rangfolge von niedrig nach hoch: defaults, Inventory, vars in site.yml, -e.
+# Beispiel: ansible-playbook site.yml -e webserver_port=8081 gewinnt gegen alles andere.
 webserver_port: 80
 webserver_begruessung: "Hallo TLBG"
