@@ -1,6 +1,6 @@
 # Labs
 
-All lab code is German-facing. Providers are pinned with `~>` constraints: `hashicorp/random ~> 3.6`, `hashicorp/local ~> 2.5`, `hashicorp/tls ~> 4.0`, `kreuzwerker/docker ~> 3.0` (a v4 exists with possible breaking changes, deliberately not used).
+Every lab folder, `umgebung` and `miniprojekt` has a German `README.md` with goal, task, steps and things to try (the lab 2 README also answers the participant questions on overriding variables, tfvars, precedence and special file names). All lab code is German-facing. Providers are pinned with `~>` constraints: `hashicorp/random ~> 3.6`, `hashicorp/local ~> 2.5`, `hashicorp/tls ~> 4.0`, `kreuzwerker/docker ~> 3.0` (a v4 exists with possible breaking changes, deliberately not used).
 
 ## lab00-check
 
