@@ -1,10 +1,20 @@
 ---
 # Lab 3: Webserver einrichten
 # Ziel: nginx auf der Gruppe web, Startseite und Konfiguration aus den Vorlagen in templates/
+# Ablauf: Voraussetzung ist ein laufendes "terraform apply" in umgebung/. Terraform baut die Container
+# und schreibt inventory.ini. Ansible liest dieses Inventory (eingestellt in ansible.cfg), verbindet
+# sich per SSH und fuehrt die Aufgaben auf jedem Server der Gruppe aus.
+# Woher kommt was:
+#   Server und SSH-Zugang   inventory.ini (von Terraform erzeugt), nicht aus diesem Playbook
+#   Variablen               vars: unten, oder -e auf der Kommandozeile (hat Vorrang)
+#   Vorlagen                Ordner templates/ neben dieser Datei
+#   Fakten und Hostname     sammelt Ansible selbst (siehe unten bei den Vorlagen)
 # PLAY
 # Was: ein Abschnitt im Playbook. Er sagt, AUF WELCHEN Servern (hosts) WAS (tasks) passieren soll.
 #      Ein Playbook ist eine Liste von Plays. Die Datei ist YAML, Einrueckung zaehlt.
-# hosts:  Gruppe aus dem Inventory (hier web).
+# hosts:  Gruppe aus dem Inventory (hier web). Der Name steht in inventory.ini in eckigen Klammern.
+#         Alle Server dieser Gruppe bekommen dieselben Aufgaben. Zu Beginn jedes Plays sammelt Ansible
+#         automatisch "Fakten" (Betriebssystem, Netzwerk ...) von jedem Server (Schritt "Gathering Facts").
 # become: true = mit sudo ausfuehren. Wozu: Pakete installieren braucht Root-Rechte.
 - name: Webserver einrichten
   hosts: web
@@ -12,6 +22,8 @@
 
   # vars: Variablen fuer dieses Play, nutzbar mit {{ name }} in Aufgaben und Vorlagen.
   #       Mit -e web_port=8081 auf der Kommandozeile ueberschreibbar (hat Vorrang).
+#       Wozu hier: web_port landet in der nginx-Konfiguration (site.conf.j2) und wird im zweiten Play
+#       zur Pruefung genutzt. begruessung landet in der Startseite (index.html.j2).
   vars:
     web_port: 80
     begruessung: "Hallo TLBG"
@@ -23,6 +35,8 @@
   tasks:
     # apt: installiert Pakete (Debian/Ubuntu). state: present = soll vorhanden sein.
     #      cache_valid_time: Paketliste nur aktualisieren, wenn sie aelter als eine Stunde ist.
+#      Woher: das Paket kommt aus den apt-Quellen des Servers (Ubuntu-Mirror), nicht vom eigenen Rechner.
+#      Warum zuerst: erst die Installation legt /var/www/html und /etc/nginx an, die spaeter gebraucht werden.
     - name: Nginx installieren
       ansible.builtin.apt:
         name: nginx
@@ -33,6 +47,10 @@
     # template: rendert eine Jinja2-Vorlage (*.j2) auf dem Controller und legt das Ergebnis auf dem Server ab.
     #           Wozu: Konfigurationsdateien mit Variablen. Unterschied zu copy: copy kopiert 1:1.
     #           owner, group, mode setzen Besitzer und Rechte.
+#           Woher: src ist relativ zu diesem Playbook (Ordner templates/). In der Vorlage sind {{ begruessung }}
+#           und {{ web_port }} unsere vars von oben. inventory_hostname (Name aus dem Inventory, z. B. server1)
+#           und ansible_facts['distribution'] (Betriebssystem) liefert Ansible selbst. Gerendert wird auf dem
+#           Controller, auf dem Server landet nur die fertige Datei unter dest.
     - name: Startseite aus Vorlage erzeugen
       ansible.builtin.template:
         src: templates/index.html.j2
@@ -42,6 +60,9 @@
         # TODO: mode "0644"
 
     # notify: loest einen Handler aus, aber nur, wenn diese Aufgabe etwas geaendert hat.
+    #         Der Text muss genau dem name des Handlers weiter unten entsprechen.
+    #         Warum diese Datei: sie ersetzt die Standard-Seite von nginx und setzt den Port aus web_port.
+    #         Warum vor dem Start des Dienstes: nginx soll gleich mit der richtigen Konfiguration starten.
     - name: Nginx-Konfiguration aus Vorlage erzeugen
       ansible.builtin.template:
         # TODO: src templates/site.conf.j2, dest /etc/nginx/sites-available/default
@@ -51,6 +72,7 @@
       # TODO: notify auf den Handler "Nginx neu laden"
 
     # service: steuert Dienste. state: started = soll laufen, enabled: true = startet beim Booten.
+    #          Laeuft nginx schon, passiert nichts (idempotent). Beim ersten Lauf startet es hier.
     - name: Nginx laeuft und startet beim Booten
       ansible.builtin.service:
         name: nginx
@@ -58,6 +80,8 @@
 
   # handlers: Aufgaben, die nur auf notify hin laufen, einmal am Ende des Plays, auch bei mehreren notify.
   #           Wozu: Dienst nur neu laden, wenn sich die Konfiguration wirklich geaendert hat.
+#           Beim ersten Lauf ist die Datei neu, der Handler laeuft also einmal. Ab dem zweiten Lauf nur noch,
+#           wenn sich die Konfiguration aendert, z. B. mit -e web_port=8081. Ohne Aenderung bleibt nginx unberuehrt.
   handlers:
     - name: Nginx neu laden
       ansible.builtin.service:
@@ -69,6 +93,10 @@
 # register: speichert das Ergebnis einer Aufgabe in einer Variable (hier seite).
 # when:     fuehrt die Aufgabe nur aus, wenn die Bedingung stimmt.
 # uri:      ruft eine URL auf. assert: bricht mit Fehler ab, wenn die Bedingung nicht stimmt.
+# Warum ein eigenes Play: Es ist ein Test nach der Einrichtung, getrennt von der Einrichtung selbst.
+# Woher: "localhost" ist hier der Server selbst (die Aufgabe laeuft ja per SSH auf ihm), nicht der eigene
+# Rechner. web_port stammt aus den vars des ersten Plays. Plays eines Playbooks teilen diese Variablen
+# nicht automatisch, daher der Standardwert 80 mit default(80). Kommt der Port per -e, gilt er in beiden.
 - name: Ergebnis pruefen
   hosts: web
   # Im Check-Modus aendert sich nichts, also gibt es auch nichts zu pruefen
