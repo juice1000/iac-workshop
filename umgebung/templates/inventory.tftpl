@@ -1,15 +1,22 @@
 # Inventory: die Liste der Server, die Ansible verwaltet. Terraform erzeugt die Datei aus
 # dieser Vorlage, deshalb nicht von Hand aendern (sie wird beim naechsten apply ueberschrieben).
 # [web] ist eine Gruppe. Im Playbook waehlt "hosts: web" alle Server dieser Gruppe.
-# Pro Zeile: Name des Servers, dann Variablen. ansible_host und ansible_port sagen, wohin
-# Ansible per SSH verbindet. Die Container laufen lokal, jeder mit eigenem Port.
+# Pro Zeile: Name des Servers, dann beliebig viele Variablen, durch Leerzeichen getrennt (name=wert).
+# Variablen in der Serverzeile gelten nur fuer diesen Server. Der Name ist inventory_hostname.
+# ansible_host und ansible_port sagen, wohin Ansible per SSH verbindet. Die Container laufen alle
+# lokal, deshalb braucht jeder einen eigenen Port.
+# Diese Namen stehen in keinem Playbook. Ansible liest sie selbst: das SSH-Plugin baut daraus den
+# ssh-Aufruf (ansible_host = Ziel, ansible_port = -o Port, ansible_user = -o User, ansible_ssh_private_key_file
+# = -o IdentityFile). Die Namen sind fest vorgegeben, ein Tippfehler wird still ignoriert.
+# Pruefen: ansible-inventory --host server1 zeigt die Variablen, ansible server1 -m ping -vvv den ssh-Aufruf.
 [web]
 %{ for name, s in server ~}
 ${name} ansible_host=127.0.0.1 ansible_port=${s.ssh_port}
 %{ endfor ~}
 
-# [all:vars]: Variablen fuer alle Server. ansible_user ist der SSH-Benutzer,
-# ansible_ssh_private_key_file der Schluessel, den Terraform erzeugt hat.
+# [all:vars]: Variablen fuer alle Server. Was fuer alle gleich ist, steht hier einmal statt in jeder
+# Zeile (fuer nur eine Gruppe: [web:vars]). ansible_user ist der SSH-Benutzer,
+# ansible_ssh_private_key_file der Schluessel, den Terraform erzeugt hat. Beide liest das SSH-Plugin.
 [all:vars]
 ansible_user=root
 ansible_ssh_private_key_file=${key_path}
