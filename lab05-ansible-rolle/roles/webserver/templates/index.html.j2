@@ -1,3 +1,6 @@
+{# Jinja2-Vorlage. {{ name }} wird durch den Wert der Variablen ersetzt, Zeilen mit Raute-Klammern sind Kommentare
+   und erscheinen nicht in der fertigen Datei. inventory_hostname ist der Servername aus dem Inventory.
+   ansible_facts sind Angaben, die Ansible vor dem Lauf auf dem Server einsammelt (Betriebssystem usw.). -#}
 <!DOCTYPE html>
 <html lang="de">
 <head><meta charset="utf-8"><title>{{ inventory_hostname }}</title></head>

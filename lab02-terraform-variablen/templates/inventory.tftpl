@@ -1,3 +1,7 @@
+# Vorlage fuer ein Ansible-Inventory. Zeilen mit Prozentzeichen und geschweifter Klammer sind
+# Anweisungen (for, if) und erscheinen nicht in der Ausgabe. Ein Dollarzeichen mit Klammer wird
+# durch den Wert ersetzt. Das Tilde-Zeichen schneidet den Zeilenumbruch ab.
+# Aussen: eine Gruppe [rolle] pro Rolle. Innen: alle Server dieser Rolle, einer pro Zeile.
 %{ for rolle in rollen ~}
 [${rolle}]
 %{ for name, s in server ~}

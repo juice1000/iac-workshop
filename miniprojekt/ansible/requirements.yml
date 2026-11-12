@@ -1,5 +1,7 @@
 ---
-# Nur noetig, wenn nur ansible-core installiert ist:
+# requirements.yml: Liste der Ansible-Collections, die die Rollen brauchen. Eine Collection ist
+# ein Paket mit zusaetzlichen Modulen. Hier: community.postgresql fuer die Datenbank-Module.
+# Nur noetig, wenn nur ansible-core installiert ist (das volle Paket "ansible" bringt sie mit):
 # ansible-galaxy collection install -r requirements.yml
 collections:
   - name: community.postgresql
