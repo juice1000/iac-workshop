@@ -14,19 +14,6 @@ Das Dockerfile (`docker/Dockerfile`) beschreibt das **Image**, die Vorlage. Das 
 
 Dieselbe Trennung gibt es ohne Terraform: Das Dockerfile entspricht `docker build`, das Modul entspricht `docker run` mit allen Optionen.
 
-## Warum das nicht ins Dockerfile passt
-
-| Einstellung im Modul | Warum nicht im Dockerfile |
-| --- | --- |
-| `name`, `hostname` | Gehören zur Instanz. Dasselbe Image läuft mehrfach unter verschiedenen Namen. |
-| `ipv4_address`, `network_name` | Das Netz existiert erst zur Laufzeit. Ein Image kennt keine Netze. |
-| `ssh_port` | `EXPOSE 22` ist nur eine Notiz. Ein Port wird erst beim Start veröffentlicht, und die Seite auf dem Rechner hängt vom Rechner ab. |
-| `privileged`, `cgroupns_mode`, `tmpfs` | Startoptionen (`docker run --privileged --tmpfs ...`). Im Dockerfile gibt es dafür keine Anweisung. |
-| Volume `/sys/fs/cgroup` | Ein Pfad des Rechners kann nicht im Image stehen. `VOLUME` legt nur ein anonymes Volume an. |
-| `public_key` | Der Schlüssel entsteht in Terraform (`tls_private_key`). Im Image stünde er fest, und jede Änderung brächte ein neues Image. |
-
-Alles, was zum Image gehört, steht schon im Dockerfile: Pakete, `systemctl enable ssh`, `policy-rc.d`, `STOPSIGNAL`, `CMD`.
-
 ## Wozu ein Modul
 
 `umgebung/` und das Miniprojekt brauchen mehrere Server mit gleichem Aufbau, aber verschiedenen Namen, IPs und Ports. Das Modul beschreibt "ein Server" einmal, `for_each` ruft es pro Eintrag auf. Das Image baut Terraform nur einmal (`docker_image.linux`), alle Container nutzen es.
