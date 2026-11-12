@@ -184,6 +184,61 @@ Terraform legt selbst an und verwaltet:
 
 Nur Konvention: `main.tf`, `variables.tf`, `outputs.tf` und `providers.tf` haben keine technische Sonderrolle. Terraform ist es egal, in welcher Datei ein Block steht. Die Namen helfen beim Lesen.
 
+### Kann ich die Logik aus `inventory.tftpl` auch direkt in `main.tf` schreiben?
+
+Ja, auf zwei Arten. Beide Varianten habe ich getestet: Sie erzeugen byte-genau dieselbe `inventory.ini` wie die Vorlage.
+
+**1. Heredoc mit denselben Direktiven.** `%{ for }` und `%{ if }` funktionieren in jedem String, nicht nur in Vorlagen. Dann braucht ihr `templatefile()` nicht, und die Werte heißen direkt `var.server` und `local.rollen`:
+
+```hcl
+resource "local_file" "inventory" {
+  filename = "${path.module}/out/inventory.ini"
+  content  = <<EOT
+%{for rolle in local.rollen~}
+[${rolle}]
+%{for name, s in var.server~}
+%{if s.rolle == rolle~}
+${name} ansible_host=127.0.0.1 ansible_port=${s.port}
+%{endif~}
+%{endfor~}
+
+%{endfor~}
+EOT
+}
+```
+
+Achtung: Schreibt `<<EOT` ohne Bindestrich und setzt den Text an den Zeilenanfang. Mit `<<-EOT` und eingerücktem Text bleiben Einrückungen von den Direktiven übrig, und die Datei sieht falsch aus. `terraform fmt` schreibt `%{ for ... ~}` übrigens zu `%{for ...~}` um. Beides ist gleichwertig.
+
+**2. Mit `for`-Ausdrücken und `join()`** statt Template-Direktiven:
+
+```hcl
+locals {
+  inventory = join("\n\n", [
+    for rolle in local.rollen : join("\n", concat(
+      ["[${rolle}]"],
+      [for name, s in var.server :
+        "${name} ansible_host=127.0.0.1 ansible_port=${s.port}"
+      if s.rolle == rolle]
+    ))
+  ])
+}
+
+resource "local_file" "inventory" {
+  filename = "${path.module}/out/inventory.ini"
+  content  = "${local.inventory}\n\n"
+}
+```
+
+Das ist kürzer, aber schwerer zu lesen. Die zwei `\n` am Ende ergeben die Leerzeile, die die Vorlage am Dateiende erzeugt.
+
+**Warum `templatefile` trotzdem üblich ist:**
+
+- Die Vorlage ist eine eigene Datei, und ihr Text sieht aus wie das Ergebnis. Bei längeren Dateien (Konfigurationen, Skripte) ist das viel übersichtlicher.
+- Der Terraform-Code bleibt kurz.
+- Mit anderen Werten erzeugt dieselbe Vorlage ein anderes Ergebnis. Ein Heredoc ist fest an die Variablen im Modul gebunden.
+
+Faustregel: Für ein paar Zeilen ist ein Heredoc in Ordnung, ab etwa zehn Zeilen lohnt sich die eigene Datei. Soll ein wörtliches `${` im Text stehen, schreibt ihr `$${`, in beiden Fällen.
+
 ## Dinge zum Ausprobieren
 
 - Kopiert `terraform.tfvars.example` nach `terraform.tfvars` und führt `plan` aus. Ein dritter Server kommt dazu, alle Namen tragen `test`.
