@@ -1,7 +1,8 @@
 # Terraform & Ansible: Einstieg (TLBG)
 
-> Branch `start`: Im Miniprojekt sind die Tasks der Rollen `postgresql` und `app`
-> leer. Die Aufgaben stehen als Kommentare in `roles/*/tasks/main.yml`.
+> Branch `start`: In jedem Lab fehlen Stellen, die ihr selbst ergänzt. Sie sind mit
+> `TODO` markiert. Über jedem Block steht, was er tut und wozu. Die fertige Lösung liegt
+> auf dem Branch `main` (`git fetch origin main && git diff start origin/main`).
 
 Übungsmaterial für den 2-tägigen Workshop. Jeder Ordner ist ein Lab.
 
