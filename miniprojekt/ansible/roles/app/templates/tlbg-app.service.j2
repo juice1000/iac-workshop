@@ -8,6 +8,10 @@ User={{ app_user }}
 EnvironmentFile=/etc/tlbg-app.env
 ExecStart=/usr/bin/python3 {{ app_dir }}/app.py
 Restart=on-failure
+# Haertung (siehe Rolle app, Hinweis dort)
+NoNewPrivileges=true
+ProtectSystem=strict
+PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target

@@ -1,8 +1,6 @@
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# WEGWEISER
-# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
-# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
-# erst nach dem Hauptweg ansehen.
+# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: zweite validation, nullable und sensitive, tfvars und TF_VAR,
 #   optional() im Objekt, weitere Typen.
 
@@ -15,19 +13,22 @@
 #   validation  eigene Pruefung mit Fehlermeldung, bevor etwas passiert
 variable "umgebung" {
   description = "Name der Umgebung, wird als Praefix verwendet"
-  # TODO: type string, default "schulung"
+  type        = string
+  default     = "schulung"
+  nullable    = false
 
-  # TODO: validation-Block: nur "schulung", "test" oder "prod" erlaubt
-  #       Tipp: condition mit contains(), dazu error_message
+  validation {
+    condition     = contains(["schulung", "test", "prod"], var.umgebung)
+    error_message = "Erlaubt sind: schulung, test, prod."
+  }
 
   # OPTIONAL: zweite Pruefung (mehrere validation-Bloecke sind erlaubt)
-  #   validation {
-  #     condition     = can(regex("^[a-z]+$", var.umgebung))
-  #     error_message = "Nur Kleinbuchstaben."
-  #   }
+  validation {
+    condition     = can(regex("^[a-z]+$", var.umgebung))
+    error_message = "Nur Kleinbuchstaben."
+  }
   # OPTIONAL: weitere Eigenschaften einer Variable
-  #   nullable  = false
-  #   sensitive = true
+  # Aktiv: nullable = false steht oben. sensitive = true wuerde den Wert in allen Ausgaben ausblenden.
 }
 # OPTIONAL: Wert von aussen setzen, Rangfolge von niedrig nach hoch:
 #   default < terraform.tfvars < *.auto.tfvars < -var-file < -var < TF_VAR_umgebung
@@ -40,16 +41,34 @@ variable "umgebung" {
 # Daraus baut for_each in main.tf die Ressourcen.
 variable "server" {
   description = "Server mit Rolle und SSH-Port"
-  # TODO: type = map(object({ ... })) mit rolle (string) und port (number)
-  # TODO: default mit app1 (Rolle app, Port 2201) und db1 (Rolle db, Port 2202)
+  type = map(object({
+    rolle = string
+    port  = optional(number, 22) # Standardwert, wenn der Port fehlt
+  }))
+  default = {
+    app1 = { rolle = "app", port = 2201 }
+    db1  = { rolle = "db", port = 2202 }
+  }
 }
 # OPTIONAL: Attribut mit Standardwert im Objekt (optional())
-#   type = map(object({
-#     rolle = string
-#     port  = optional(number, 22)
-#   }))
+# Aktiv: optional(number, 22) steht oben im Typ.
 # OPTIONAL: weitere Typen
-#   variable "ports"  { type = list(number) }
-#   variable "tags"   { type = map(string) }
-#   variable "aktiv"  { type = bool }
-#   variable "ids"    { type = set(string) }
+variable "ports" {
+  type    = list(number)
+  default = []
+}
+
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
+
+variable "aktiv" {
+  type    = bool
+  default = true
+}
+
+variable "ids" {
+  type    = set(string)
+  default = []
+}

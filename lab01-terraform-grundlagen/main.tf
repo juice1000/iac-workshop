@@ -1,11 +1,9 @@
 # Lab 1: Terraform-Grundlagen (Uebung)
 # Ziel: out/hallo.txt mit "Hallo Terraform! Servername: <zufaelliger Name>"
-# Ergaenzt die Stellen mit TODO.
+# Geloeste Version, alles ausgefuellt.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# WEGWEISER
-# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
-# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
-# erst nach dem Hauptweg ansehen.
+# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: backend (gemeinsamer State), zweiter Provider time, provider mit
 #   alias, weitere Argumente von random_pet und local_file, depends_on, lifecycle, data und
 #   output, terraform_data, time_static, nuetzliche Befehle.
@@ -16,8 +14,24 @@
 #       mit welcher Version geladen werden (required_providers). Ohne diese Angaben kann ein Update
 #       still das Verhalten aendern.
 # Ein Provider ist ein Plugin, das Terraform eine Art von Ressourcen beibringt (hier random und local).
-# TODO: terraform-Block mit required_version >= 1.6 und required_providers
-#       random (hashicorp/random, ~> 3.6) und local (hashicorp/local, ~> 2.5)
+terraform {
+  required_version = ">= 1.6"
+
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.5"
+    }
+    time = {
+      source  = "hashicorp/time"
+      version = "~> 0.12"
+    }
+  }
+}
 
 # [OPTIONAL] BLOCK backend (im terraform-Block)
 # Was: sagt, wo Terraform den State speichert. Der State ist die Datei, in der Terraform festhaelt,
@@ -25,16 +39,9 @@
 # Wozu: Standard ist eine lokale Datei terraform.tfstate. Im Team braucht man einen gemeinsamen Ort
 #       (S3, GitLab, http) mit Locking, damit nicht zwei Personen gleichzeitig aendern.
 # OPTIONAL: State an einem gemeinsamen Ort ablegen (Zeile im terraform-Block, mit Locking)
-#   backend "s3" {
-#     bucket = "mein-state-bucket"
-#     key    = "lab01/terraform.tfstate"
-#     region = "eu-central-1"
-#   }
+# [NICHT AKTIV] braucht einen S3-Bucket. Einfuegen in den terraform-Block: backend "s3" { bucket, key, region }
 # OPTIONAL: Weiterer Provider im terraform-Block (hier: time fuer Zeitstempel)
-#   time = {
-#     source  = "hashicorp/time"
-#     version = "~> 0.12"
-#   }
+# Aktiv: der Provider time steht oben im terraform-Block.
 
 # [OPTIONAL] BLOCK provider { }
 # Was: konfiguriert einen Provider, z. B. Region und Zugangsdaten.
@@ -42,17 +49,7 @@
 #       denselben Provider mehrfach (zwei Regionen, zwei Konten). Eine Ressource waehlt ihn mit
 #       provider = aws.usa.
 # OPTIONAL: Provider konfigurieren, auch mehrfach mit alias (Beispiel mit zwei Regionen)
-#   provider "aws" {
-#     region = "eu-central-1"
-#   }
-#   provider "aws" {
-#     alias  = "usa"
-#     region = "us-east-1"
-#   }
-#   resource "aws_s3_bucket" "beispiel" {
-#     provider = aws.usa
-#     bucket   = "beispiel-bucket"
-#   }
+# [NICHT AKTIV] braucht einen AWS-Zugang. Beispiel: provider "aws" { alias = "usa"  region = "us-east-1" }, Nutzung mit provider = aws.usa
 
 # BLOCK resource "TYP" "NAME" { }
 # Was: beschreibt ein Objekt, das Terraform anlegen und verwalten soll. TYP sagt was (Provider und Art),
@@ -62,32 +59,36 @@
 # Verweise wie random_pet.server_name.id legen die Reihenfolge fest (implizite Abhaengigkeit).
 # Erzeugt einen zufaelligen Namen, z. B. "brave-otter"
 resource "random_pet" "server_name" {
-  # TODO: length auf 2 setzen (zwei Woerter)
+  length    = 2
+  separator = "_"
+  prefix    = "tlbg"
+  keepers   = { version = "1" } # anderer Wert erzeugt einen neuen Namen
 }
 # OPTIONAL: weitere Argumente von random_pet
-#   separator = "_"
-#   prefix    = "tlbg"
-#   keepers   = { version = "1" }   # anderer Wert erzeugt einen neuen Namen
+# Aktiv: separator, prefix und keepers stehen oben im Block.
 
 # Schreibt eine Datei. Der Inhalt haengt von random_pet ab (implizite Abhaengigkeit).
 resource "local_file" "hallo" {
-  # TODO: filename = Datei hallo.txt im Ordner out/ des Moduls (path.module)
-  # TODO: content = "Hallo Terraform! Servername: " plus den Namen aus random_pet.server_name
-  #       (Attribut id), am Ende ein Zeilenumbruch \n
+  filename = "${path.module}/out/hallo.txt"
+  content  = "Hallo Terraform! Servername: ${random_pet.server_name.id}\n"
+
+  file_permission      = "0600"
+  directory_permission = "0700"
+  depends_on           = [random_pet.server_name] # nur bei versteckten Abhaengigkeiten
+
+  lifecycle {
+    ignore_changes = [content] # Aenderungen von Hand werden ignoriert
+    # prevent_destroy = true   # [NICHT AKTIV] destroy bricht ab, dann laeuft der Probelauf nicht durch
+  }
 }
 # [OPTIONAL] Zusatz in Ressourcen:
 # depends_on: erzwingt eine Reihenfolge, wenn Terraform die Abhaengigkeit nicht aus Verweisen erkennt.
 # lifecycle:  steuert, wie Terraform mit der Ressource umgeht (nicht loeschen, Aenderungen ignorieren,
 #             erst neu anlegen, dann alte loeschen).
 # OPTIONAL: weitere Argumente von local_file (in den Block schreiben)
-#   file_permission      = "0600"
-#   directory_permission = "0700"
-#   depends_on           = [random_pet.server_name]   # nur bei versteckten Abhaengigkeiten
+# Aktiv: file_permission, directory_permission und depends_on stehen oben im Block.
 # OPTIONAL: lifecycle (in den Block schreiben)
-#   lifecycle {
-#     prevent_destroy = true        # destroy bricht ab
-#     ignore_changes  = [content]   # Aenderungen von Hand werden ignoriert
-#   }
+# Aktiv: ignore_changes steht oben im Block. prevent_destroy ist auskommentiert.
 
 # [OPTIONAL] BLOCK data "TYP" "NAME" { }
 # Was: liest etwas Vorhandenes, ohne es zu verwalten (Datei, Image, Netzwerk, Webseite).
@@ -96,26 +97,28 @@ resource "local_file" "hallo" {
 # Was: gibt einen Wert nach dem Apply aus (terraform output). Wozu: Ergebnisse anzeigen und
 #      an andere Module oder Projekte weitergeben.
 # OPTIONAL: eine vorhandene Datei lesen (data-Block) und ausgeben
-#   data "local_file" "gelesen" {
-#     filename   = local_file.hallo.filename
-#     depends_on = [local_file.hallo]
-#   }
-#   output "inhalt" {
-#     value = data.local_file.gelesen.content
-#   }
+data "local_file" "gelesen" {
+  filename   = local_file.hallo.filename
+  depends_on = [local_file.hallo]
+}
+
+output "inhalt" {
+  value = data.local_file.gelesen.content
+}
 
 # [OPTIONAL] terraform_data: eingebaute Ressource ohne Provider. Wozu: Klebstoff, z. B. als Ausloeser, der sich
 #                 aendert, wenn sich ein Wert aendert (Nachfolger von null_resource).
 # time_static:    speichert einen Zeitpunkt dauerhaft im State (Provider time).
 # OPTIONAL: terraform_data als Ausloeser (Ersatz fuer null_resource)
-#   resource "terraform_data" "marker" {
-#     input = random_pet.server_name.id
-#   }
+resource "terraform_data" "marker" {
+  input = random_pet.server_name.id
+}
 # OPTIONAL: Zeitstempel, der sich nur beim ersten Apply setzt (Provider time)
-#   resource "time_static" "erstellt" {}
-#   output "erstellt_am" {
-#     value = time_static.erstellt.rfc3339
-#   }
+resource "time_static" "erstellt" {}
+
+output "erstellt_am" {
+  value = time_static.erstellt.rfc3339
+}
 
 # Pruefen: terraform init, plan, apply. Zweiter plan muss leer sein. Dann destroy.
 # OPTIONAL: nuetzliche Befehle

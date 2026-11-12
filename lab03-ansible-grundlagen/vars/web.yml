@@ -1,0 +1,3 @@
+---
+# Wird im Playbook mit vars_files geladen
+web_notiz: "Wartung am Freitag"

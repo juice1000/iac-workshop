@@ -1,0 +1,19 @@
+---
+# Beschreibt und prueft die Eingaben der Rolle
+argument_specs:
+  main:
+    short_description: Nginx einrichten
+    options:
+      webserver_port:
+        type: int
+        default: 80
+      webserver_begruessung:
+        type: str
+        default: "Hallo TLBG"
+      webserver_pakete:
+        type: list
+        elements: str
+        default: [wget]
+      webserver_dokumentenwurzel:
+        type: str
+        default: /var/www/html

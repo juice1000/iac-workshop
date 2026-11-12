@@ -1,0 +1,5 @@
+---
+# Wird mit import_tasks aus tasks/main.yml eingebunden (statisch, beim Einlesen)
+- name: Abschluss melden
+  ansible.builtin.debug:
+    msg: "Rolle webserver ist fertig auf {{ inventory_hostname }}"

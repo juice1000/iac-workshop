@@ -1,12 +1,10 @@
 ---
 # Phase 3: Rolle app. Hilfe: ansible-doc <modulname>
 # Die Vorlagen in templates/ und der Handler in handlers/ sind schon fertig.
-# Die ersten beiden Aufgaben sind als Beispiel fertig. Ergaenzt die Stellen mit TODO.
+# Die ersten beiden Aufgaben sind als Beispiel fertig. Geloeste Version, alles ausgefuellt.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# WEGWEISER
-# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
-# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
-# erst nach dem Hauptweg ansehen.
+# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: no_log, Dienst haerten, uri mit until und assert, delegate_to.
 - name: Python-Treiber fuer PostgreSQL installieren
   ansible.builtin.apt:
@@ -21,50 +19,75 @@
   ansible.builtin.user:
     name: "{{ app_user }}"
     system: true
-    # TODO: keine Login-Shell (/usr/sbin/nologin) und kein Home-Verzeichnis
+    shell: /usr/sbin/nologin
+    create_home: false
 
 # file: legt Dateien, Verzeichnisse oder Links an, setzt Rechte. state: directory = Verzeichnis.
 - name: Anwendungsverzeichnis anlegen
   ansible.builtin.file:
     path: "{{ app_dir }}"
-    # TODO: state directory, Besitzer root, Gruppe root, Rechte 0755
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
 
 # Die Anwendung kommt per Vorlage aufs Ziel. notify startet sie neu, wenn sich die Datei geaendert hat.
 - name: Anwendung ausrollen
   ansible.builtin.template:
     src: app.py.j2
     dest: "{{ app_dir }}/app.py"
-    # TODO: Besitzer root, Gruppe root, Rechte 0644
-  # TODO: notify "Anwendung neu starten"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Anwendung neu starten
 
-# TODO: Vorlage app.env.j2 nach /etc/tlbg-app.env
-#       Besitzer root, Gruppe {{ app_user }}, Rechte 0640 (enthaelt das Passwort!), notify wie oben
+- name: Datenbankverbindung konfigurieren
+  ansible.builtin.template:
+    src: app.env.j2
+    dest: /etc/tlbg-app.env
+    owner: root
+    group: "{{ app_user }}"
+    mode: "0640"
+  notify: Anwendung neu starten
+  no_log: true # die Datei enthaelt das Passwort
 # OPTIONAL: Datei nicht im Log zeigen (in die Aufgabe schreiben)
-#   no_log: true
+# Aktiv: no_log steht oben bei der Aufgabe.
 
-# TODO: Vorlage tlbg-app.service.j2 nach /etc/systemd/system/tlbg-app.service, notify wie oben
+- name: Systemd-Dienst anlegen
+  ansible.builtin.template:
+    src: tlbg-app.service.j2
+    dest: /etc/systemd/system/tlbg-app.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Anwendung neu starten
 # OPTIONAL: Dienst haerten, in der Vorlage tlbg-app.service.j2 unter [Service]:
-#   NoNewPrivileges=true
-#   ProtectSystem=strict
-#   PrivateTmp=true
+# Aktiv: NoNewPrivileges, ProtectSystem und PrivateTmp stehen in templates/tlbg-app.service.j2.
 
 # systemd_service: steuert Dienste mit systemd. daemon_reload liest die Dienstdateien neu ein,
 # das ist noetig, nachdem tlbg-app.service neu angelegt oder geaendert wurde.
-# TODO: Dienst tlbg-app starten und aktivieren, vorher systemd neu laden
-#       (ansible.builtin.systemd_service, daemon_reload: true)
+- name: Anwendung laeuft und startet beim Booten
+  ansible.builtin.systemd_service:
+    name: tlbg-app
+    state: started
+    enabled: true
+    daemon_reload: true
 
 # OPTIONAL: Warten, bis die Anwendung antwortet, und das Ergebnis pruefen
-#   - name: Auf die Anwendung warten
-#     ansible.builtin.uri:
-#       url: "http://localhost:{{ app_port }}/"
-#       return_content: true
-#     register: antwort
-#     until: antwort.status == 200
-#     retries: 10
-#     delay: 2
-#   - name: Datenbankverbindung pruefen
-#     ansible.builtin.assert:
-#       that: "'DB OK' in antwort.content"
-#       success_msg: "Anwendung erreicht die Datenbank"
+- name: Auf die Anwendung warten
+  ansible.builtin.uri:
+    url: "http://localhost:{{ app_port }}/"
+    return_content: true
+  register: app_antwort
+  until: app_antwort.status == 200
+  retries: 10
+  delay: 2
+  when: not ansible_check_mode
+
+- name: Datenbankverbindung pruefen
+  ansible.builtin.assert:
+    that: "'DB OK' in app_antwort.content"
+    success_msg: "Anwendung erreicht die Datenbank"
+  when: not ansible_check_mode
 # OPTIONAL: Pruefung vom Controller aus
-#   delegate_to: localhost
+# [NICHT AKTIV] delegate_to: localhost trifft nur zu, wenn der App-Port auf dem Controller veroeffentlicht ist (Docker). Bei VMs nicht.

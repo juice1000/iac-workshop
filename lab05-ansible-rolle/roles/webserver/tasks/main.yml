@@ -11,10 +11,8 @@
 # Lab 5: die Aufgaben aus Lab 3 als Rolle (Uebung)
 # Die Vorlagen liegen in templates/ (ohne Pfadpraefix), die Variablen heissen webserver_*.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# WEGWEISER
-# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
-# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
-# erst nach dem Hauptweg ansehen.
+# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: tags, Hinweis zu validate, include_tasks/import_tasks, loop und when,
 #   Befehle.
 - name: Nginx installieren
@@ -24,37 +22,51 @@
     update_cache: true
     cache_valid_time: 3600
   # OPTIONAL: Stichwort, damit nur dieser Teil laeuft:  ansible-playbook site.yml --tags paket
-  #   tags: [paket]
+  tags: [paket]
 
 - name: Startseite aus Vorlage erzeugen
   ansible.builtin.template:
     src: index.html.j2
-    # TODO: dest /var/www/html/index.html, Besitzer root, Gruppe root, Rechte 0644
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Nginx-Konfiguration aus Vorlage erzeugen
   ansible.builtin.template:
     src: site.conf.j2
-    # TODO: dest /etc/nginx/sites-available/default, Besitzer root, Gruppe root, Rechte 0644
-  # TODO: notify "Nginx neu laden"
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Nginx neu laden
   # Hinweis: validate: "nginx -t -c %s" funktioniert nur bei einer kompletten nginx.conf,
   # nicht bei diesem Ausschnitt. Beispiel mit sudoers:  validate: "visudo -cf %s"
 
-# TODO: Task "Nginx laeuft und startet beim Booten"
-#       (ansible.builtin.service: name nginx, state started, enabled true)
+- name: Nginx laeuft und startet beim Booten
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+# Handler sofort ausfuehren (hier nach dem Start, sonst waere nginx beim ersten Lauf noch nicht aktiv)
+- name: Handler jetzt ausfuehren
+  ansible.builtin.meta: flush_handlers
 
 # OPTIONAL: Aufgaben in Dateien aufteilen und einbinden
-#   - name: Installation
-#     ansible.builtin.include_tasks: install.yml     # dynamisch, zur Laufzeit
-#     tags: [paket]
-#   - name: Konfiguration
-#     ansible.builtin.import_tasks: konfig.yml       # statisch, beim Einlesen
-#     tags: [konfig]
+- name: Zusatzpakete (eigene Datei, dynamisch eingebunden)
+  ansible.builtin.include_tasks: zusatz.yml
+  tags: [paket]
+
+- name: Abschluss (eigene Datei, statisch eingebunden)
+  ansible.builtin.import_tasks: abschluss.yml
+  tags: [konfig]
 # OPTIONAL: Aufgabe nur unter einer Bedingung oder in einer Schleife
-#   - name: Zusaetzliches Paket
-#     ansible.builtin.apt:
-#       name: "{{ item }}"
-#     loop: "{{ webserver_pakete | default([]) }}"
-#     when: webserver_pakete is defined
+- name: Zusaetzliches Paket
+  ansible.builtin.apt:
+    name: "{{ item }}"
+  loop: "{{ webserver_pakete | default([]) }}"
+  when: webserver_pakete is defined
 # OPTIONAL: Befehle
 #   ansible-galaxy init meine_rolle      # Geruest fuer eine neue Rolle
 #   ansible-lint                         # Stil und Fallstricke

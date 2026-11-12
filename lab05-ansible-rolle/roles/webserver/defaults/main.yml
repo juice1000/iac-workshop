@@ -3,34 +3,16 @@
 # (Inventory, Play, -e) ueberschreibt sie. So bleibt die Rolle anpassbar, ohne sie zu aendern.
 # Standardwerte, im Playbook oder Inventory ueberschreibbar
 webserver_port: 80
-# TODO: webserver_begruessung mit dem Wert "Hallo TLBG"
+webserver_begruessung: "Hallo TLBG"
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# WEGWEISER
-# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
-# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
-# erst nach dem Hauptweg ansehen.
+# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: weitere Standardwerte, argument_specs, meta/main.yml.
 # defaults/ hat die niedrigste Rangfolge, vars/ ueberschreibt fast alles.
 # OPTIONAL: weitere Standardwerte
-#   webserver_pakete: [nginx]
-#   webserver_dokumentenwurzel: /var/www/html
+webserver_pakete: [wget]
+webserver_dokumentenwurzel: /var/www/html
 # OPTIONAL: Eingaben der Rolle beschreiben und pruefen, in roles/webserver/meta/argument_specs.yml:
-#   ---
-#   argument_specs:
-#     main:
-#       short_description: Nginx einrichten
-#       options:
-#         webserver_port:
-#           type: int
-#           default: 80
-#         webserver_begruessung:
-#           type: str
-#           default: "Hallo TLBG"
+# Aktiv: siehe meta/argument_specs.yml
 # OPTIONAL: Abhaengigkeiten und Metadaten in roles/webserver/meta/main.yml:
-#   ---
-#   dependencies: []
-#   galaxy_info:
-#     author: Julien Look
-#     description: Nginx mit Startseite
-#     license: MIT
-#     min_ansible_version: "2.14"
+# Aktiv: siehe meta/main.yml

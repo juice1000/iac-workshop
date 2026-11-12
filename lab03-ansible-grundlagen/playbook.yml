@@ -2,10 +2,8 @@
 # Lab 3: Webserver einrichten (Uebung)
 # Ziel: nginx auf der Gruppe web, Startseite und Konfiguration aus den Vorlagen in templates/
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# WEGWEISER
-# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
-# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
-# erst nach dem Hauptweg ansehen.
+# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: vars_files und vars_prompt, serial, tags und when, loop, user und
 #   file, validate, copy und lineinfile, flush_handlers, command mit changed_when,
 #   block/rescue/always, wait_for, no_log, delegate_to, listen, until/retries, Fakten, Befehle.
@@ -24,14 +22,15 @@
     web_port: 80
     begruessung: "Hallo TLBG"
   # OPTIONAL: Variablen aus Datei oder Eingabe
-  #   vars_files:
-  #     - vars/web.yml
+  vars_files:
+    - vars/web.yml
+  # vars_prompt fragt beim Start nach einem Wert. [NICHT AKTIV] Es blockiert unbeaufsichtigte Laeufe.
   #   vars_prompt:
   #     - name: begruessung
   #       prompt: "Welche Begruessung?"
   #       private: false
   # OPTIONAL: Ein Server nach dem anderen (in das Play schreiben)
-  #   serial: 1
+  serial: 1
 
   # tasks: die Aufgaben, die der Reihe nach laufen. Jede Aufgabe ruft ein Modul auf.
   # Ein Modul ist ein fertiger Baustein (apt, template, service ...) mit eigenen Parametern.
@@ -47,28 +46,29 @@
         update_cache: true
         cache_valid_time: 3600
       # OPTIONAL: Stichwort fuer --tags und eine Bedingung (in die Aufgabe schreiben)
-      #   tags: [paket]
-      #   when: ansible_facts['os_family'] == "Debian"
+      tags: [paket]
+      when: ansible_facts['os_family'] == "Debian"
 
     # [OPTIONAL] loop: wiederholt die Aufgabe fuer jedes Element, das Element heisst {{ item }}.
     # OPTIONAL: mehrere Pakete mit einer Schleife
-    #   - name: Werkzeuge installieren
-    #     ansible.builtin.apt:
-    #       name: "{{ item }}"
-    #       state: present
-    #     loop: [curl, vim, htop]
+    - name: Werkzeuge installieren
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      loop: [curl, vim, htop]
     # OPTIONAL: Benutzer und Verzeichnis anlegen
-    #   - name: Benutzer anlegen
-    #     ansible.builtin.user:
-    #       name: webadmin
-    #       shell: /bin/bash
-    #       groups: www-data
-    #       append: true
-    #   - name: Verzeichnis anlegen
-    #     ansible.builtin.file:
-    #       path: /srv/daten
-    #       state: directory
-    #       mode: "0755"
+    - name: Benutzer anlegen
+      ansible.builtin.user:
+        name: webadmin
+        shell: /bin/bash
+        groups: www-data
+        append: true
+
+    - name: Verzeichnis anlegen
+      ansible.builtin.file:
+        path: /srv/daten
+        state: directory
+        mode: "0755"
 
     # template: rendert eine Jinja2-Vorlage (*.j2) auf dem Controller und legt das Ergebnis auf dem Server ab.
     #           Wozu: Konfigurationsdateien mit Variablen. Unterschied zu copy: copy kopiert 1:1.
@@ -76,89 +76,98 @@
     - name: Startseite aus Vorlage erzeugen
       ansible.builtin.template:
         src: templates/index.html.j2
-        # TODO: dest /var/www/html/index.html
+        dest: /var/www/html/index.html
         owner: root
         group: root
-        # TODO: mode "0644"
+        mode: "0644"
 
     # OPTIONAL: Datei vor dem Ausrollen pruefen (validate), Beispiel sudoers
-    #   - name: sudo-Regel anlegen
-    #     ansible.builtin.copy:
-    #       content: "webadmin ALL=(ALL) NOPASSWD: ALL\n"
-    #       dest: /etc/sudoers.d/webadmin
-    #       mode: "0440"
-    #       validate: "visudo -cf %s"
+    - name: Sudo-Regel anlegen
+      ansible.builtin.copy:
+        content: "webadmin ALL=(ALL) NOPASSWD: ALL\n"
+        dest: /etc/sudoers.d/webadmin
+        mode: "0440"
+        validate: "visudo -cf %s"
     # OPTIONAL: statische Datei kopieren und eine Zeile in einer Datei setzen
-    #   - name: Datei kopieren
-    #     ansible.builtin.copy:
-    #       content: "Hallo\n"
-    #       dest: /etc/motd
-    #       mode: "0644"
-    #   - name: Zeile in Datei setzen
-    #     ansible.builtin.lineinfile:
-    #       path: /etc/motd
-    #       line: "Wartung am Freitag"
+    - name: Datei kopieren
+      ansible.builtin.copy:
+        content: "Hallo\n"
+        dest: /srv/daten/hallo.txt
+        mode: "0644"
+
+    - name: Zeile in Datei setzen (Datei wird bei Bedarf angelegt)
+      ansible.builtin.lineinfile:
+        path: /srv/daten/notiz.txt
+        line: "{{ web_notiz }}"
+        create: true
+        mode: "0644"
 
     # notify: loest einen Handler aus, aber nur, wenn diese Aufgabe etwas geaendert hat.
     - name: Nginx-Konfiguration aus Vorlage erzeugen
       ansible.builtin.template:
-        # TODO: src templates/site.conf.j2, dest /etc/nginx/sites-available/default
+        src: templates/site.conf.j2
+        dest: /etc/nginx/sites-available/default
         owner: root
         group: root
         mode: "0644"
-      # TODO: notify auf den Handler "Nginx neu laden"
+      notify: Nginx neu laden
 
     # OPTIONAL: Handler sofort ausfuehren statt am Ende des Plays
-    #   - name: Handler jetzt ausfuehren
-    #     ansible.builtin.meta: flush_handlers
+    - name: Handler jetzt ausfuehren
+      ansible.builtin.meta: flush_handlers
 
     # service: steuert Dienste. state: started = soll laufen, enabled: true = startet beim Booten.
     - name: Nginx laeuft und startet beim Booten
       ansible.builtin.service:
         name: nginx
-        # TODO: state started, enabled true
+        state: started
+        enabled: true
 
     # [OPTIONAL] command / shell: fuehren ein Kommando aus. Sie kennen den Soll-Zustand nicht und melden immer changed.
     #                  Deshalb: changed_when steuert die Meldung, und wenn moeglich ein Modul nehmen.
     # debug: gibt Werte aus. Wozu: nachsehen, was in einer Variable steht.
     # OPTIONAL: command meldet immer "changed". Mit changed_when steuert man das.
-    #   - name: Nginx-Version lesen
-    #     ansible.builtin.command: nginx -v
-    #     register: nginx_version
-    #     changed_when: false
-    #   - name: Version anzeigen
-    #     ansible.builtin.debug:
-    #       msg: "{{ nginx_version.stderr }}"
+    - name: Nginx-Version lesen
+      ansible.builtin.command: nginx -v
+      register: nginx_version
+      changed_when: false
+      check_mode: false # lesender Befehl, laeuft auch im Check-Modus
+
+    - name: Version anzeigen
+      ansible.builtin.debug:
+        msg: "{{ nginx_version.stderr }}"
     # [OPTIONAL] block / rescue / always: fasst Aufgaben zusammen.
     #   rescue laeuft nur bei einem Fehler im block, always immer. Wozu: Fehler abfangen und aufraeumen.
     # OPTIONAL: Fehlerbehandlung mit block, rescue und always
-    #   - name: Mit Fehlerbehandlung
-    #     block:
-    #       - name: Kann fehlschlagen
-    #         ansible.builtin.command: /bin/false
-    #     rescue:
-    #       - name: Wird bei Fehler ausgefuehrt
-    #         ansible.builtin.debug:
-    #           msg: "Fehler abgefangen"
-    #     always:
-    #       - name: Immer
-    #         ansible.builtin.debug:
-    #           msg: "fertig"
+    - name: Mit Fehlerbehandlung
+      block:
+        - name: Kann fehlschlagen
+          ansible.builtin.command: /bin/false
+          changed_when: false
+      rescue:
+        - name: Wird bei Fehler ausgefuehrt
+          ansible.builtin.debug:
+            msg: "Fehler abgefangen"
+      always:
+        - name: Immer
+          ansible.builtin.debug:
+            msg: "fertig"
     # [OPTIONAL] wait_for: wartet auf einen Port oder eine Datei. Wozu: erst weitermachen, wenn ein Dienst bereit ist.
     # OPTIONAL: Wartet, bis der Port offen ist
-    #   - name: Auf Port warten
-    #     ansible.builtin.wait_for:
-    #       port: "{{ web_port }}"
-    #       timeout: 30
+    - name: Auf Port warten
+      ansible.builtin.wait_for:
+        port: "{{ web_port }}"
+        timeout: 30
+      when: not ansible_check_mode # im Check-Modus lauscht nginx noch nicht auf dem neuen Port
       # OPTIONAL: Passwoerter nicht ins Log schreiben (in die Aufgabe schreiben)
-      #   no_log: true
+      # [NICHT AKTIV] no_log: true versteckt auch Fehlermeldungen. Nur fuer Aufgaben mit Geheimnissen (siehe Miniprojekt).
     # OPTIONAL: Aufgabe nur einmal und auf dem eigenen Rechner ausfuehren
-    #   - name: Zeitstempel auf dem eigenen Rechner
-    #     ansible.builtin.command: date
-    #     delegate_to: localhost
-    #     become: false             # auf dem eigenen Rechner kein sudo
-    #     run_once: true
-    #     changed_when: false
+    - name: Zeitstempel auf dem eigenen Rechner
+      ansible.builtin.command: date
+      delegate_to: localhost
+      become: false # auf dem eigenen Rechner kein sudo
+      # run_once: true # [NICHT AKTIV] ansible-lint warnt davor (anderes Verhalten bei strategy: free)
+      changed_when: false
 
   # handlers: Aufgaben, die nur auf notify hin laufen, einmal am Ende des Plays, auch bei mehreren notify.
   #           Wozu: Dienst nur neu laden, wenn sich die Konfiguration wirklich geaendert hat.
@@ -166,9 +175,9 @@
     - name: Nginx neu laden
       ansible.builtin.service:
         name: nginx
-        # TODO: state reloaded
+        state: reloaded
       # OPTIONAL: mehrere Handler auf dasselbe Stichwort
-      #   listen: "web neu laden"
+      listen: "web neu laden"
 
 # Zweites Play: Pruefung nach der Einrichtung. Ein Playbook kann mehrere Plays haben, auch fuer
 # andere Hosts.
@@ -186,17 +195,19 @@
       register: seite
       when: not ansible_check_mode
       # OPTIONAL: wiederholen, bis der Server antwortet (in die Aufgabe schreiben)
-      #   until: seite.status == 200
-      #   retries: 5
-      #   delay: 2
+      until: seite.status == 200
+      retries: 5
+      delay: 2
 
-    # TODO: Task mit ansible.builtin.assert: that: der Hostname (inventory_hostname)
-    #       steht im Inhalt der Seite (seite.content). success_msg frei waehlen.
-    #       Ebenfalls nur ausfuehren, wenn nicht ansible_check_mode.
+    - name: Inhalt pruefen
+      ansible.builtin.assert:
+        that: inventory_hostname in seite.content
+        success_msg: "Webserver auf {{ inventory_hostname }} antwortet"
+      when: not ansible_check_mode
     # OPTIONAL: Fakten anzeigen
-    #   - name: Betriebssystem anzeigen
-    #     ansible.builtin.debug:
-    #       var: ansible_facts['distribution']
+    - name: Betriebssystem anzeigen
+      ansible.builtin.debug:
+        var: ansible_facts['distribution']
 
 # OPTIONAL: Befehle
 #   ansible-playbook playbook.yml --limit server1

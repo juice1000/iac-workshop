@@ -1,11 +1,9 @@
 ---
 # Phase 2: Rolle postgresql. Hilfe: ansible-doc <modulname>
-# Die erste Aufgabe ist als Beispiel fertig. Ergaenzt die Stellen mit TODO.
+# Die erste Aufgabe ist als Beispiel fertig. Geloeste Version, alles ausgefuellt.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# WEGWEISER
-# Hauptweg: die Stellen mit TODO. Sie reichen, damit das Lab laeuft.
-# NICHT Teil des Hauptwegs: alles, was mit OPTIONAL oder [OPTIONAL] beginnt. Nur zum Vertiefen,
-# erst nach dem Hauptweg ansehen.
+# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: postgresql_set, flush_handlers, wait_for, Vault, postgresql_privs und
 #   postgresql_query, cron-Sicherung.
 - name: PostgreSQL und Python-Treiber installieren
@@ -23,16 +21,10 @@
   ansible.builtin.lineinfile:
     path: "{{ postgresql_conf_dir }}/postgresql.conf"
     regexp: "^#?listen_addresses"
-    # TODO: line "listen_addresses = '*'"
+    line: "listen_addresses = '*'"
   notify: PostgreSQL neu starten
 # OPTIONAL: weitere Einstellungen mit community.postgresql.postgresql_set (nach dem Dienststart)
-#   - name: Maximale Verbindungen setzen
-#     community.postgresql.postgresql_set:
-#       name: max_connections
-#       value: "50"
-#     become: true
-#     become_user: postgres
-#     notify: PostgreSQL neu starten
+# Aktiv: siehe ganz unten (die Datenbank muss dafuer schon laufen).
 
 # pg_hba.conf: Zugriffsregeln von PostgreSQL (wer darf von wo auf welche Datenbank mit welcher
 # Anmeldung). Das Modul postgresql_pg_hba pflegt einzelne Zeilen. Wozu: die Datenbank nur dem
@@ -41,21 +33,27 @@
   community.postgresql.postgresql_pg_hba:
     dest: "{{ postgresql_conf_dir }}/pg_hba.conf"
     contype: host
-    # TODO: databases {{ db_name }}, users {{ db_user }}
-    # TODO: address {{ postgresql_erlaubtes_netz }}, method scram-sha-256
+    databases: "{{ db_name }}"
+    users: "{{ db_user }}"
+    address: "{{ postgresql_erlaubtes_netz }}"
+    method: scram-sha-256
   notify: PostgreSQL neu starten
 # Die pg_hba.conf wird von oben nach unten gelesen, die erste passende Zeile gilt.
 # listen_addresses braucht einen Neustart, pg_hba.conf nur ein Reload.
 
-# TODO: Dienst postgresql starten und beim Booten aktivieren (ansible.builtin.service)
+- name: PostgreSQL laeuft und startet beim Booten
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
 # OPTIONAL: Handler sofort ausfuehren, damit die Datenbank die neuen Einstellungen hat
-#   - name: Handler jetzt ausfuehren
-#     ansible.builtin.meta: flush_handlers
+- name: Handler jetzt ausfuehren
+  ansible.builtin.meta: flush_handlers
 # OPTIONAL: Warten, bis der Port offen ist
-#   - name: Auf PostgreSQL warten
-#     ansible.builtin.wait_for:
-#       port: 5432
-#       timeout: 30
+- name: Auf PostgreSQL warten
+  ansible.builtin.wait_for:
+    port: 5432
+    timeout: 30
 
 # become_user: postgres fuehrt die Aufgabe als Datenbank-Administrator aus (sudo -u postgres).
 # no_log: true unterdrueckt die Ausgabe der Aufgabe, damit das Passwort nicht im Log landet.
@@ -63,41 +61,56 @@
 - name: Datenbankbenutzer anlegen
   community.postgresql.postgresql_user:
     name: "{{ db_user }}"
-    # TODO: password {{ db_password }}
-  # TODO: als Benutzer postgres ausfuehren (become und become_user)
-  # TODO: das Passwort darf nicht im Log erscheinen (no_log)
+    password: "{{ db_password }}"
+  become: true
+  become_user: postgres
+  no_log: true
 # OPTIONAL: Passwort nicht im Klartext ablegen, sondern mit Ansible Vault:
 #   ansible-vault encrypt_string 'geheim' --name db_password
 #   ansible-playbook site.yml --ask-vault-pass
 
-# TODO: Datenbank {{ db_name }} mit Besitzer {{ db_user }} anlegen
-#       (community.postgresql.postgresql_db, ebenfalls als Benutzer postgres)
+- name: Datenbank anlegen
+  community.postgresql.postgresql_db:
+    name: "{{ db_name }}"
+    owner: "{{ db_user }}"
+  become: true
+  become_user: postgres
 # OPTIONAL: Rechte vergeben und eine Abfrage ausfuehren
-#   - name: Rechte setzen
-#     community.postgresql.postgresql_privs:
-#       db: "{{ db_name }}"
-#       role: "{{ db_user }}"
-#       type: database
-#       privs: ALL
-#     become: true
-#     become_user: postgres
-#   - name: Abfrage ausfuehren
-#     community.postgresql.postgresql_query:
-#       db: "{{ db_name }}"
-#       query: "SELECT version();"
-#     become: true
-#     become_user: postgres
-#     register: abfrage
-#     changed_when: false
+- name: Maximale Verbindungen setzen
+  community.postgresql.postgresql_set:
+    name: max_connections
+    value: "50"
+  become: true
+  become_user: postgres
+  notify: PostgreSQL neu starten
+
+- name: Rechte setzen
+  community.postgresql.postgresql_privs:
+    login_db: "{{ db_name }}"
+    roles: "{{ db_user }}"
+    type: database
+    privs: ALL
+  become: true
+  become_user: postgres
+
+- name: Abfrage ausfuehren
+  community.postgresql.postgresql_query:
+    login_db: "{{ db_name }}"
+    query: "SELECT version();"
+  become: true
+  become_user: postgres
+  register: postgresql_abfrage
+  changed_when: false
 # OPTIONAL: Datenbank sichern (pg_dump) per cron. Im Lab-Image ist cron nicht installiert.
-#   - name: cron installieren
-#     ansible.builtin.apt:
-#       name: cron
-#       state: present
-#   - name: Taegliche Sicherung
-#     ansible.builtin.cron:
-#       name: pg_dump
-#       minute: "30"
-#       hour: "2"
-#       user: postgres
-#       job: "pg_dump {{ db_name }} > /var/backups/{{ db_name }}.sql"
+- name: Cron installieren
+  ansible.builtin.apt:
+    name: cron
+    state: present
+
+- name: Taegliche Sicherung
+  ansible.builtin.cron:
+    name: pg_dump
+    minute: "30"
+    hour: "2"
+    user: postgres
+    job: "pg_dump {{ db_name }} > /var/backups/{{ db_name }}.sql"

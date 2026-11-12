@@ -1,0 +1,6 @@
+---
+# Wird mit include_tasks aus tasks/main.yml eingebunden (dynamisch, zur Laufzeit)
+- name: Hilfswerkzeug installieren
+  ansible.builtin.apt:
+    name: curl
+    state: present
