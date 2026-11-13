@@ -10,7 +10,7 @@
 | Branch | Audience | Content |
 | --- | --- | --- |
 | `main` | Trainer | Complete solution, docs, CI |
-| `start` | Participants | `main` with gaps to fill in (`TODO` comments) in labs 1, 2, 3 and in the mini project (Terraform `main.tf` and the role tasks). Labs 4 and 5 are complete on `start` (walkthrough, reference for the mini project). Without the trainer docs (`docs/`, `CLAUDE.md`), plus a note in the README |
+| `start` | Participants | `main` with gaps to fill in (`TODO` comments) in labs 1, 2, 3 and in the mini project (Terraform `main.tf`, `variables.tf`, `versions.tf`, `outputs.tf` and the role tasks). Labs 4 and 5 are complete on `start` (walkthrough, reference for the mini project). Without the trainer docs (`docs/`, `CLAUDE.md`), plus a note in the README |
 
 Participants clone with `git clone -b start https://github.com/juice1000/iac-workshop.git`. After the mini project they can compare with `git fetch origin main && git diff start origin/main -- miniprojekt/`.
 

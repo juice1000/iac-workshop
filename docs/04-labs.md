@@ -56,7 +56,7 @@ Scenario from the client: application server with a remote DB server.
 
 ### terraform/
 
-`versions.tf`, `variables.tf` (`umgebung`, `netz` 172.30.0.0/24, `app_port` 8080), `main.tf` (locals with app1 and db1, IPs via `cidrhost`, key, image, network, module per server, inventory). On `start` three gaps in `main.tf`: the `db1` entry, `ipam_config` of the network and the inputs of the module call, `outputs.tf` (`app_url`, `ssh`, `db_ip`), `templates/inventory.tftpl` (groups `[app]`, `[db]`, vars `db_host`, `app_netz`, `app_port`).
+`versions.tf`, `variables.tf` (`umgebung`, `netz` 172.30.0.0/24, `app_port` 8080), `main.tf` (locals with app1 and db1, IPs via `cidrhost`, key, image, network, module per server, inventory). On `start` the Terraform part has these gaps: `versions.tf`, `variables.tf` and `outputs.tf` are empty except for a TODO spec (names, types, defaults, values) that participants write themselves; in `main.tf` the `local_sensitive_file.private_key` resource, the Dockerfile path in `docker_image.linux` (`filesha1("TODO")`), the `db1` entry, `ipam_config` of the network, the inputs of the module call and the right-hand sides of the `templatefile` call (placeholders `null`, `abspath` stays). Outputs: `app_url`, `ssh`, `db_ip`. `templates/inventory.tftpl` stays given (groups `[app]`, `[db]`, vars `db_host`, `app_netz`, `app_port`).
 
 ### ansible/
 

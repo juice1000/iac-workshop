@@ -36,7 +36,7 @@ Replanned after day 1 (only labs 1 and 2 were finished, the pace was too high). 
 | Time | Phase | What participants do |
 | --- | --- | --- |
 | 13:25 | Intro (5 min) | Scenario in one picture, OpenStack comparison in two sentences |
-| 13:30 | Phase 1: Terraform (30 min) | Fill the `TODO` gaps in `miniprojekt/terraform/main.tf` (db1 entry, network subnet, module inputs), then apply. Every gap names its reference (`umgebung/main.tf`, lab 2) |
+| 13:30 | Phase 1: Terraform (30 min) | Write `versions.tf`, `variables.tf`, `outputs.tf` and fill the `TODO` gaps in `main.tf` (private key resource, Dockerfile path, db1 entry, network subnet, module inputs, inventory values), then apply. Every gap names its reference (`umgebung/main.tf`, lab 2) |
 | 14:00 | Phase 2: role postgresql (40 min) | Fill the gaps in the role tasks. Every gap names its reference (lab 3, lab 5) or the `ansible-doc` call |
 | 14:40 | Break (15 min) | |
 | 14:55 | Phase 3: role app (30 min) | Fill the gaps in the role tasks, templates and handler are given |
