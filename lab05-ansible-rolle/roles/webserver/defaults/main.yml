@@ -6,4 +6,4 @@
 # site.conf.j2: webserver_port). Rangfolge von niedrig nach hoch: defaults, Inventory, vars in site.yml, -e.
 # Beispiel: ansible-playbook site.yml -e webserver_port=8081 gewinnt gegen alles andere.
 webserver_port: 80
-# TODO: webserver_begruessung mit dem Wert "Hallo TLBG"
+webserver_begruessung: "Hallo TLBG"

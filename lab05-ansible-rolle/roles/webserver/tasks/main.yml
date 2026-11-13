@@ -15,8 +15,6 @@
 #   Handler          roles/webserver/handlers/main.yml, notify nennt ihn beim Namen
 # Die Aufgaben sind dieselben wie in Lab 3, in derselben Reihenfolge: erst installieren, dann die Dateien,
 # dann den Dienst. Neu ist nur, dass Play-Kopf und vars fehlen. Die stehen jetzt in site.yml und defaults/.
-# Lab 5: die Aufgaben aus Lab 3 als Rolle
-# Die Vorlagen liegen in templates/ (ohne Pfadpraefix), die Variablen heissen webserver_*.
 # Das Paket kommt aus den apt-Quellen des Servers. become: true steht nicht hier, sondern in site.yml
 # und gilt fuer alle Aufgaben der Rolle.
 - name: Nginx installieren
@@ -31,16 +29,25 @@
 - name: Startseite aus Vorlage erzeugen
   ansible.builtin.template:
     src: index.html.j2
-    # TODO: dest /var/www/html/index.html, Besitzer root, Gruppe root, Rechte 0644
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: "0644"
 
 # site.conf.j2 setzt den Port aus webserver_port (Standard 80 aus defaults/main.yml).
 # notify ruft den Handler aus handlers/main.yml, aber nur, wenn sich die Datei geaendert hat.
 - name: Nginx-Konfiguration aus Vorlage erzeugen
   ansible.builtin.template:
     src: site.conf.j2
-    # TODO: dest /etc/nginx/sites-available/default, Besitzer root, Gruppe root, Rechte 0644
-  # TODO: notify "Nginx neu laden"
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Nginx neu laden
 
 # Nach der Konfiguration, damit nginx gleich mit den richtigen Einstellungen startet.
-# TODO: Task "Nginx laeuft und startet beim Booten"
-#       (ansible.builtin.service: name nginx, state started, enabled true)
+- name: Nginx laeuft und startet beim Booten
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
