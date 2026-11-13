@@ -1,4 +1,6 @@
 # Ein Linux-"Server" als Docker-Container mit systemd und SSH.
+# Das Image (docker/Dockerfile) bringt die Software mit. Dieses Modul macht daraus eine laufende Instanz:
+# Container starten, ins Netz haengen, Ports freigeben, Schluessel ablegen.
 
 terraform {
   required_providers {
@@ -9,12 +11,19 @@ terraform {
   }
 }
 
+# Der laufende Server. hostname ist der Name, den der Server von sich selbst sieht.
 resource "docker_container" "server" {
   name     = var.name
   hostname = var.name
   image    = var.image_id
 
-  # systemd im Container braucht diese Einstellungen
+  # systemd im Container braucht diese Einstellungen. Ansible startet Dienste mit systemd, und systemd
+  # erwartet eine Umgebung wie auf einer VM. Das ist ein Kompromiss fuers Labor, in Produktion
+  # waere privileged zu offen.
+  #   privileged       volle Rechte, damit systemd seine Prozesse verwalten darf
+  #   cgroupns_mode    der Container nutzt die cgroups des Hosts (cgroup-Verzeichnis, mit dem systemd Dienste gruppiert)
+  #   tmpfs            /run und /run/lock liegen im Arbeitsspeicher, dort legt systemd Laufzeitdaten ab
+  #   volumes          bindet /sys/fs/cgroup vom Host ein, passend zum cgroup-Modus
   privileged    = true
   cgroupns_mode = "host"
   tmpfs = {
@@ -27,18 +36,25 @@ resource "docker_container" "server" {
     read_only      = false
   }
 
+  # networks_advanced: haengt den Container in das Netz aus der Umgebung und gibt ihm dort eine feste IP.
+  # "advanced" heisst nur: man kann Optionen wie die Adresse mitgeben.
   networks_advanced {
     name         = var.network_name
     ipv4_address = var.ipv4_address
   }
 
-  # SSH nur lokal erreichbar
+  # ports: veroeffentlicht einen Port des Containers auf dem eigenen Rechner (Container 22 -> Rechner ssh_port).
+  # ip 127.0.0.1 heisst: nur von diesem Rechner aus erreichbar, nicht aus dem Netzwerk. Jeder Server braucht
+  # einen eigenen ssh_port, denn alle teilen sich denselben Rechner. Ansible verbindet sich darueber.
   ports {
     internal = 22
     external = var.ssh_port
     ip       = "127.0.0.1"
   }
 
+  # dynamic: erzeugt den ports-Block so oft, wie die Liste weitere_ports Eintraege hat. Ohne Eintrag
+  # entsteht keiner (Standard []). Wozu: der App-Server im Miniprojekt gibt zusaetzlich Port 8080 frei,
+  # die Datenbank keinen. Ein fester Block ginge nicht, weil die Anzahl vom Aufruf abhaengt.
   dynamic "ports" {
     for_each = var.weitere_ports
     content {
@@ -48,6 +64,8 @@ resource "docker_container" "server" {
     }
   }
 
+  # upload: legt beim Start eine Datei in den Container. Hier der oeffentliche Schluessel als authorized_keys
+  # von root. Damit darf sich der Besitzer des privaten Schluessels (Ansible) ohne Passwort anmelden.
   upload {
     content = var.public_key
     file    = "/root/.ssh/authorized_keys"

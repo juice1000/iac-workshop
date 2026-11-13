@@ -31,6 +31,9 @@ resource "tls_private_key" "lab" {
   algorithm = "ED25519"
 }
 
+# Schreibt den privaten Schluessel als Datei (.ssh/id_lab, nicht im Git). "sensitive" blendet den Inhalt in plan
+# und apply aus. file_permission 0600 (nur der Besitzer darf lesen) ist Pflicht: ssh verweigert Schluessel,
+# die andere lesen duerfen.
 resource "local_sensitive_file" "private_key" {
   filename        = "${path.module}/.ssh/id_lab"
   content         = tls_private_key.lab.private_key_openssh
