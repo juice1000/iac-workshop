@@ -28,8 +28,11 @@ miniprojekt/terraform/main.tf
 miniprojekt/terraform/outputs.tf
 miniprojekt/terraform/variables.tf
 miniprojekt/terraform/versions.tf
+miniprojekt/ansible/roles/app/handlers/main.yml
 miniprojekt/ansible/roles/app/tasks/main.yml
-miniprojekt/ansible/roles/postgresql/tasks/main.yml"
+miniprojekt/ansible/roles/postgresql/handlers/main.yml
+miniprojekt/ansible/roles/postgresql/tasks/main.yml
+miniprojekt/ansible/site.yml"
 erlaubt="$(printf '.yamllint\nREADME.md\n%s\n' "$UEBUNG" | sort)"
 # Trainer-Doku (docs/, CLAUDE.md) ist auf start absichtlich entfernt und zaehlt hier nicht mit
 geaendert="$(git -C "$ROOT" diff --name-only main start | grep -Ev '^(docs/|CLAUDE\.md$)' | sort || true)"
