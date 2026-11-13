@@ -10,6 +10,7 @@
 # kommen nach dem Start, weil die Module sich mit der laufenden Datenbank verbinden.
 # Woher die Werte kommen: db_name, db_user, db_password aus group_vars/all.yml, app_netz aus dem Inventory
 # (ueber postgresql_erlaubtes_netz), Pfade und Version aus defaults/main.yml.
+# Checkpoint: ansible-playbook site.yml --limit db, danach ansible-playbook pruefen.yml --tags db
 # Mehr Hintergrund: README.md im Ordner miniprojekt/ansible.
 - name: PostgreSQL und Python-Treiber installieren
   ansible.builtin.apt:

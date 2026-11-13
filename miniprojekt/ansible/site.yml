@@ -3,6 +3,7 @@
 # Reihenfolge: erst die Datenbank (die Anwendung braucht sie beim Start), dann die Anwendung, dann ein
 # Smoke-Test (ein kurzer Test, ob das Ganze funktioniert) und zuletzt das Einsammeln der Ergebnisse in out/.
 # hosts: app und db sind Gruppen aus inventory.ini (Terraform erzeugt die Datei).
+# Checkpoint fuer die Plays: ansible-playbook site.yml --syntax-check und --list-hosts. Alle Checkpoints: README.md.
 # Hintergrund und Erklaerung der Rollen: README.md in diesem Ordner.
 - name: Datenbankserver einrichten
   hosts: db

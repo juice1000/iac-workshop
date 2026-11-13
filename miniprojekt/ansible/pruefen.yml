@@ -1,0 +1,260 @@
+---
+# pruefen.yml: Checkpoints fuer das Miniprojekt. Dieses Playbook richtet nichts ein, es prueft nur. (Einzige
+# Wirkung: Der Aufruf der Startseite in Checkpoint 4 zaehlt einen Besuch mehr.)
+# Ihr fuehrt es zwischendurch aus, um zu sehen, ob der letzte Schritt funktioniert, bevor ihr weitermacht.
+#
+# Aufruf (im Ordner miniprojekt/ansible), je ein Checkpoint:
+#   ansible-playbook pruefen.yml --tags verbindung   Checkpoint 1: Terraform fertig, Server erreichbar
+#   ansible-playbook pruefen.yml --tags db           Checkpoint 2: Datenbank eingerichtet (Rolle postgresql)
+#   ansible-playbook pruefen.yml --tags zugriff      Checkpoint 3: das Netz zwischen App und Datenbank steht
+#   ansible-playbook pruefen.yml --tags app          Checkpoint 4: Anwendung laeuft (Rolle app)
+#   ansible-playbook pruefen.yml                     alle Checkpoints nacheinander
+#
+# So lest ihr die Ausgabe: Jede Pruefung meldet "OK: ..." oder "FEHLT: ..." mit einem Hinweis, welche Aufgabe
+# ihr euch ansehen sollt. Eine fehlgeschlagene Pruefung stoppt den Lauf nicht (ignore_errors), damit ihr alle
+# Ergebnisse auf einmal seht. Im PLAY RECAP am Ende bedeutet "ignored=0": alles in Ordnung. Jede Zahl groesser
+# als 0 ist eine fehlgeschlagene Pruefung.
+#
+# Wie geprueft wird: command fragt den Server (systemctl, ss, grep, psql), changed_when: false sagt, dass das
+# nichts am Server aendert (systemd_service ohne state fragt nur ab). assert wertet das Ergebnis aus, success_msg und fail_msg sind die beiden Meldungen.
+# Die Variablen (db_name, db_user, db_host ...) kommen aus group_vars/all.yml und dem Inventory, genau wie in den Rollen.
+
+- name: "Checkpoint 1: Terraform fertig, Server erreichbar"
+  hosts: all
+  gather_facts: false
+  tags: [verbindung]
+  tasks:
+    # ping ist kein Netzwerk-Ping, sondern prueft, ob Ansible sich per SSH anmelden und Python ausfuehren kann.
+    - name: Server per SSH erreichen
+      ansible.builtin.ping:
+
+    - name: Gruppen app und db sind im Inventory
+      ansible.builtin.assert:
+        that:
+          - "'app' in group_names or 'db' in group_names"
+        success_msg: "OK: {{ inventory_hostname }} gehoert zur Gruppe {{ group_names | join(', ') }}"
+        fail_msg: "FEHLT: {{ inventory_hostname }} ist weder in app noch in db. Hinweis: templates/inventory.tftpl und terraform apply"
+      ignore_errors: true # noqa: ignore-errors
+
+- name: "Checkpoint 2: Datenbank eingerichtet (Rolle postgresql)"
+  hosts: db
+  become: true
+  gather_facts: false
+  tags: [db]
+  tasks:
+    - name: Dienst abfragen
+      ansible.builtin.systemd_service:
+        name: postgresql
+      register: dienst
+
+    - name: PostgreSQL laeuft
+      ansible.builtin.assert:
+        that: dienst.status.ActiveState | default('') == 'active'
+        success_msg: "OK: PostgreSQL laeuft"
+        fail_msg: "FEHLT: PostgreSQL laeuft nicht. Hinweis: Aufgaben 'Installieren' und 'laeuft und startet beim Booten'"
+      ignore_errors: true # noqa: ignore-errors
+
+    - name: Lauschende Ports abfragen
+      ansible.builtin.command: ss -tln
+      register: ports
+      changed_when: false
+
+    - name: PostgreSQL lauscht im Netz, nicht nur auf localhost
+      ansible.builtin.assert:
+        that: "'0.0.0.0:5432' in ports.stdout"
+        success_msg: "OK: Port 5432 lauscht auf allen Schnittstellen (listen_addresses = '*')"
+        fail_msg: "FEHLT: 5432 lauscht nicht auf 0.0.0.0. Hinweis: lineinfile (listen_addresses), danach Neustart per Handler"
+      ignore_errors: true # noqa: ignore-errors
+
+    - name: Zugriffsregel suchen
+      ansible.builtin.shell: >-
+        grep -E '^host[[:space:]]+{{ db_name }}[[:space:]]+{{ db_user }}[[:space:]]+{{ app_netz | replace(".", "\.") }}[[:space:]]+scram-sha-256'
+        /etc/postgresql/*/main/pg_hba.conf
+      register: regel
+      changed_when: false
+      failed_when: false
+
+    - name: Zugriffsregel fuer die Anwendung steht in pg_hba.conf
+      ansible.builtin.assert:
+        that: regel.rc == 0
+        success_msg: "OK: pg_hba.conf erlaubt {{ db_user }} auf {{ db_name }} aus {{ app_netz }} (scram-sha-256)"
+        fail_msg: "FEHLT: keine passende Zeile in pg_hba.conf. Hinweis: Aufgabe mit postgresql_pg_hba (databases, users, address, method)"
+      ignore_errors: true # noqa: ignore-errors
+
+    - name: Benutzer in der Datenbank suchen
+      ansible.builtin.command: psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '{{ db_user }}'"
+      become: true
+      become_user: postgres
+      register: benutzer
+      changed_when: false
+      failed_when: false
+
+    - name: Datenbankbenutzer existiert
+      ansible.builtin.assert:
+        that: benutzer.stdout == '1'
+        success_msg: "OK: Benutzer {{ db_user }} existiert"
+        fail_msg: "FEHLT: Benutzer {{ db_user }} nicht gefunden. Hinweis: Aufgabe mit postgresql_user (become_user: postgres nicht vergessen)"
+      ignore_errors: true # noqa: ignore-errors
+
+    - name: Datenbank suchen
+      ansible.builtin.command: psql -tAc "SELECT 1 FROM pg_database WHERE datname = '{{ db_name }}'"
+      become: true
+      become_user: postgres
+      register: datenbank
+      changed_when: false
+      failed_when: false
+
+    - name: Datenbank existiert
+      ansible.builtin.assert:
+        that: datenbank.stdout == '1'
+        success_msg: "OK: Datenbank {{ db_name }} existiert"
+        fail_msg: "FEHLT: Datenbank {{ db_name }} nicht gefunden. Hinweis: Aufgabe mit postgresql_db (name, owner)"
+      ignore_errors: true # noqa: ignore-errors
+
+    # Echte Anmeldung ueber das Netz: psql verbindet sich mit der Adresse der Datenbank (db_host), nicht ueber den
+    # lokalen Socket. Die Anfrage kommt dann aus dem Netz app_netz und trifft die Regel in pg_hba.conf. Geprueft
+    # werden so listen_addresses, pg_hba.conf, Benutzer, Passwort und Datenbank auf einmal.
+    # Das Passwort steht nur in der Umgebung des Prozesses (PGPASSWORD), nicht in der Befehlszeile.
+    - name: Anmeldung mit Passwort ueber das Netz
+      ansible.builtin.command: psql -h {{ db_host }} -U {{ db_user }} -d {{ db_name }} -tAc "SELECT 1"
+      environment:
+        PGPASSWORD: "{{ db_password }}"
+      register: netzlogin
+      changed_when: false
+      failed_when: false
+      no_log: true
+
+    - name: Anmeldung gelungen
+      ansible.builtin.assert:
+        that: netzlogin.stdout == '1'
+        success_msg: "OK: Anmeldung als {{ db_user }} an {{ db_host }} mit Passwort klappt"
+        fail_msg: "FEHLT: Anmeldung scheitert. Hinweis: pg_hba.conf (Netz, method), Passwort in postgresql_user, listen_addresses"
+      ignore_errors: true # noqa: ignore-errors
+
+- name: "Checkpoint 3: das Netz zwischen App und Datenbank steht"
+  hosts: app
+  become: true
+  gather_facts: false
+  tags: [zugriff]
+  tasks:
+    # wait_for mit timeout probiert, ob ein TCP-Port erreichbar ist. Hier von app1 aus Richtung db1.
+    - name: Datenbankport von der App aus erreichbar
+      ansible.builtin.wait_for:
+        host: "{{ db_host }}"
+        port: 5432
+        timeout: 3
+      ignore_errors: true # noqa: ignore-errors
+
+    - name: Python-Treiber fuer PostgreSQL suchen
+      ansible.builtin.command: python3 -c "import psycopg2"
+      changed_when: false
+      failed_when: false
+      register: treiber
+
+    # Dieselbe Anmeldung, aber von app1 aus und mit Python, so wie die Anwendung sie spaeter macht. Sie laeuft nur,
+    # wenn der Treiber schon da ist (erste Aufgabe der Rolle app). Sonst wird sie uebersprungen.
+    - name: Anmeldung an der Datenbank von der App aus
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - >-
+            import os, psycopg2;
+            psycopg2.connect(host=os.environ['H'], dbname=os.environ['D'], user=os.environ['U'],
+            password=os.environ['P'], connect_timeout=3).close()
+      environment:
+        H: "{{ db_host }}"
+        D: "{{ db_name }}"
+        U: "{{ db_user }}"
+        P: "{{ db_password }}"
+      register: anmeldung
+      changed_when: false
+      failed_when: false
+      no_log: true
+      when: treiber.rc == 0
+
+    - name: Anmeldung von der App aus gelungen
+      ansible.builtin.assert:
+        that: anmeldung.rc | default(1) == 0
+        success_msg: "OK: Anmeldung von {{ inventory_hostname }} an {{ db_host }} als {{ db_user }} klappt"
+        fail_msg: "FEHLT: Anmeldung scheitert. Hinweis: zuerst Checkpoint 2 pruefen (pg_hba.conf, Benutzer, Passwort, Datenbank)"
+      ignore_errors: true # noqa: ignore-errors
+      when: treiber.rc == 0
+
+    - name: Hinweis, falls der Treiber noch fehlt
+      ansible.builtin.debug:
+        msg: "UEBERSPRUNGEN: psycopg2 fehlt noch (erste Aufgabe der Rolle app). Checkpoint 4 prueft die Anmeldung mit."
+      when: treiber.rc != 0
+
+- name: "Checkpoint 4: Anwendung laeuft (Rolle app)"
+  hosts: app
+  become: true
+  gather_facts: false
+  tags: [app]
+  tasks:
+    - name: Python-Treiber fuer PostgreSQL suchen
+      ansible.builtin.command: python3 -c "import psycopg2"
+      changed_when: false
+      failed_when: false
+      register: treiber
+
+    - name: Treiber vorhanden
+      ansible.builtin.assert:
+        that: treiber.rc == 0
+        success_msg: "OK: psycopg2 ist installiert"
+        fail_msg: "FEHLT: psycopg2. Hinweis: erste Aufgabe in roles/app/tasks/main.yml (apt, python3-psycopg2)"
+      ignore_errors: true # noqa: ignore-errors
+
+    - name: Dienst abfragen
+      ansible.builtin.systemd_service:
+        name: tlbg-app
+      register: dienst
+
+    - name: Dienst tlbg-app laeuft
+      ansible.builtin.assert:
+        that: dienst.status.ActiveState | default('') == 'active'
+        success_msg: "OK: tlbg-app laeuft"
+        fail_msg: "FEHLT: tlbg-app laeuft nicht. Hinweis: Dienstdatei, Dienst starten, Log: journalctl -u tlbg-app"
+      ignore_errors: true # noqa: ignore-errors
+
+    - name: Rechte der Zugangsdaten pruefen
+      ansible.builtin.stat:
+        path: /etc/tlbg-app.env
+      register: env_datei
+
+    - name: Zugangsdaten sind nicht fuer alle lesbar
+      ansible.builtin.assert:
+        that:
+          - env_datei.stat.exists
+          - env_datei.stat.mode == '0640'
+        success_msg: "OK: /etc/tlbg-app.env hat die Rechte 0640"
+        fail_msg: "FEHLT: /etc/tlbg-app.env fehlt oder hat falsche Rechte. Hinweis: Aufgabe 'Datenbankverbindung konfigurieren' (mode 0640, group tlbg-app)"
+      ignore_errors: true # noqa: ignore-errors
+
+    - name: Health-Seite abrufen
+      ansible.builtin.uri:
+        url: "http://localhost:{{ app_port }}/health"
+        return_content: true
+      register: gesund
+      failed_when: false
+
+    - name: Anwendung antwortet auf /health
+      ansible.builtin.assert:
+        that: gesund.status | default(0) == 200
+        success_msg: "OK: /health antwortet mit ok"
+        fail_msg: "FEHLT: /health antwortet nicht. Hinweis: laeuft der Dienst (siehe oben)? lauscht Port {{ app_port }}?"
+      ignore_errors: true # noqa: ignore-errors
+
+    - name: Startseite abrufen
+      ansible.builtin.uri:
+        url: "http://localhost:{{ app_port }}/"
+        return_content: true
+      register: startseite
+      failed_when: false
+
+    - name: Anwendung erreicht die Datenbank
+      ansible.builtin.assert:
+        that: "'DB OK' in startseite.content | default('')"
+        success_msg: "OK: {{ startseite.content | trim }}"
+        fail_msg: "FEHLT: kein 'DB OK' in der Antwort. Hinweis: db_host in /etc/tlbg-app.env und Checkpoint 3"
+      ignore_errors: true # noqa: ignore-errors

@@ -17,6 +17,10 @@ Am Ende antwortet die Anwendung mit `Hallo von tlbg-schulung-app1! DB OK (...), 
 3. **Rolle `app`**: Ergänzt die `TODO` in `ansible/roles/app/tasks/main.yml` (Benutzer, Verzeichnis, Vorlagen, Dienst) und schreibt den Handler in `handlers/main.yml`. Die Vorlagen sind fertig.
 4. **Test und Neuaufbau**: Smoke-Test, `destroy`, alles von vorn.
 
+## Checkpoints
+
+Nach jedem Schritt gibt es einen Test, damit ihr wisst, ob es klappt, bevor ihr weitermacht: `ansible-playbook pruefen.yml --tags verbindung|db|zugriff|app`. Die Tabelle mit allen sechs Checkpoints steht in `ansible/README.md`.
+
 ## Ablauf
 
 ```bash
