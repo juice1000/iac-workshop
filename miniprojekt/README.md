@@ -18,14 +18,30 @@ Alle Ansible-Befehle laufen im Ordner `miniprojekt/ansible`.
 
 ### Schritt 1: Terraform
 
-Ergänzt die `TODO` in `terraform/`: `versions.tf`, `variables.tf` und `outputs.tf` schreibt ihr selbst, in `main.tf` fehlen der Schlüssel (`local_sensitive_file`), der Pfad zum Dockerfile, Server `db1`, das Subnetz, die Eingaben des Moduls und die Werte für das Inventory. Zu jeder Lücke steht ein Muster dabei.
+Der Terraform-Teil hat eigene Checkpoints, getrennt von Ansible: `bash pruefen.sh <name>` im Ordner `terraform`. Erst wenn Terraform steht (Checkpoint 5), geht es mit Ansible weiter.
+
+Arbeitet in dieser Reihenfolge. Die `TODO` mit Mustern stehen in den Dateien.
+
+| # | Was ihr schreibt | Checkpoint | Grün heißt |
+| --- | --- | --- | --- |
+| 1 | `versions.tf` (terraform-Block, drei Provider, Docker-Provider) | `bash pruefen.sh init` | `terraform init` läuft, drei Provider geladen |
+| 2 | `variables.tf` (`umgebung`, `netz`, `app_port`) | `bash pruefen.sh variablen` | Namen, Typen und Standardwerte stimmen |
+| 3 | `main.tf`: Schlüssel (`local_sensitive_file`), Pfad zum Dockerfile, `ipam_config`, Modulaufruf, Inventory-Werte; `outputs.tf` (`app_url`, `ssh`, `db_ip`) | `bash pruefen.sh validate` | `terraform validate` ohne Fehler, alle Ressourcen und Ausgaben vorhanden, `terraform fmt` stimmt |
+| 4 | `main.tf`: Eintrag `db1` in den `locals` | `bash pruefen.sh plan` | IP 172.30.0.21, SSH-Port 2202, keine veröffentlichten Ports, `terraform plan` läuft durch (bei leerem Zustand `Plan: 7 to add`) |
+| 5 | `terraform apply` | `bash pruefen.sh apply` | Ausgaben, Schlüssel mit Rechten 0600, Inventory, zwei laufende Container, Subnetz, `db1` ohne Port 5432 |
 
 ```bash
 cd miniprojekt/terraform
-terraform init && terraform apply
+terraform init
+bash pruefen.sh init
+# ... Dateien schreiben, nach jedem Schritt den passenden Checkpoint ...
+terraform apply
+bash pruefen.sh apply             # grün? dann weiter mit Ansible
 cd ../ansible
-ansible-playbook pruefen.yml --tags verbindung     # Checkpoint 1: beide Server erreichbar
+ansible-playbook pruefen.yml --tags verbindung     # Ansible-Checkpoint 1: beide Server erreichbar
 ```
+
+`bash pruefen.sh` ohne Namen führt alle fünf Checkpoints nacheinander aus. Jede Zeile meldet `OK:` oder `FEHLT:` mit einem Hinweis, welche Stelle ihr euch ansehen sollt. Am Ende steht, wie viele Prüfungen fehlgeschlagen sind.
 
 ### Schritt 2: `site.yml`
 

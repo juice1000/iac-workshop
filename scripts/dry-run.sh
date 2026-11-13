@@ -136,6 +136,13 @@ tf validate
 tf apply -auto-approve >/dev/null
 cat "$ROOT/miniprojekt/ansible/inventory.ini"
 
+# Checkpoints der Teilnehmer fuer den Terraform-Teil (Exit-Code = Anzahl fehlgeschlagener Pruefungen)
+if ! tf_pruefung="$(bash pruefen.sh)"; then
+  printf '%s\n' "$tf_pruefung" | grep -E 'FEHLT|Ergebnis'
+  fehler "miniprojekt/terraform/pruefen.sh: mindestens ein Checkpoint schlaegt fehl"
+fi
+printf '%s\n' "$tf_pruefung" | tail -n 2
+
 log "Miniprojekt: Ansible"
 cd "$ROOT/miniprojekt/ansible"
 warte_auf_ssh
