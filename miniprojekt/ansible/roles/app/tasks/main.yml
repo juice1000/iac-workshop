@@ -3,7 +3,7 @@
 # Die Vorlagen in templates/ und der Handler in handlers/ sind schon fertig.
 # Die ersten beiden Aufgaben sind als Beispiel fertig. Geloeste Version, alles ausgefuellt.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
 # Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: no_log, Dienst haerten, uri mit until und assert, delegate_to.
 - name: Python-Treiber fuer PostgreSQL installieren

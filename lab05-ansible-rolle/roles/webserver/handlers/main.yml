@@ -1,5 +1,5 @@
 ---
-# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
 # Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: listen, flush_handlers.
 # handlers/main.yml: Handler der Rolle. Sie laufen nur, wenn eine Aufgabe sie per notify ruft, und

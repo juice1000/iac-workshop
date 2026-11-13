@@ -2,7 +2,7 @@
 # Ziel: out/hallo.txt mit "Hallo Terraform! Servername: <zufaelliger Name>"
 # Geloeste Version, alles ausgefuellt.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
 # Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: backend (gemeinsamer State), zweiter Provider time, provider mit
 #   alias, weitere Argumente von random_pet und local_file, depends_on, lifecycle, data und

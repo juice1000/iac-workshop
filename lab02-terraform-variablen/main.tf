@@ -1,7 +1,7 @@
 # Lab 2: Variablen, Locals, for_each, Outputs, templatefile (Uebung)
 # Ziel: eine Datei pro Server und out/inventory.ini aus templates/inventory.tftpl
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
 # Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: for-Ausdruecke und Funktionen in locals, time_rotating, lifecycle mit
 #   precondition, count, local_sensitive_file, dynamic, moved, jsonencode/yamlencode, data, check.

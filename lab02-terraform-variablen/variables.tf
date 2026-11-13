@@ -1,5 +1,5 @@
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
 # Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: zweite validation, nullable und sensitive, tfvars und TF_VAR,
 #   optional() im Objekt, weitere Typen.

@@ -1,6 +1,6 @@
 # Lab 4: Terraform-Module
 
-> Branch `practice-solved`: Die Lücken (`TODO`) sind hier schon ausgefüllt, inklusive der optionalen Beispiele. Zum Vergleichen mit der eigenen Lösung.
+> Branch `additional-material`: Zusatzmaterial. Die Lücken (`TODO`) sind hier schon ausgefüllt, inklusive der optionalen Beispiele. Zum Vergleichen mit der eigenen Lösung.
 
 ## Ziel
 

@@ -2,7 +2,7 @@
 # Phase 2: Rolle postgresql. Hilfe: ansible-doc <modulname>
 # Die erste Aufgabe ist als Beispiel fertig. Geloeste Version, alles ausgefuellt.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
 # Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: postgresql_set, flush_handlers, wait_for, Vault, postgresql_privs und
 #   postgresql_query, cron-Sicherung.

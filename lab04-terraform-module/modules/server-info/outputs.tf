@@ -1,4 +1,4 @@
-# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
 # Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: description, sensitive, weiterer Output.
 # Der Output ist die Ausgabe-Schnittstelle des Moduls. Nur was hier steht, sieht der Aufrufer.

@@ -10,7 +10,7 @@
 #   Vorlagen                Ordner templates/ neben dieser Datei
 #   Fakten und Hostname     sammelt Ansible selbst (siehe unten bei den Vorlagen)
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
 # Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: vars_files und vars_prompt, serial, tags und when, loop, user und
 #   file, validate, copy und lineinfile, flush_handlers, command mit changed_when,

@@ -18,7 +18,7 @@
 # Lab 5: die Aufgaben aus Lab 3 als Rolle (Uebung)
 # Die Vorlagen liegen in templates/ (ohne Pfadpraefix), die Variablen heissen webserver_*.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
 # Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: tags, Hinweis zu validate, include_tasks/import_tasks, loop und when,
 #   Befehle.

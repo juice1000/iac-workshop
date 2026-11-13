@@ -1,7 +1,7 @@
 # Lab 4: Lab 2 als Modul (Uebung)
 # Das Root-Modul ruft das Modul in modules/server-info pro Server auf.
 # Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# GELOESTE VERSION von practice: alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
+# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
 # Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
 # Optional in dieser Datei: andere Modulquellen, count als Bedingung, zweiter Modulaufruf, moved
 #   ins Modul, precondition, check, Befehle.
