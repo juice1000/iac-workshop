@@ -12,7 +12,7 @@ Am Ende antwortet die Anwendung mit `Hallo von tlbg-schulung-app1! DB OK (...), 
 
 ## Phasen
 
-1. **Terraform** (geführt): `miniprojekt/terraform` lesen und anwenden. Es baut Netz, zwei Server und das Inventory mit den Gruppen `app` und `db`.
+1. **Terraform**: Ergänzt die `TODO` in `miniprojekt/terraform/main.tf` (Server `db1`, Subnetz des Netzes, Eingaben des Moduls) und wendet es an. Es baut Netz, zwei Server und das Inventory mit den Gruppen `app` und `db`.
 2. **Rolle `postgresql`**: Ergänzt die `TODO` in `ansible/roles/postgresql/tasks/main.yml` (Konfiguration, Zugriffsregel, Dienst, Benutzer, Datenbank).
 3. **Rolle `app`**: Ergänzt die `TODO` in `ansible/roles/app/tasks/main.yml` (Benutzer, Verzeichnis, Vorlagen, Dienst). Vorlagen und Handler sind schon fertig.
 4. **Test und Neuaufbau**: Smoke-Test, `destroy`, alles von vorn.

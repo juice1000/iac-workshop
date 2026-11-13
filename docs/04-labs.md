@@ -56,7 +56,7 @@ Scenario from the client: application server with a remote DB server.
 
 ### terraform/
 
-`versions.tf`, `variables.tf` (`umgebung`, `netz` 172.30.0.0/24, `app_port` 8080), `main.tf` (locals with app1 and db1, IPs via `cidrhost`, key, image, network, module per server, inventory), `outputs.tf` (`app_url`, `ssh`, `db_ip`), `templates/inventory.tftpl` (groups `[app]`, `[db]`, vars `db_host`, `app_netz`, `app_port`).
+`versions.tf`, `variables.tf` (`umgebung`, `netz` 172.30.0.0/24, `app_port` 8080), `main.tf` (locals with app1 and db1, IPs via `cidrhost`, key, image, network, module per server, inventory). On `start` and `practice` three gaps in `main.tf`: the `db1` entry, `ipam_config` of the network and the inputs of the module call, `outputs.tf` (`app_url`, `ssh`, `db_ip`), `templates/inventory.tftpl` (groups `[app]`, `[db]`, vars `db_host`, `app_netz`, `app_port`).
 
 ### ansible/
 

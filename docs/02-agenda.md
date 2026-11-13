@@ -34,7 +34,7 @@ Times assume 09:00 to 16:30. Each block has a Notion page with learning goals, c
 | Time | Phase | What participants do |
 | --- | --- | --- |
 | 13:00 | Intro | Scenario, comparison with OpenStack |
-| 13:10 | Phase 1: Terraform | Guided: read and run `miniprojekt/terraform` |
+| 13:10 | Phase 1: Terraform | Fill the `TODO` gaps in `miniprojekt/terraform/main.tf` (db1 entry, network subnet, module inputs), then apply |
 | 13:45 | Phase 2: role postgresql | Write the tasks (start branch has them as comments) |
 | 14:20 | Phase 3: role app | Write the tasks, templates and handler are given |
 | 14:55 | Phase 4 | Smoke test, destroy, rebuild from scratch |

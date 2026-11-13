@@ -22,7 +22,7 @@ Idempotence is detected by grepping `changed=[1-9]` in the second run.
 | Script | Purpose |
 | --- | --- |
 | `scripts/gfu-reach.sh [host] [port]` | Reachability test for the RDP endpoint (DNS, TCP, answer to an RDP connection request). No credentials. Defaults to `rdp.gfu.cloud 44400` |
-| `scripts/check-start-branch.sh` | Checks `start`: based on `main`, differs only in README, `.yamllint` and the exercise files, every exercise file has `TODO` gaps and no `OPTIONAL` parts, syntax check, fmt, validate (only `umgebung` and the mini project, the labs have gaps on purpose) |
+| `scripts/check-start-branch.sh` | Checks `start`: based on `main`, differs only in README, `.yamllint` and the exercise files, every exercise file has `TODO` gaps and no `OPTIONAL` parts, syntax check, fmt, validate (only `umgebung`; the labs and the mini project Terraform have gaps on purpose) |
 | `scripts/test-cleanup.sh` | Interrupts the dry run (SIGINT) during the mini project and checks that no containers or networks remain |
 | `setup-wsl.sh` (repo root) | Participant setup for Ubuntu on WSL2: installs Docker, Ansible, Terraform, adds the user to `docker`, runs `lab00-check`. Idempotent. Not run in CI (needs sudo, systemd), only linted with shellcheck. See `09-windows-wsl-setup.md` |
 | `scripts/dry-run-vm.sh` | Variant B (Linux VMs): runs labs 3, 5 and optionally the mini project against `INVENTORY` and `MINI_INVENTORY`. Needs SSH and sudo on the hosts |
