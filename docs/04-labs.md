@@ -62,6 +62,7 @@ Scenario from the client: application server with a remote DB server.
 
 - `site.yml`: play db (role postgresql), play app (role app), play smoke test (uri with retries, assert "DB OK")
 - `group_vars/all.yml`: `db_name`, `db_user`, `db_password` (plain text on purpose, Vault is the stretch task)
+- final plays collect results into `ansible/out/` (git-ignored): `fetch` of `pg_hba.conf` and the systemd unit, `ss -tln` per server as `ports.txt`, and `antwort.txt` (the visit counter is cut off with `regex_replace`, otherwise the second run would not be `changed=0`)
 - role `postgresql`: install postgresql + python3-psycopg2, `listen_addresses = '*'`, `pg_hba` rule only for `db_user` from `app_netz` with scram-sha-256, service, user and DB via `community.postgresql` as user postgres. Defaults: `postgresql_version: "16"` (Ubuntu 24.04)
 - role `app`: python3-psycopg2, system user `tlbg-app`, `/opt/tlbg-app/app.py` (stdlib HTTP server, counts visits in table `besuche`), `/etc/tlbg-app.env` (0640), systemd unit `tlbg-app`, handler restarts with daemon reload
 - `requirements.yml`: `community.postgresql` (only needed with ansible-core)
