@@ -18,7 +18,7 @@ Alle Ansible-Befehle laufen im Ordner `miniprojekt/ansible`.
 
 ### Schritt 1: Terraform
 
-Der Terraform-Teil hat eigene Checkpoints, getrennt von Ansible: `bash pruefen.sh <name>` im Ordner `terraform`. Erst wenn Terraform steht (Checkpoint 5), geht es mit Ansible weiter.
+Der Terraform-Teil hat eigene Checkpoints, getrennt von Ansible: `bash pruefen.sh <name>` im Ordner `terraform`. Die ausführliche Anleitung (Aufruf, Ausgabe lesen, häufige Meldungen) steht in `terraform/README.md`. Erst wenn Terraform steht (Checkpoint 5), geht es mit Ansible weiter.
 
 Arbeitet in dieser Reihenfolge. Die `TODO` mit Mustern stehen in den Dateien.
 
