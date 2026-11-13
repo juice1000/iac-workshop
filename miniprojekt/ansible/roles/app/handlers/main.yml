@@ -1,8 +1,10 @@
 ---
 # handlers/main.yml: startet die Anwendung neu, wenn eine Datei (Anwendung, Zugangsdaten, Dienstdatei) sich
-# geaendert hat. daemon_reload liest die Dienstdatei neu ein.
-- name: Anwendung neu starten
-  ansible.builtin.systemd_service:
-    name: tlbg-app
-    state: restarted
-    daemon_reload: true
+# geaendert hat.
+#
+# TODO: Schreibt den Handler "Anwendung neu starten": Modul systemd_service, Dienst tlbg-app, state restarted,
+#       daemon_reload true (liest die Dienstdatei neu ein, falls sie sich geaendert hat).
+#       Der name muss genau dem notify in tasks/main.yml entsprechen.
+# Muster: lab05-ansible-rolle/roles/webserver/handlers/main.yml, und die Aufgabe "Anwendung laeuft und startet
+#         beim Booten" in tasks/main.yml (dasselbe Modul, dort mit state started)
+# Hilfe:  ansible-doc ansible.builtin.systemd_service

@@ -4,34 +4,25 @@
 # Smoke-Test (ein kurzer Test, ob das Ganze funktioniert) und zuletzt das Einsammeln der Ergebnisse in out/.
 # hosts: app und db sind Gruppen aus inventory.ini (Terraform erzeugt die Datei).
 # Hintergrund und Erklaerung der Rollen: README.md in diesem Ordner.
-- name: Datenbankserver einrichten
-  hosts: db
-  become: true
-  roles:
-    - postgresql
 
-- name: Anwendungsserver einrichten
-  hosts: app
-  become: true
-  roles:
-    - app
+# TODO: Schreibt die ersten beiden Plays. Jeder Play braucht name, hosts, become und roles:
+#   Play 1  Datenbankserver einrichten   hosts: db    Rolle postgresql
+#   Play 2  Anwendungsserver einrichten  hosts: app   Rolle app
+# Beide mit become: true (Root-Rechte). Die Datenbank kommt zuerst, weil die Anwendung sie beim Start braucht.
+# Muster:  lab05-ansible-rolle/site.yml (dort ruft ein Play eine Rolle auf)
+# Hilfe:   Die Gruppen db und app stehen in inventory.ini (Terraform hat sie erzeugt). roles: ist eine Liste.
 
 - name: Smoke-Test
   hosts: app
   tasks:
-    - name: Anwendung abrufen
-      ansible.builtin.uri:
-        url: "http://localhost:{{ app_port }}/"
-        return_content: true
-      register: antwort
-      retries: 5
-      delay: 2
-      until: antwort.status == 200
-
-    - name: Anwendung erreicht die Datenbank
-      ansible.builtin.assert:
-        that: "'DB OK' in antwort.content"
-        success_msg: "{{ antwort.content | trim }}"
+    # TODO: Schreibt die beiden Aufgaben des Smoke-Tests:
+    #   1. Anwendung abrufen: Modul uri, url http://localhost:{{ app_port }}/, return_content: true, Ergebnis mit
+    #      register in der Variable antwort speichern (wird unten weiterverwendet). Die Anwendung braucht nach dem
+    #      Start einen Moment: retries 5, delay 2, until antwort.status == 200.
+    #   2. Pruefen: Modul assert, that: "'DB OK' in antwort.content", success_msg ist die Antwort ohne Leerzeichen
+    #      am Rand ({{ antwort.content | trim }}).
+    # Muster: lab03-ansible-grundlagen/playbook.yml, zweites Play (uri, register, assert)
+    # Hilfe:  ansible-doc ansible.builtin.uri, ansible-doc ansible.builtin.assert
 
     # delegate_to: localhost fuehrt eine Aufgabe auf eurem Rechner aus statt auf dem Server.
     # Zuerst muss der Ordner out/ existieren, denn copy legt keine Ordner an.
