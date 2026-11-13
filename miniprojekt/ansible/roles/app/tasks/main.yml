@@ -1,11 +1,13 @@
 ---
-# Phase 3: Rolle app. Hilfe: ansible-doc <modulname>
-# Die Vorlagen in templates/ und der Handler in handlers/ sind schon fertig.
-# Die ersten beiden Aufgaben sind als Beispiel fertig. Geloeste Version, alles ausgefuellt.
-# Zeilen mit "#   " (Raute und drei Leerzeichen) sind Code zum Einkommentieren.
-# ZUSATZMATERIAL (Branch additional-material): alle TODOs sind ausgefuellt, die optionalen Beispiele sind aktiv.
-# Beispiele mit [NICHT AKTIV] bleiben bewusst auskommentiert, der Grund steht dabei.
-# Optional in dieser Datei: no_log, Dienst haerten, uri mit until und assert, delegate_to.
+# roles/app/tasks/main.yml: richtet den Anwendungsserver (app1) ein.
+#
+# Ziel: Am Ende laeuft eine kleine Python-Anwendung als Dienst, die Besuche in der Datenbank auf db1 zaehlt.
+# Ablauf: Treiber fuer PostgreSQL installieren, eigenen Benutzer und Verzeichnis anlegen, drei Dateien aus
+# Vorlagen ausrollen (Anwendung, Zugangsdaten, systemd-Dienstdatei), Dienst starten. Aendert sich eine der drei
+# Dateien, startet der Handler die Anwendung neu (notify).
+# Woher die Werte kommen: app_user, app_dir aus defaults/main.yml, db_host und app_port aus dem Inventory
+# (Terraform schreibt sie), db_name, db_user, db_password aus group_vars/all.yml.
+# Mehr Hintergrund: README.md im Ordner miniprojekt/ansible.
 - name: Python-Treiber fuer PostgreSQL installieren
   ansible.builtin.apt:
     name: python3-psycopg2
@@ -49,9 +51,6 @@
     group: "{{ app_user }}"
     mode: "0640"
   notify: Anwendung neu starten
-  no_log: true  # die Datei enthaelt das Passwort
-# OPTIONAL: Datei nicht im Log zeigen (in die Aufgabe schreiben)
-# Aktiv: no_log steht oben bei der Aufgabe.
 
 - name: Systemd-Dienst anlegen
   ansible.builtin.template:
@@ -61,8 +60,6 @@
     group: root
     mode: "0644"
   notify: Anwendung neu starten
-# OPTIONAL: Dienst haerten, in der Vorlage tlbg-app.service.j2 unter [Service]:
-# Aktiv: NoNewPrivileges, ProtectSystem und PrivateTmp stehen in templates/tlbg-app.service.j2.
 
 # systemd_service: steuert Dienste mit systemd. daemon_reload liest die Dienstdateien neu ein,
 # das ist noetig, nachdem tlbg-app.service neu angelegt oder geaendert wurde.
@@ -72,22 +69,3 @@
     state: started
     enabled: true
     daemon_reload: true
-
-# OPTIONAL: Warten, bis die Anwendung antwortet, und das Ergebnis pruefen
-- name: Auf die Anwendung warten
-  ansible.builtin.uri:
-    url: "http://localhost:{{ app_port }}/"
-    return_content: true
-  register: app_antwort
-  until: app_antwort.status == 200
-  retries: 10
-  delay: 2
-  when: not ansible_check_mode
-
-- name: Datenbankverbindung pruefen
-  ansible.builtin.assert:
-    that: "'DB OK' in app_antwort.content"
-    success_msg: "Anwendung erreicht die Datenbank"
-  when: not ansible_check_mode
-# OPTIONAL: Pruefung vom Controller aus
-# [NICHT AKTIV] delegate_to: localhost trifft nur zu, wenn der App-Port auf dem Controller veroeffentlicht ist (Docker). Bei VMs nicht.

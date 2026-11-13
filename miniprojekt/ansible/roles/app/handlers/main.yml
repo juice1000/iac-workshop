@@ -1,4 +1,6 @@
 ---
+# handlers/main.yml: startet die Anwendung neu, wenn eine Datei (Anwendung, Zugangsdaten, Dienstdatei) sich
+# geaendert hat. daemon_reload liest die Dienstdatei neu ein.
 - name: Anwendung neu starten
   ansible.builtin.systemd_service:
     name: tlbg-app
