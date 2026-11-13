@@ -1,4 +1,6 @@
 ---
+# handlers/main.yml: laeuft nur, wenn eine Aufgabe per notify ruft, und einmal am Ende des Plays.
+# Neustart noetig, weil PostgreSQL listen_addresses nur beim Start einliest.
 - name: PostgreSQL neu starten
   ansible.builtin.service:
     name: postgresql

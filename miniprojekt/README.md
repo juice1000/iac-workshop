@@ -31,6 +31,8 @@ ansible-playbook site.yml          # zweiter Lauf: changed=0
 
 Hilfe zu einem Modul: `ansible-doc <modulname>`.
 
+Was der Ansible-Teil macht und warum (Datenbank öffnen, `lineinfile`, `pg_hba.conf`, woher die Variablen kommen): `miniprojekt/ansible/README.md`.
+
 ## Was Ansible bewirkt hat: der Ordner `out/`
 
 Am Ende von `site.yml` holt Ansible Ergebnisse von den Servern in `miniprojekt/ansible/out/` (nicht im Git):

@@ -13,6 +13,10 @@
 
 # lineinfile: stellt sicher, dass eine Zeile in einer Datei so steht. regexp findet die alte Zeile,
 #             line ersetzt sie. Wozu: einzelne Einstellung aendern, ohne die ganze Datei zu besitzen.
+# Hier: postgresql.conf ist eine lange Datei des Pakets, wir aendern nur listen_addresses. Standard ist
+# 'localhost' (nur Programme auf diesem Server). '*' heisst: auf allen Schnittstellen lauschen, damit app1
+# ueber das Netz ankommt. Das "#?" im regexp trifft die Zeile auch auskommentiert, so wie sie ausgeliefert wird.
+# '*' oeffnet nur die Tuer, wer hindurch darf regelt die naechste Aufgabe (pg_hba.conf).
 - name: Auf allen Netzwerkschnittstellen lauschen
   ansible.builtin.lineinfile:
     path: "{{ postgresql_conf_dir }}/postgresql.conf"

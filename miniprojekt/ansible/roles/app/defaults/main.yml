@@ -1,4 +1,6 @@
 ---
+# defaults/main.yml: Standardwerte der Rolle (niedrigste Prioritaet, mit Inventory, group_vars oder -e ueberschreibbar).
+# app_port wird hier vorbelegt, das Inventory setzt ihn auf den Wert aus Terraform (var.app_port).
 app_user: tlbg-app
 app_dir: /opt/tlbg-app
 app_port: 8080

@@ -1,4 +1,7 @@
 ---
+# group_vars/all.yml: Variablen fuer alle Server. Ansible liest group_vars/<gruppe>.yml automatisch, "all" gilt
+# fuer jeden Host. Diese drei Werte brauchen beide Rollen: postgresql legt Benutzer und Datenbank an,
+# app traegt sie in /etc/tlbg-app.env ein, damit die Anwendung sich anmelden kann.
 db_name: tlbg_app
 db_user: tlbg_app
 # Nur fuer die Uebung im Klartext. Stretch-Aufgabe: mit Ansible Vault verschluesseln.
