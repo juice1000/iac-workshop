@@ -16,7 +16,7 @@ Die Server aus `umgebung/` laufen (siehe Lab 3). `ansible.cfg` nutzt das Invento
 
 ## Aufgabe
 
-Auf dem Branch `start` ist dieses Lab fertig ausgefüllt. Ihr geht es gemeinsam durch, führt es aus und nutzt es im Miniprojekt als Vorlage. Zum Selbstüben gibt es auf `practice` die Version mit Lücken. Über den Blöcken steht, was sie tun. Die Rolle liegt in `roles/webserver/` (Aufgaben, Standardwerte, Handler). `site.yml` ruft die Rolle nur noch auf.
+Auf dem Branch `start` ist dieses Lab fertig ausgefüllt. Ihr geht es gemeinsam durch, führt es aus und nutzt es im Miniprojekt als Vorlage. Über den Blöcken steht, was sie tun. Die Rolle liegt in `roles/webserver/` (Aufgaben, Standardwerte, Handler). `site.yml` ruft die Rolle nur noch auf.
 
 ## Ablauf
 
