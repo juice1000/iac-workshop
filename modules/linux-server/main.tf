@@ -1,6 +1,7 @@
 # Ein Linux-"Server" als Docker-Container mit systemd und SSH.
 # Das Image (docker/Dockerfile) bringt die Software mit. Dieses Modul macht daraus eine laufende Instanz:
 # Container starten, ins Netz haengen, Ports freigeben, Schluessel ablegen.
+# Einsteiger-Erklaerung zu cgroups, tmpfs, Ports, IPs und Subnetzen: README.md in diesem Ordner, "Fragen und Antworten".
 
 terraform {
   required_providers {
@@ -21,7 +22,8 @@ resource "docker_container" "server" {
   # erwartet eine Umgebung wie auf einer VM. Das ist ein Kompromiss fuers Labor, in Produktion
   # waere privileged zu offen.
   #   privileged       volle Rechte, damit systemd seine Prozesse verwalten darf
-  #   cgroupns_mode    der Container nutzt die cgroups des Hosts (cgroup-Verzeichnis, mit dem systemd Dienste gruppiert)
+  #   cgroupns_mode    der Container sieht die cgroups des Rechners (Kernel-Funktion, die Prozesse zu Gruppen zusammenfasst).
+  #                    systemd legt pro Dienst eine Gruppe an, so kann es alle Prozesse eines Dienstes zusammen beenden
   #   tmpfs            /run und /run/lock liegen im Arbeitsspeicher, dort legt systemd Laufzeitdaten ab
   #   volumes          bindet /sys/fs/cgroup vom Host ein, passend zum cgroup-Modus
   privileged    = true
