@@ -28,3 +28,65 @@
       ansible.builtin.assert:
         that: "'DB OK' in antwort.content"
         success_msg: "{{ antwort.content | trim }}"
+
+    # delegate_to: localhost fuehrt eine Aufgabe auf eurem Rechner aus statt auf dem Server.
+    # Zuerst muss der Ordner out/ existieren, denn copy legt keine Ordner an.
+    - name: Ordner out/ anlegen
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/out"
+        state: directory
+        mode: "0755"
+      delegate_to: localhost
+
+    # Die Antwort der Anwendung landet in out/antwort.txt, damit ihr sie ansehen koennt.
+    # regex_replace schneidet den Besuchszaehler ab. Er waechst bei jedem Abruf, die Datei wuerde sonst
+    # bei jedem Lauf "changed" melden und der zweite Lauf waere nicht mehr changed=0.
+    - name: Antwort der Anwendung in out/ ablegen
+      ansible.builtin.copy:
+        content: "{{ antwort.content | trim | regex_replace(', Besuche: [0-9]+$', '') }}\n"
+        dest: "{{ playbook_dir }}/out/antwort.txt"
+        mode: "0644"
+      delegate_to: localhost
+
+# Ergebnisse einsammeln: Ansible holt Dateien und Auskuenfte von den Servern in den Ordner out/ neben
+# diesem Playbook (nicht im Git). So seht ihr, was die Rollen auf den Servern bewirkt haben:
+#   out/<server>/etc/postgresql/16/main/pg_hba.conf   Zugriffsregel der Datenbank (nur die App darf rein)
+#   out/<server>/etc/systemd/system/tlbg-app.service   Dienstdatei der Anwendung
+#   out/<server>/ports.txt                             welche Ports auf dem Server lauschen (5432, 8080)
+#   out/antwort.txt                                    Antwort der Anwendung (siehe Smoke-Test)
+# fetch ist das Gegenstueck zu copy: Server -> Rechner. Es ist idempotent (gleicher Inhalt = ok).
+- name: Ergebnisse in out/ sammeln
+  hosts: all
+  tasks:
+    - name: Zugriffsregeln der Datenbank holen
+      ansible.builtin.fetch:
+        src: /etc/postgresql/16/main/pg_hba.conf
+        dest: "{{ playbook_dir }}/out/"
+      when: "'db' in group_names"
+
+    - name: Dienstdatei der Anwendung holen
+      ansible.builtin.fetch:
+        src: /etc/systemd/system/tlbg-app.service
+        dest: "{{ playbook_dir }}/out/"
+      when: "'app' in group_names"
+
+    # ss -tln listet alle Ports im Zustand LISTEN (lauscht auf Verbindungen).
+    # changed_when: false, weil das reine Abfragen nichts am Server aendert.
+    - name: Lauschende Ports abfragen
+      ansible.builtin.command: ss -tln
+      register: ports
+      changed_when: false
+
+    - name: Ordner pro Server in out/ anlegen
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/out/{{ inventory_hostname }}"
+        state: directory
+        mode: "0755"
+      delegate_to: localhost
+
+    - name: Ports in out/ ablegen
+      ansible.builtin.copy:
+        content: "{{ ports.stdout }}\n"
+        dest: "{{ playbook_dir }}/out/{{ inventory_hostname }}/ports.txt"
+        mode: "0644"
+      delegate_to: localhost
