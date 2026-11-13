@@ -4,10 +4,14 @@
 # sensitive = true blendet den Wert in der Anzeige aus (er steht trotzdem im State).
 output "server_dateien" {
   description = "Erzeugte Dateien pro Server"
-  # TODO: value = Map Servername -> Dateiname (for-Ausdruck ueber local_file.server_info)
+  value       = { for name, f in local_file.server_info : name => f.filename }
 }
 
-# TODO: output "rollen" mit local.rollen
+output "rollen" {
+  value = local.rollen
+}
 
-# TODO: output "db_passwort" mit dem Ergebnis von random_password.db (Attribut result)
-#       Der Wert ist geheim: sensitive = true
+output "db_passwort" {
+  value     = random_password.db.result
+  sensitive = true
+}
