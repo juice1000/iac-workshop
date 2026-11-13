@@ -31,6 +31,7 @@ lab04-terraform-module/modules/server-info/variables.tf
 lab05-ansible-rolle/roles/webserver/defaults/main.yml
 lab05-ansible-rolle/roles/webserver/handlers/main.yml
 lab05-ansible-rolle/roles/webserver/tasks/main.yml
+miniprojekt/terraform/main.tf
 miniprojekt/ansible/roles/app/tasks/main.yml
 miniprojekt/ansible/roles/postgresql/tasks/main.yml"
 erlaubt="$(printf '.yamllint\nREADME.md\n%s\n' "$UEBUNG" | sort)"
@@ -63,9 +64,10 @@ echo "== Syntaxcheck der Playbooks"
 (cd lab05-ansible-rolle && ansible-playbook --syntax-check -i localhost, site.yml >/dev/null)
 
 echo "== terraform fmt und validate"
-# Die Labs 1, 2 und 4 haben absichtlich Luecken und sind nicht validierbar. Dort prueft fmt nur die Syntax.
+# Die Labs 1, 2, 4 und das Terraform im Miniprojekt haben absichtlich Luecken und sind nicht validierbar.
+# Dort prueft fmt nur die Syntax.
 terraform fmt -check -recursive >/dev/null || fehler "terraform fmt"
-for d in umgebung miniprojekt/terraform; do
+for d in umgebung; do
   (cd "$d" && terraform init -backend=false -input=false >/dev/null && terraform validate -no-color >/dev/null) || fehler "validate in $d"
 done
 
