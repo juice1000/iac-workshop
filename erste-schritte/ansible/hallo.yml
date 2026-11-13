@@ -1,26 +1,75 @@
 ---
-# Erste Schritte: ein Playbook nur fuer den eigenen Rechner
+# Erste Schritte: ein Playbook nur fuer den eigenen Rechner.
+#
+# Was ist ein Playbook? Eine Textdatei im YAML-Format, die den Soll-Zustand beschreibt: Auf welchen
+# Servern soll was passieren? Ansible liest sie von oben nach unten und fuehrt die Aufgaben aus.
+# Die drei Minuszeichen in der ersten Zeile markieren den Anfang eines YAML-Dokuments.
+# YAML-Regeln, die hier wichtig sind: Die Einrueckung (zwei Leerzeichen) zeigt, was zu wem gehoert.
+# Ein Minus am Zeilenanfang ist ein Listeneintrag. "name: wert" ist ein Schluessel mit Wert.
+#
+# Aufruf: ansible-playbook hallo.yml  (im Ordner erste-schritte/ansible)
+
+# Ein Playbook ist eine Liste von "Plays". Das Minus beginnt den ersten (hier einzigen) Play.
+# Ein Play sagt: AUF WELCHEN Servern (hosts) laufen WELCHE Aufgaben (tasks).
+#
+# name:   frei waehlbarer Titel. Er erscheint in der Ausgabe als "PLAY [Erste Schritte mit Ansible]".
 - name: Erste Schritte mit Ansible
+  # hosts: welche Server. "lokal" ist eine Gruppe aus inventory.ini und enthaelt nur den eigenen Rechner.
+  #        Ansible verbindet sich dort ohne SSH direkt (ansible_connection=local im Inventory).
   hosts: lokal
+
+  # vars: eigene Variablen fuer dieses Play. Eine Variable ist ein Name mit einem Wert, den man weiter
+  #       unten mit doppelten geschweiften Klammern einsetzt: {{ begruessung }}.
+  #       Sie laesst sich auf der Kommandozeile ueberschreiben, z. B. mit -e begruessung=Moin.
   vars:
     begruessung: "Hallo"
 
+  # tasks: die Aufgaben, die der Reihe nach laufen. Jede Aufgabe ruft genau ein Modul auf.
+  #        Ein Modul ist ein fertiger Baustein fuer eine Sache (Datei, Paket, Dienst ...).
+  #        Bevor die erste Aufgabe laeuft, sammelt Ansible automatisch Fakten ueber den Rechner
+  #        (Schritt "Gathering Facts" in der Ausgabe). Sie stehen danach in ansible_facts.
   tasks:
+    # Aufgabe 1: Ordner anlegen.
+    # name:  Beschreibung der Aufgabe, erscheint in der Ausgabe als "TASK [...]". Kurz sagen, was passiert.
     - name: Ordner fuer Ergebnisse anlegen
+      # ansible.builtin.file: das Modul "file" aus der mitgelieferten Sammlung ansible.builtin.
+      #                       Es verwaltet Dateien, Ordner und Links und ihre Rechte.
       ansible.builtin.file:
+        # path: welcher Pfad. playbook_dir ist eine Variable, die Ansible selbst setzt: der Ordner dieses
+        #       Playbooks. Die Anfuehrungszeichen sind noetig, weil ein Wert mit { sonst als YAML-Objekt
+        #       gelesen wuerde.
         path: "{{ playbook_dir }}/out"
+        # state: der Soll-Zustand. directory = es muss ein Ordner existieren. Fehlt er, legt Ansible ihn an
+        #        (wie mkdir -p). Ist er da, passiert nichts. Das ist Idempotenz.
         state: directory
+        # mode: Dateirechte. 0755 = Besitzer darf lesen, schreiben, ausfuehren, alle anderen lesen und
+        #       ausfuehren. In Anfuehrungszeichen, damit YAML die Zahl nicht umdeutet.
         mode: "0755"
 
+    # Aufgabe 2: eine Datei mit Fakten schreiben.
     - name: Datei mit Fakten ueber den Rechner schreiben
+      # copy: schreibt eine Datei auf das Ziel. Entweder kopiert es eine vorhandene Datei (src) oder,
+      #       wie hier, schreibt es einen Text, den man direkt angibt (content).
       ansible.builtin.copy:
+        # dest: wohin die Datei geschrieben wird, im Ordner aus Aufgabe 1.
         dest: "{{ playbook_dir }}/out/rechner.txt"
+        # content: der Inhalt der Datei. Das Zeichen | heisst: Die eingerueckten Zeilen darunter werden
+        #          Zeile fuer Zeile uebernommen, mit allen Zeilenumbruechen.
+        #          {{ ... }} wird durch den Wert ersetzt:
+        #          begruessung        unsere Variable aus vars (oben)
+        #          ansible_facts[...] Angaben, die Ansible vor dem Lauf eingesammelt hat: Rechnername,
+        #                             Betriebssystem, Version, Python-Version
         content: |
           {{ begruessung }} von {{ ansible_facts['hostname'] }}
           System: {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}
           Python: {{ ansible_facts['python_version'] }}
+        # mode: 0644 = Besitzer liest und schreibt, alle anderen lesen nur.
+        # Idempotent: stimmt Inhalt und Recht schon, bleibt die Datei unberuehrt (changed=0).
         mode: "0644"
 
+    # Aufgabe 3: etwas auf dem Bildschirm zeigen.
     - name: Ergebnis zeigen
+      # debug: gibt nur Text aus, es aendert nichts. Praktisch, um zu sehen, was in einer Variable steht.
       ansible.builtin.debug:
+        # msg: die Nachricht. Auch hier setzt {{ ... }} Variablen und Fakten ein.
         msg: "{{ begruessung }}, Ansible laeuft auf {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}"
