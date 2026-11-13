@@ -63,18 +63,24 @@ cp_init() {
   pruef "Format stimmt (terraform fmt)" "terraform fmt im Ordner ausfuehren" terraform fmt -check -diff versions.tf
 }
 
+# Wert aus variables.tf allein lesen, damit unfertige Dateien (main.tf, outputs.tf) nicht stoeren
+variablenwert() {
+  local tmp out
+  tmp="$(mktemp -d)"
+  cp variables.tf "$tmp/"
+  out="$(cd "$tmp" && printf '%s\n' "$1" | terraform console -no-color 2>&1 | tail -n 1)"
+  rm -rf "$tmp"
+  printf '%s' "$out"
+}
+
 cp_variablen() {
   titel "Checkpoint 2: variables.tf"
   for v in umgebung netz app_port; do
     pruef "Variable $v ist deklariert" "variable \"$v\" in variables.tf (type und default)" grep -q "variable \"$v\"" variables.tf
   done
-  [ -d .terraform ] || {
-    fehlt "Provider fehlen noch. Hinweis: zuerst bash pruefen.sh init"
-    return
-  }
-  gleich "umgebung hat den Standardwert schulung" "default in variables.tf (Text in Anfuehrungszeichen)" "$(konsole var.umgebung)" '"schulung"'
-  gleich "netz hat den Standardwert 172.30.0.0/24" "default in variables.tf (Text in Anfuehrungszeichen)" "$(konsole var.netz)" '"172.30.0.0/24"'
-  gleich "app_port ist die Zahl 8080" "type = number und default = 8080 (ohne Anfuehrungszeichen)" "$(konsole var.app_port)" '8080'
+  gleich "umgebung hat den Standardwert schulung" "default in variables.tf (Text in Anfuehrungszeichen)" "$(variablenwert var.umgebung)" '"schulung"'
+  gleich "netz hat den Standardwert 172.30.0.0/24" "default in variables.tf (Text in Anfuehrungszeichen)" "$(variablenwert var.netz)" '"172.30.0.0/24"'
+  gleich "app_port ist die Zahl 8080" "type = number und default = 8080 (ohne Anfuehrungszeichen)" "$(variablenwert var.app_port)" '8080'
   pruef "Format stimmt (terraform fmt)" "terraform fmt im Ordner ausfuehren" terraform fmt -check -diff variables.tf
 }
 
