@@ -31,6 +31,19 @@ ansible-playbook site.yml          # zweiter Lauf: changed=0
 
 Hilfe zu einem Modul: `ansible-doc <modulname>`.
 
+## Was Ansible bewirkt hat: der Ordner `out/`
+
+Am Ende von `site.yml` holt Ansible Ergebnisse von den Servern in `miniprojekt/ansible/out/` (nicht im Git):
+
+| Datei | Zeigt |
+| --- | --- |
+| `out/tlbg-schulung-db1/etc/postgresql/16/main/pg_hba.conf` | die Zugriffsregel der Datenbank (nur `app_netz`, nur `db_user`) |
+| `out/tlbg-schulung-app1/etc/systemd/system/tlbg-app.service` | die Dienstdatei der Anwendung |
+| `out/<server>/ports.txt` | welche Ports lauschen: 5432 auf `db1`, 8080 auf `app1` |
+| `out/antwort.txt` | die Antwort der Anwendung ("DB OK") |
+
+Schaut sie euch nach dem Lauf an, z. B. `cat out/*/ports.txt`.
+
 ## Aufräumen
 
 ```bash
