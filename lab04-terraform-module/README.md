@@ -22,7 +22,7 @@ modules/server-info/
 
 ## Aufgabe
 
-Ergänzt die Stellen mit `TODO` im Root-Modul und im Modul. Über jedem Block steht, was er tut und wozu. Ergebnis: für `app1` und `db1` entsteht je eine Datei in `out/`, wie in Lab 2.
+Auf dem Branch `start` ist dieses Lab fertig ausgefüllt. Ihr geht es gemeinsam durch, führt es aus und nutzt es im Miniprojekt als Vorlage. Zum Selbstüben gibt es auf `practice` die Version mit Lücken. Über jedem Block steht, was er tut und wozu. Ergebnis: für `app1` und `db1` entsteht je eine Datei in `out/`, wie in Lab 2.
 
 ## Ablauf
 
