@@ -19,7 +19,7 @@ Den Schritt-für-Schritt-Ablauf mit allen Befehlen findet ihr in `../README.md`.
 
 | # | Nach welchem Schritt | Befehl | Grün heißt |
 | --- | --- | --- | --- |
-| 1 | Terraform angewendet | `terraform output` (im Ordner `terraform`), dann `ansible-playbook pruefen.yml --tags verbindung` | beide Server erreichbar, `ansible-inventory --graph` zeigt die Gruppen `app` und `db` |
+| 1 | Terraform angewendet und dort `bash pruefen.sh apply` grün (eigene Checkpoints in `../README.md`) | `ansible-playbook pruefen.yml --tags verbindung` | beide Server erreichbar, `ansible-inventory --graph` zeigt die Gruppen `app` und `db` |
 | 2 | `site.yml`: Plays geschrieben | `ansible-playbook site.yml --syntax-check` und `ansible-playbook site.yml --list-hosts` | keine Fehlermeldung; Play 1 listet `tlbg-schulung-db1`, Play 2 listet `tlbg-schulung-app1` |
 | 3 | Rolle `postgresql` + Handler fertig | `ansible-playbook site.yml --limit db`, dann `ansible-playbook pruefen.yml --tags db` | sechs Zeilen `OK:` (Dienst, Port, `pg_hba.conf`, Benutzer, Datenbank, Anmeldung mit Passwort), im PLAY RECAP `ignored=0` |
 | 4 | Datenbank von der App-Seite aus | `ansible-playbook pruefen.yml --tags zugriff` | `OK:` beim Datenbankport: das Netz zwischen `app1` und `db1` steht. Die Anmeldung mit Python meldet `UEBERSPRUNGEN`, bis die Rolle `app` den Treiber installiert hat |
