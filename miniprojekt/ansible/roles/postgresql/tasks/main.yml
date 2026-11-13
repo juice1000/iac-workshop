@@ -1,6 +1,7 @@
 ---
 # Phase 2: Rolle postgresql. Hilfe: ansible-doc <modulname>
-# Die erste Aufgabe ist als Beispiel fertig. Ergaenzt die Stellen mit TODO.
+# Einige Aufgaben sind als Muster fertig. Ergaenzt die Stellen mit TODO. Bei jedem TODO steht, wo ihr ein Beispiel
+# oder Hilfe findet. Variablen: group_vars/all.yml (db_name, db_user, db_password) und defaults/main.yml.
 - name: PostgreSQL und Python-Treiber installieren
   ansible.builtin.apt:
     name:
@@ -17,6 +18,7 @@
     path: "{{ postgresql_conf_dir }}/postgresql.conf"
     regexp: "^#?listen_addresses"
     # TODO: line "listen_addresses = '*'"
+    #       Hilfe: ansible-doc ansible.builtin.lineinfile (Parameter line)
   notify: PostgreSQL neu starten
 
 # pg_hba.conf: Zugriffsregeln von PostgreSQL (wer darf von wo auf welche Datenbank mit welcher
@@ -28,11 +30,17 @@
     contype: host
     # TODO: databases {{ db_name }}, users {{ db_user }}
     # TODO: address {{ postgresql_erlaubtes_netz }}, method scram-sha-256
+    #       Hilfe: ansible-doc community.postgresql.postgresql_pg_hba
   notify: PostgreSQL neu starten
 # Die pg_hba.conf wird von oben nach unten gelesen, die erste passende Zeile gilt.
 # listen_addresses braucht einen Neustart, pg_hba.conf nur ein Reload.
 
-# TODO: Dienst postgresql starten und beim Booten aktivieren (ansible.builtin.service)
+# Als Beispiel fertig: derselbe Aufbau wie der Dienst in Lab 3 und Lab 5.
+- name: PostgreSQL laeuft und startet beim Booten
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
 
 # become_user: postgres fuehrt die Aufgabe als Datenbank-Administrator aus (sudo -u postgres).
 # no_log: true unterdrueckt die Ausgabe der Aufgabe, damit das Passwort nicht im Log landet.
@@ -43,6 +51,8 @@
     # TODO: password {{ db_password }}
   # TODO: als Benutzer postgres ausfuehren (become und become_user)
   # TODO: das Passwort darf nicht im Log erscheinen (no_log)
+  #       Hilfe: ansible-doc community.postgresql.postgresql_user. become kennt ihr aus Lab 3, hier mit become_user: postgres.
 
 # TODO: Datenbank {{ db_name }} mit Besitzer {{ db_user }} anlegen
 #       (community.postgresql.postgresql_db, ebenfalls als Benutzer postgres)
+#       Muster: die Aufgabe 'Datenbankbenutzer anlegen' darueber. Hilfe: ansible-doc community.postgresql.postgresql_db

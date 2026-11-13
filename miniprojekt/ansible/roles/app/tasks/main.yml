@@ -1,7 +1,8 @@
 ---
 # Phase 3: Rolle app. Hilfe: ansible-doc <modulname>
 # Die Vorlagen in templates/ und der Handler in handlers/ sind schon fertig.
-# Die ersten beiden Aufgaben sind als Beispiel fertig. Ergaenzt die Stellen mit TODO.
+# Einige Aufgaben sind als Muster fertig. Ergaenzt die Stellen mit TODO. Bei jedem TODO steht, wo ihr ein Beispiel
+# oder Hilfe findet. Die Rolle webserver aus Lab 5 (lab05-ansible-rolle/roles/webserver) hat dieselbe Struktur.
 - name: Python-Treiber fuer PostgreSQL installieren
   ansible.builtin.apt:
     name: python3-psycopg2
@@ -16,12 +17,14 @@
     name: "{{ app_user }}"
     system: true
     # TODO: keine Login-Shell (/usr/sbin/nologin) und kein Home-Verzeichnis
+    #       Hilfe: ansible-doc ansible.builtin.user (Parameter shell und create_home)
 
 # file: legt Dateien, Verzeichnisse oder Links an, setzt Rechte. state: directory = Verzeichnis.
 - name: Anwendungsverzeichnis anlegen
   ansible.builtin.file:
     path: "{{ app_dir }}"
     # TODO: state directory, Besitzer root, Gruppe root, Rechte 0755
+    #       Muster fuer owner, group und mode: Lab 5, roles/webserver/tasks/main.yml, 'Startseite aus Vorlage erzeugen'
 
 # Die Anwendung kommt per Vorlage aufs Ziel. notify startet sie neu, wenn sich die Datei geaendert hat.
 - name: Anwendung ausrollen
@@ -29,14 +32,33 @@
     src: app.py.j2
     dest: "{{ app_dir }}/app.py"
     # TODO: Besitzer root, Gruppe root, Rechte 0644
+    #       Muster: dieselbe Aufgabe in Lab 5 (src, dest, owner, group, mode)
   # TODO: notify "Anwendung neu starten"
+  #       Muster: notify in Lab 5, roles/webserver/tasks/main.yml. Der Handler steht in handlers/main.yml.
 
-# TODO: Vorlage app.env.j2 nach /etc/tlbg-app.env
-#       Besitzer root, Gruppe {{ app_user }}, Rechte 0640 (enthaelt das Passwort!), notify wie oben
+# Gleiches Muster wie oben, als Beispiel fertig. Gruppe {{ app_user }} und Rechte 0640, weil die Datei das
+# Passwort enthaelt.
+- name: Datenbankverbindung konfigurieren
+  ansible.builtin.template:
+    src: app.env.j2
+    dest: /etc/tlbg-app.env
+    owner: root
+    group: "{{ app_user }}"
+    mode: "0640"
+  notify: Anwendung neu starten
 
-# TODO: Vorlage tlbg-app.service.j2 nach /etc/systemd/system/tlbg-app.service, notify wie oben
+# Auch fertig: die Dienstdatei fuer systemd kommt als Vorlage aufs Ziel.
+- name: Systemd-Dienst anlegen
+  ansible.builtin.template:
+    src: tlbg-app.service.j2
+    dest: /etc/systemd/system/tlbg-app.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Anwendung neu starten
 
 # systemd_service: steuert Dienste mit systemd. daemon_reload liest die Dienstdateien neu ein,
 # das ist noetig, nachdem tlbg-app.service neu angelegt oder geaendert wurde.
 # TODO: Dienst tlbg-app starten und aktivieren, vorher systemd neu laden
 #       (ansible.builtin.systemd_service, daemon_reload: true)
+#       Muster: Lab 5, Aufgabe 'Nginx laeuft und startet beim Booten' (service). Hilfe: ansible-doc ansible.builtin.systemd_service

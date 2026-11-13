@@ -16,6 +16,7 @@ locals {
     }
     # TODO: Server db1 mit rolle "db", ssh_port 2202, ip als Host 21 im Netz (cidrhost wie bei app1)
     #       und ports als leere Liste (der DB-Port wird nicht veroeffentlicht, nur im Netz erreichbar)
+    #       Muster: der Eintrag app1 darueber. Maps kennt ihr aus Lab 2 (variable "server").
   }
 
   rollen = sort(distinct([for s in local.server : s.rolle]))
@@ -54,6 +55,7 @@ resource "docker_network" "projekt" {
   name = "${local.prefix}-netz"
 
   # TODO: ipam_config-Block mit subnet = var.netz
+  #       Muster: umgebung/main.tf, Ressource docker_network.lab
 }
 
 # Ein Server pro Eintrag in local.server (for_each). each.key ist der Name (app1, db1), each.value
@@ -70,6 +72,7 @@ module "server" {
   #   ssh_port       ssh_port des Servers
   #   public_key     public_key_openssh von tls_private_key.lab
   #   weitere_ports  ports des Servers
+  # Muster: umgebung/main.tf, module "server" (dieselben Eingaben, dort ohne weitere_ports)
 }
 
 # Schreibt ansible/inventory.ini aus der Vorlage. Hier gibt Terraform an Ansible weiter, was es ueber die
