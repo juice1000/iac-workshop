@@ -1,4 +1,13 @@
 ---
+# roles/app/tasks/main.yml: richtet den Anwendungsserver (app1) ein.
+#
+# Ziel: Am Ende laeuft eine kleine Python-Anwendung als Dienst, die Besuche in der Datenbank auf db1 zaehlt.
+# Ablauf: Treiber fuer PostgreSQL installieren, eigenen Benutzer und Verzeichnis anlegen, drei Dateien aus
+# Vorlagen ausrollen (Anwendung, Zugangsdaten, systemd-Dienstdatei), Dienst starten. Aendert sich eine der drei
+# Dateien, startet der Handler die Anwendung neu (notify).
+# Woher die Werte kommen: app_user, app_dir aus defaults/main.yml, db_host und app_port aus dem Inventory
+# (Terraform schreibt sie), db_name, db_user, db_password aus group_vars/all.yml.
+# Mehr Hintergrund: README.md im Ordner miniprojekt/ansible.
 - name: Python-Treiber fuer PostgreSQL installieren
   ansible.builtin.apt:
     name: python3-psycopg2

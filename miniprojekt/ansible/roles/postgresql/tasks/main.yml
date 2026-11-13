@@ -1,4 +1,16 @@
 ---
+# roles/postgresql/tasks/main.yml: richtet den Datenbankserver (db1) ein.
+#
+# Ziel: Am Ende laeuft PostgreSQL so, dass die Anwendung von einem anderen Server (app1) aus eine
+# Verbindung aufbauen darf, aber sonst niemand. Direkt nach der Installation geht das nicht, drei Dinge fehlen:
+#   1. PostgreSQL lauscht nur auf 127.0.0.1, also nur fuer Programme auf db1 selbst.  -> lineinfile
+#   2. Die Zugriffsregeln (pg_hba.conf) lassen niemanden von aussen herein.             -> postgresql_pg_hba
+#   3. Es gibt noch keinen Benutzer und keine Datenbank fuer die Anwendung.            -> postgresql_user, postgresql_db
+# Reihenfolge: installieren, lauschen, Zugriffsregel, Dienst starten, Benutzer, Datenbank. Benutzer und Datenbank
+# kommen nach dem Start, weil die Module sich mit der laufenden Datenbank verbinden.
+# Woher die Werte kommen: db_name, db_user, db_password aus group_vars/all.yml, app_netz aus dem Inventory
+# (ueber postgresql_erlaubtes_netz), Pfade und Version aus defaults/main.yml.
+# Mehr Hintergrund: README.md im Ordner miniprojekt/ansible.
 - name: PostgreSQL und Python-Treiber installieren
   ansible.builtin.apt:
     name:
@@ -10,6 +22,10 @@
 
 # lineinfile: stellt sicher, dass eine Zeile in einer Datei so steht. regexp findet die alte Zeile,
 #             line ersetzt sie. Wozu: einzelne Einstellung aendern, ohne die ganze Datei zu besitzen.
+# Hier: postgresql.conf ist eine lange Datei des Pakets, wir aendern nur listen_addresses. Standard ist
+# 'localhost' (nur Programme auf diesem Server). '*' heisst: auf allen Schnittstellen lauschen, damit app1
+# ueber das Netz ankommt. Das "#?" im regexp trifft die Zeile auch auskommentiert, so wie sie ausgeliefert wird.
+# '*' oeffnet nur die Tuer, wer hindurch darf regelt die naechste Aufgabe (pg_hba.conf).
 - name: Auf allen Netzwerkschnittstellen lauschen
   ansible.builtin.lineinfile:
     path: "{{ postgresql_conf_dir }}/postgresql.conf"
