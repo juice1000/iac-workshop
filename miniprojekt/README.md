@@ -13,8 +13,8 @@ Am Ende antwortet die Anwendung mit `Hallo von tlbg-schulung-app1! DB OK (...), 
 ## Phasen
 
 1. **Terraform**: Ergänzt die `TODO` in `miniprojekt/terraform/` und wendet es an: `versions.tf`, `variables.tf` und `outputs.tf` schreibt ihr selbst, in `main.tf` fehlen der Schlüssel (`local_sensitive_file`), der Pfad zum Dockerfile, Server `db1`, das Subnetz, die Eingaben des Moduls und die Werte für das Inventory. Zu jeder Lücke steht ein Muster dabei. Es baut Netz, zwei Server und das Inventory mit den Gruppen `app` und `db`.
-2. **Rolle `postgresql`**: Ergänzt die `TODO` in `ansible/roles/postgresql/tasks/main.yml` (Konfiguration, Zugriffsregel, Dienst, Benutzer, Datenbank).
-3. **Rolle `app`**: Ergänzt die `TODO` in `ansible/roles/app/tasks/main.yml` (Benutzer, Verzeichnis, Vorlagen, Dienst). Vorlagen und Handler sind schon fertig.
+2. **`site.yml` und Rolle `postgresql`**: Schreibt in `ansible/site.yml` die ersten beiden Plays und den Smoke-Test. Ergänzt die `TODO` in `ansible/roles/postgresql/tasks/main.yml` (Konfiguration, Zugriffsregel, Benutzer, Datenbank) und schreibt den Handler in `handlers/main.yml`.
+3. **Rolle `app`**: Ergänzt die `TODO` in `ansible/roles/app/tasks/main.yml` (Benutzer, Verzeichnis, Vorlagen, Dienst) und schreibt den Handler in `handlers/main.yml`. Die Vorlagen sind fertig.
 4. **Test und Neuaufbau**: Smoke-Test, `destroy`, alles von vorn.
 
 ## Ablauf
