@@ -7,6 +7,7 @@
 # Dateien, startet der Handler die Anwendung neu (notify).
 # Woher die Werte kommen: app_user, app_dir aus defaults/main.yml, db_host und app_port aus dem Inventory
 # (Terraform schreibt sie), db_name, db_user, db_password aus group_vars/all.yml.
+# Checkpoint: ansible-playbook site.yml --limit app, danach ansible-playbook pruefen.yml --tags app
 # Mehr Hintergrund: README.md im Ordner miniprojekt/ansible.
 # Phase 3: Rolle app. Hilfe: ansible-doc <modulname>
 # Die Vorlagen in templates/ und der Handler in handlers/ sind schon fertig.
