@@ -1,7 +1,5 @@
 # Miniprojekt: Anwendungsserver mit Datenbankserver
 
-> Branch `additional-material`: Zusatzmaterial. Die Lücken (`TODO`) sind hier schon ausgefüllt, inklusive der optionalen Beispiele. Zum Vergleichen mit der eigenen Lösung.
-
 ## Ziel
 
 Alles zusammen, wie im Alltag: Terraform baut die Infrastruktur, Ansible konfiguriert sie. Ihr richtet einen Anwendungsserver ein, der mit einem entfernten PostgreSQL-Server spricht.
@@ -14,7 +12,7 @@ Am Ende antwortet die Anwendung mit `Hallo von tlbg-schulung-app1! DB OK (...), 
 
 ## Phasen
 
-1. **Terraform**: Ergänzt die `TODO` in `miniprojekt/terraform/main.tf` (Server `db1`, Subnetz des Netzes, Eingaben des Moduls) und wendet es an. Es baut Netz, zwei Server und das Inventory mit den Gruppen `app` und `db`.
+1. **Terraform**: Ergänzt die `TODO` in `miniprojekt/terraform/` und wendet es an: `versions.tf`, `variables.tf` und `outputs.tf` schreibt ihr selbst, in `main.tf` fehlen der Schlüssel (`local_sensitive_file`), der Pfad zum Dockerfile, Server `db1`, das Subnetz, die Eingaben des Moduls und die Werte für das Inventory. Zu jeder Lücke steht ein Muster dabei. Es baut Netz, zwei Server und das Inventory mit den Gruppen `app` und `db`.
 2. **Rolle `postgresql`**: Ergänzt die `TODO` in `ansible/roles/postgresql/tasks/main.yml` (Konfiguration, Zugriffsregel, Dienst, Benutzer, Datenbank).
 3. **Rolle `app`**: Ergänzt die `TODO` in `ansible/roles/app/tasks/main.yml` (Benutzer, Verzeichnis, Vorlagen, Dienst). Vorlagen und Handler sind schon fertig.
 4. **Test und Neuaufbau**: Smoke-Test, `destroy`, alles von vorn.
