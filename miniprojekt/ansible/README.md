@@ -72,6 +72,29 @@ Nur der Datenbank-Administrator `postgres` darf Benutzer und Datenbanken anlegen
 
 Ändert sich eine der drei Dateien, startet der Handler `Anwendung neu starten` die Anwendung neu (`notify`). Ohne Änderung bleibt sie unberührt.
 
+## Checkpoints: nach jedem Schritt prüfen
+
+Ihr löst alles selbst. Damit ihr nicht bis zum Schluss im Dunkeln tappt, gibt es nach jedem Schritt einen Test. Geht erst weiter, wenn der Checkpoint grün ist. Alle Befehle im Ordner `miniprojekt/ansible`.
+
+| # | Nach welchem Schritt | Befehl | Grün heißt |
+| --- | --- | --- | --- |
+| 1 | Terraform angewendet | `terraform output` (im Ordner `terraform`), dann `ansible-playbook pruefen.yml --tags verbindung` | beide Server erreichbar, `ansible-inventory --graph` zeigt die Gruppen `app` und `db` |
+| 2 | `site.yml`: Plays geschrieben | `ansible-playbook site.yml --syntax-check` und `ansible-playbook site.yml --list-hosts` | keine Fehlermeldung; Play 1 listet `tlbg-schulung-db1`, Play 2 listet `tlbg-schulung-app1` |
+| 3 | Rolle `postgresql` + Handler fertig | `ansible-playbook site.yml --limit db`, dann `ansible-playbook pruefen.yml --tags db` | sechs Zeilen `OK:` (Dienst, Port, `pg_hba.conf`, Benutzer, Datenbank, Anmeldung mit Passwort), im PLAY RECAP `ignored=0` |
+| 4 | Datenbank von der App-Seite aus | `ansible-playbook pruefen.yml --tags zugriff` | `OK:` beim Datenbankport: das Netz zwischen `app1` und `db1` steht. Die Anmeldung mit Python meldet `UEBERSPRUNGEN`, bis die Rolle `app` den Treiber installiert hat |
+| 5 | Rolle `app` + Handler fertig | `ansible-playbook site.yml --limit app`, dann `ansible-playbook pruefen.yml --tags app` | `OK: psycopg2`, `OK: tlbg-app laeuft`, `OK: /health ...`, `DB OK`, `ignored=0` |
+| 6 | Alles zusammen | `ansible-playbook site.yml` zweimal, dann `curl http://127.0.0.1:8080/` | zweiter Lauf `changed=0`, Antwort enthält `DB OK` |
+
+Wie ihr die Ausgabe von `pruefen.yml` lest: Jede Prüfung meldet `OK: ...` oder `FEHLT: ... Hinweis: ...`. Der Hinweis nennt die Aufgabe, die ihr euch ansehen sollt. Im PLAY RECAP bedeutet `ignored=0`: alles in Ordnung, jede Zahl darüber ist eine fehlgeschlagene Prüfung. `ansible-playbook pruefen.yml` ohne `--tags` führt alle Checkpoints aus.
+
+Weitere Werkzeuge, wenn etwas nicht klappt:
+
+- `ansible-playbook site.yml --check --diff`: zeigt, was sich ändern würde, ohne etwas zu ändern
+- `ansible-playbook site.yml --limit db --start-at-task "Datenbank anlegen"`: macht bei einer Aufgabe weiter, statt von vorn
+- `ansible-playbook site.yml -vvv`: zeigt jedes Detail, auch die genauen Befehle
+- `ansible-playbook site.yml --list-tasks`: zeigt die Aufgaben in der Reihenfolge, in der sie laufen würden
+- Auf dem Server nachsehen: `ssh -i ../terraform/.ssh/id_lab -p 2202 root@127.0.0.1` (db1) oder Port `2201` (app1), dort `journalctl -u tlbg-app`
+
 ## Woher kommen die Werte?
 
 | Variable | Definiert in | Benutzt in |
