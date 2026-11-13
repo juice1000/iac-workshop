@@ -2,6 +2,8 @@
 # handlers/main.yml: startet die Anwendung neu, wenn eine Datei (Anwendung, Zugangsdaten, Dienstdatei) sich
 # geaendert hat.
 #
+# Checkpoint: zusammen mit den Tasks, siehe tasks/main.yml (ansible-playbook pruefen.yml --tags app).
+#
 # TODO: Schreibt den Handler "Anwendung neu starten": Modul systemd_service, Dienst tlbg-app, state restarted,
 #       daemon_reload true (liest die Dienstdatei neu ein, falls sie sich geaendert hat).
 #       Der name muss genau dem notify in tasks/main.yml entsprechen.

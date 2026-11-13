@@ -2,6 +2,8 @@
 # handlers/main.yml: laeuft nur, wenn eine Aufgabe per notify ruft, und einmal am Ende des Plays.
 # Neustart noetig, weil PostgreSQL listen_addresses nur beim Start einliest.
 #
+# Checkpoint: zusammen mit den Tasks, siehe tasks/main.yml (ansible-playbook pruefen.yml --tags db).
+#
 # TODO: Schreibt den Handler "PostgreSQL neu starten": Modul service, Dienst postgresql, state restarted.
 #       Der name muss genau dem notify in tasks/main.yml entsprechen, sonst wird er nie gerufen.
 # Muster: lab05-ansible-rolle/roles/webserver/handlers/main.yml (dort mit state reloaded)
