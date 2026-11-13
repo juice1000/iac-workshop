@@ -141,6 +141,13 @@ cd "$ROOT/miniprojekt/ansible"
 warte_auf_ssh
 playbook site.yml
 idempotent site.yml
+
+# Checkpoints der Teilnehmer: alle Pruefungen muessen bestehen (ignore_errors faengt Fehler ab, daher ignored=0 pruefen)
+pruef="$(ansible-playbook pruefen.yml)"
+printf '%s\n' "$pruef" | tail -n 4
+if printf '%s\n' "$pruef" | grep -Eq 'ignored=[1-9]|failed=[1-9]'; then
+  fehler "pruefen.yml: mindestens ein Checkpoint schlaegt fehl"
+fi
 antwort="$(curl -fsS http://127.0.0.1:8080/)"
 echo "$antwort"
 case "$antwort" in
