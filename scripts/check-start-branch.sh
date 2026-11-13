@@ -25,6 +25,9 @@ lab02-terraform-variablen/outputs.tf
 lab02-terraform-variablen/variables.tf
 lab03-ansible-grundlagen/playbook.yml
 miniprojekt/terraform/main.tf
+miniprojekt/terraform/outputs.tf
+miniprojekt/terraform/variables.tf
+miniprojekt/terraform/versions.tf
 miniprojekt/ansible/roles/app/tasks/main.yml
 miniprojekt/ansible/roles/postgresql/tasks/main.yml"
 erlaubt="$(printf '.yamllint\nREADME.md\n%s\n' "$UEBUNG" | sort)"
