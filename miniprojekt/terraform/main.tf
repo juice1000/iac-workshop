@@ -28,14 +28,13 @@ resource "tls_private_key" "lab" {
   algorithm = "ED25519"
 }
 
-# Schreibt den privaten Schluessel als Datei (.ssh/id_lab, nicht im Git). "sensitive" blendet den Inhalt in plan
-# und apply aus. file_permission 0600 (nur der Besitzer darf lesen) ist Pflicht: ssh verweigert Schluessel,
-# die andere lesen duerfen.
-resource "local_sensitive_file" "private_key" {
-  filename        = "${path.module}/.ssh/id_lab"
-  content         = tls_private_key.lab.private_key_openssh
-  file_permission = "0600"
-}
+# TODO: Schreibt die Ressource local_sensitive_file.private_key. Sie legt den privaten Schluessel als Datei
+#       ab, damit Ansible sich anmelden kann. "sensitive" blendet den Inhalt in plan und apply aus.
+#   filename         ${path.module}/.ssh/id_lab  (Ordner .ssh neben dieser Datei, nicht im Git)
+#   content          der private Schluessel im OpenSSH-Format: private_key_openssh von tls_private_key.lab
+#   file_permission  "0600" (nur der Besitzer darf lesen). Pflicht: ssh verweigert Schluessel, die andere lesen duerfen.
+# Muster: umgebung/main.tf, Ressource local_sensitive_file.private_key
+# Hilfe:  Der Name ist wichtig: der Rest der Datei und outputs.tf verweisen auf local_sensitive_file.private_key.
 
 # Baut das Server-Image (systemd und sshd, ohne Anwendung) aus docker/Dockerfile.
 # triggers: das Image wird neu gebaut, wenn sich das Dockerfile aendert.
@@ -48,7 +47,7 @@ resource "docker_image" "linux" {
   }
 
   triggers = {
-    dockerfile = filesha1("${path.module}/../../docker/Dockerfile")
+    dockerfile = filesha1("TODO") # TODO: Pfad zum Dockerfile. context oben zeigt auf den Ordner docker, die Datei darin heisst Dockerfile. Muster: umgebung/main.tf
   }
 }
 
@@ -83,12 +82,14 @@ module "server" {
 resource "local_file" "inventory" {
   filename = "${path.module}/../ansible/inventory.ini"
   content = templatefile("${path.module}/templates/inventory.tftpl", {
-    server   = local.server
-    rollen   = local.rollen
-    knoten   = module.server
-    key_path = abspath(local_sensitive_file.private_key.filename)
-    db_host  = local.server["db1"].ip
-    netz     = var.netz
-    app_port = var.app_port
+    # TODO: Ersetzt jedes null durch den richtigen Wert (rechte Seite). Die Namen links benutzt die Vorlage
+    #       templates/inventory.tftpl. Muster: umgebung/main.tf, Ressource local_file.inventory
+    server   = null          # die Server-Map aus den locals
+    rollen   = null          # die sortierte Liste der Rollen aus den locals
+    knoten   = null          # die Ausgabe des Moduls "server" (alle Instanzen, in der Vorlage knoten[name].name)
+    key_path = abspath(null) # der Dateiname von local_sensitive_file.private_key (abspath macht ihn absolut)
+    db_host  = null          # die IP-Adresse von db1 aus den locals
+    netz     = null          # die Variable netz
+    app_port = null          # die Variable app_port
   })
 }
